@@ -1,7 +1,9 @@
 import { PickType } from '@nestjs/swagger';
 import {
+  EmailField,
   EnumField,
   ObjectField,
+  PasswordField,
   StringField,
   UUIDField,
   UUIDFieldOptional,
@@ -17,14 +19,14 @@ export class UserDto {
   @StringField()
   name: string;
 
-  @StringField()
+  @EmailField()
   email: string;
 
-  @StringField()
+  @PasswordField()
   password: string;
 
   @UUIDFieldOptional()
-  centerId?: string;
+  centreId?: string;
 
   @EnumField(() => UserRole)
   role: UserRole;
@@ -39,10 +41,6 @@ export class UserDto {
     this.email = user.email;
     this.password = user.password;
     this.role = user.role;
-
-    if (user.centerId) {
-      this.centerId = user.centerId;
-    }
   }
 }
 
