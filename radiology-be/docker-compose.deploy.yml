@@ -1,0 +1,63 @@
+version: '3.9'
+
+volumes:
+  postgres:
+
+# Make sure public network is created prior to first deployment
+networks:
+  public:
+    external: true
+
+services:
+  app:
+    # TODO: change this image url to my own
+    image: ${APP_BACKEND_IMAGE:-registry.digitalocean.com/xpayments/pg-backend:latest}
+    restart: unless-stopped
+    ports:
+      - 3001
+    depends_on:
+      - postgres
+    networks:
+      - public
+      - default
+    environment:
+      - SWAGGER_PUBLIC_ONLY=true
+
+      - NODE_ENV
+      - PORT
+      - APP_VERSION
+      - APP_ENV
+
+      - API_URL
+      - FRONTEND_URL
+
+      - SWAGGER_ENABLED
+      - CORS
+
+      - POSTGRES_URL
+      # - POSTGRES_SSL_CA
+
+      - ORM_LOGGING_ENABLED
+      - ORM_AUTO_MIGRATION
+      - ORM_SYNCHRONIZE
+
+      # - MAIL_HOST
+      # - MAIL_PORT
+      # - MAIL_USERNAME
+      # - MAIL_PASSWORD
+      # - MAIL_IGNORE_TLS
+      # - MAIL_SECURE
+      # - MAIL_FROM_NAME
+      # - MAIL_FROM_EMAIL
+
+  postgres:
+    image: postgres:14-alpine
+    restart: unless-stopped
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - 5432
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
