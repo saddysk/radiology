@@ -1,5 +1,3 @@
-# Youtube Companion: AI tool for youtubers
-
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
@@ -39,3 +37,4 @@ $ npm run test:cov
 ## Author
 
 [@sksaddyy](https://twitter.com/sksaddyy)
+[@Nada](https://twitter.com/___Nadaaa)

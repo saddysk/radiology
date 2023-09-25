@@ -8,15 +8,17 @@ export async function setupSwagger(
   apiUrl = '/',
 ): Promise<void> {
   const documentBuilder = new DocumentBuilder()
-    .setTitle('Youtube Companion API')
-    .setDescription(
-      `Youtube Companion API provides access to tools used for youtubers to create content with an ease.`,
+    .setTitle('Radiology API')
+    .setDescription(`Radiology booking API`)
+    .setContact(
+      'Radiology',
+      'https://sksaddam.com',
+      'nadaaofficial19@gmail.com',
     )
-    .setContact('Youtube Companion', 'https://sksaddam.com', 'sksaddamh08@gmail.com')
     .setVersion(version)
     .addBearerAuth();
 
-  //   documentBuilder.addServer('https://api.youtube-companion.com', 'Production');
+  //   documentBuilder.addServer('https://api.radiolofy.com', 'Production');
 
   if (process.env.NODE_ENV === 'development') {
     documentBuilder.addServer('http://localhost:3001', 'Localhost');
