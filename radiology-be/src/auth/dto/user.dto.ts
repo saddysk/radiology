@@ -63,7 +63,6 @@ export class CreateUserDto extends PickType(UserDto, [
   'name',
   'email',
   'password',
-  'centerId',
   'role',
 ]) {}
 

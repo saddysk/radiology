@@ -1,6 +1,5 @@
 import {
-  BadGatewayException,
-  BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -12,7 +11,7 @@ import { AuthTokenRepository } from '../repositories/auth-token.repository';
 import { AuthToken } from 'src/database/entities/auth-token.entity';
 import { CreateUserDto, LoginUserDto } from '../dto/user.dto';
 import { AppConfig } from 'src/config/config';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { IAuthUser } from 'libs/interfaces/auth-user.interface';
 
 const CONFIG = AppConfig();
@@ -33,8 +32,8 @@ export class AuthService {
     });
 
     if (user != null) {
-      throw new BadRequestException(
-        `User already exist for this email: ${email}`,
+      throw new ConflictException(
+        `User already exist for this email id: ${email}`,
       );
     }
 
@@ -43,17 +42,8 @@ export class AuthService {
     user.name = data.name;
     user.role = data.role;
 
-    bcrypt.hash(data.password, 10, (err, hash) => {
-      if (err) {
-        throw new BadGatewayException(err);
-      }
-      user.password = hash;
-    });
-
-    // TODO: set after the center is created
-    // if (data.centerId != null) {
-    //   user.centerId = data.centerId;
-    // }
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    user.password = hashedPassword;
 
     await this.userRepository.save(user, { reload: true });
 
@@ -70,7 +60,7 @@ export class AuthService {
 
     // Check if the user exists
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(`User not found, email: ${email}`);
     }
 
     // Verify the password
@@ -84,6 +74,10 @@ export class AuthService {
     const token = await this.createAuthToken(user);
 
     return { token, user };
+  }
+
+  async logout(tokenId: string) {
+    return this.authTokenRepository.revokeToken(tokenId);
   }
 
   async validateUserByToken(plainToken: string): Promise<AuthToken> {
