@@ -18,7 +18,7 @@ export async function setupSwagger(
     .setVersion(version)
     .addBearerAuth();
 
-  //   documentBuilder.addServer('https://api.radiolofy.com', 'Production');
+  //   documentBuilder.addServer('https://api.radiology.com', 'Production');
 
   if (process.env.NODE_ENV === 'development') {
     documentBuilder.addServer('http://localhost:3001', 'Localhost');

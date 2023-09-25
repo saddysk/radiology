@@ -9,7 +9,6 @@ import { AuthTokenRepository } from './repositories/auth-token.repository';
 import { UserRepository } from './repositories/user.repository';
 import { DatabaseModule } from 'src/database/database.module';
 import { InternalStrategy } from './strategies/internal.strategy';
-import { LocalStrategy } from './strategies/local.startegy';
 
 const CONFIG = AppConfig();
 
@@ -29,6 +28,6 @@ const CONFIG = AppConfig();
     }),
   ],
   controllers: [AuthController],
-  providers: [InternalStrategy, BearerStrategy, LocalStrategy, AuthService],
+  providers: [InternalStrategy, BearerStrategy, AuthService],
 })
 export class AuthModule {}

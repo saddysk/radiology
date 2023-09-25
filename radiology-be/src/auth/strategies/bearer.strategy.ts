@@ -19,6 +19,6 @@ export class BearerStrategy extends PassportStrategy(
 
     const user = await token.user;
 
-    return { ...user, ...token };
+    return { user, token };
   }
 }
