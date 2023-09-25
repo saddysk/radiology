@@ -12,7 +12,7 @@ export async function setupSwagger(
     .setDescription(`Radiology booking API`)
     .setContact(
       'Radiology',
-      'https://sksaddam.com',
+      'https://nadaaa.vercel.app/',
       'nadaaofficial19@gmail.com',
     )
     .setVersion(version)
