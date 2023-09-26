@@ -2,13 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
 } from "@/components/ui/form";
-import { useToast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast";
 
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,17 +22,19 @@ import { CreateUserDto, UserRole } from "@/app/api/data-contracts";
 const userRoleValues = Object.values(UserRole) as [string, ...string[]];
 
 const createUserSchema = z.object({
-    name: z.string(),
-    email: z.string().email(),
-    password: z.string().regex(/^[\d!#$%&*@A-Z^a-z]*$/, 'Invalid password format.'),
-    role: z.enum(userRoleValues)
-  });
+  name: z.string(),
+  email: z.string().email(),
+  password: z
+    .string()
+    .regex(/^[\d!#$%&*@A-Z^a-z]*$/, "Invalid password format."),
+  role: z.enum(userRoleValues),
+});
 
-  type FormData = {
-    name: string;
-    email: string;
-    password: string;
-    role: UserRole;
+type FormData = {
+  name: string;
+  email: string;
+  password: string;
+  role: UserRole;
 };
 
 export function RegisterForm() {
@@ -40,7 +42,7 @@ export function RegisterForm() {
     resolver: zodResolver(createUserSchema),
     defaultValues: {
       name: "",
-      email : "",
+      email: "",
       password: "",
       role: UserRole.Admin,
     },
@@ -50,14 +52,12 @@ export function RegisterForm() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
-const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   async function onSubmit(data: FormData) {
     setLoading(true);
 
     try {
-      const response = await auth.authControllerRegister(
-      data as CreateUserDto
-      );
+      const response = await auth.authControllerRegister(data as CreateUserDto);
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
@@ -108,27 +108,30 @@ const [showPassword, setShowPassword] = useState(false);
         <FormField
           control={form.control}
           name="password"
-          
           render={({ field }) => (
             <FormItem>
               <FormControl>
                 <div className="flex">
-                <Input placeholder="Enter your password"  {...field} type={showPassword ? 'text' : 'password'} className="border-r-0 rounded-r-none" />
-                <Button
-                  variant="outline"
-                  className=" rounded-l-none border-zinc-600 border-l-0"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                    {showPassword ? "Hide" : "Show"} 
-                </Button>
+                  <Input
+                    placeholder="Enter your password"
+                    {...field}
+                    type={showPassword ? "text" : "password"}
+                    className="border-r-0 rounded-r-none"
+                  />
+                  <Button
+                    variant="outline"
+                    className=" rounded-l-none border-zinc-600 border-l-0"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </Button>
                 </div>
               </FormControl>
-             
+
               <FormMessage />
             </FormItem>
           )}
         />
-       
 
         <div className="flex flex-col items-center justify-center space-y-2">
           <Button
