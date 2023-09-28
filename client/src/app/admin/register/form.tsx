@@ -49,10 +49,11 @@ export function RegisterForm() {
 
     try {
       const response = await auth.authControllerRegister(data);
+
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
-        router.push("/dashboards");
+        router.push("/admin/dashboard");
       }
     } catch (error: any) {
       toast({
@@ -125,7 +126,7 @@ export function RegisterForm() {
           )}
         />
 
-        <div className="flex flex-col items-center justify-center space-y-2">
+        <div className="flex flex-col items-center justify-between space-y-6">
           <Button
             type="submit"
             value="submit"
@@ -135,6 +136,16 @@ export function RegisterForm() {
           >
             Register
           </Button>
+          <p>
+            Not a user?{" "}
+            <Button
+              onClick={() => router.push("/admin/login")}
+              className="underline"
+              variant="link"
+            >
+              Login
+            </Button>
+          </p>
         </div>
       </form>
     </Form>

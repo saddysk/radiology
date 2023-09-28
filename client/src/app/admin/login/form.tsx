@@ -49,7 +49,7 @@ export function LoginForm() {
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
-        router.push("/dashboards");
+        router.push("/admin/dashboard");
       }
     } catch (error: any) {
       toast({
@@ -110,7 +110,7 @@ export function LoginForm() {
           )}
         />
 
-        <div className="flex flex-col items-center justify-center space-y-2">
+        <div className="flex flex-col items-center justify-between space-y-6">
           <Button
             type="submit"
             value="submit"
@@ -120,6 +120,16 @@ export function LoginForm() {
           >
             Login
           </Button>
+          <p>
+            Not a user?{" "}
+            <Button
+              onClick={() => router.push("/admin/register")}
+              className="underline"
+              variant="link"
+            >
+              Register
+            </Button>
+          </p>
         </div>
       </form>
     </Form>

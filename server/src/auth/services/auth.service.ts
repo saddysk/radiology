@@ -1,7 +1,7 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
@@ -60,7 +60,7 @@ export class AuthService {
 
     // Check if the user exists
     if (!user) {
-      throw new NotFoundException(`User not found, email: ${email}`);
+      throw new BadRequestException(`User not found, email: ${email}`);
     }
 
     // Verify the password
