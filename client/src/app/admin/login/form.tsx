@@ -9,6 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
+
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -16,25 +17,21 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { auth } from "@/app/api";
-import { CreateUserDto, UserRole } from "@/app/api/data-contracts";
+import { LoginUserDto, UserRole } from "@/app/api/data-contracts";
 
-const createUserSchema = z.object({
-  name: z.string().min(4, "Name needs to be atleast 4 characters long!"),
+const loginUserSchema = z.object({
   email: z.string().email(),
   password: z
     .string()
     .regex(/^[\d!#$%&*@A-Z^a-z]*$/, "Invalid password format."),
-  role: z.string(),
 });
 
-export function RegisterForm() {
-  const form = useForm<CreateUserDto>({
-    resolver: zodResolver(createUserSchema),
+export function LoginForm() {
+  const form = useForm<LoginUserDto>({
+    resolver: zodResolver(loginUserSchema),
     defaultValues: {
-      name: "",
       email: "",
       password: "",
-      role: UserRole.Admin,
     },
   });
 
@@ -44,11 +41,11 @@ export function RegisterForm() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  async function onSubmit(data: CreateUserDto) {
+  async function onSubmit(data: LoginUserDto) {
     setLoading(true);
 
     try {
-      const response = await auth.authControllerRegister(data);
+      const response = await auth.authControllerLogin(data);
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
@@ -72,18 +69,6 @@ export function RegisterForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-8 sm:w-1/2 px-4"
       >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input placeholder="Enter your name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name="email"
@@ -133,7 +118,7 @@ export function RegisterForm() {
             variant="outline"
             className="w-full sm:w-1/2  border-zinc-600"
           >
-            Register
+            Login
           </Button>
         </div>
       </form>
