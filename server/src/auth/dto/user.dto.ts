@@ -41,6 +41,7 @@ export class UserDto {
     this.email = user.email;
     this.password = user.password;
     this.role = user.role;
+    this.centreId = user.centreId;
   }
 }
 

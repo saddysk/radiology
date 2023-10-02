@@ -12,13 +12,13 @@ export abstract class AbstractEntity implements IAbstractEntity<string> {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   createdBy?: string;
 
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'uuid', nullable: true })
   updatedBy?: string;
 }
 

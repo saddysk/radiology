@@ -4,15 +4,15 @@ import { Centre } from 'src/database/entities/centre.entity';
 import { CreateCentreDto } from '../dto/centre.dto';
 import { UserRepository } from 'src/auth/repositories/user.repository';
 import { UserRole } from 'src/database/enums/user.enum';
-import { CentreUserRepository } from '../repositories/centre-user.repository';
-import { CentreUser } from 'src/database/entities/centre-user.entity';
+import { CentreAdminRepository } from '../repositories/centre-admin.repository';
+import { CentreAdmin } from 'src/database/entities/centre-admin.entity';
 
 @Injectable()
 export class CentreService {
   constructor(
     private readonly centreRepository: CentreRepository,
     private readonly userRepository: UserRepository,
-    private readonly centreUserRepository: CentreUserRepository,
+    private readonly centreAdminRepository: CentreAdminRepository,
   ) {}
 
   async create(userId: string, data: CreateCentreDto): Promise<Centre> {
@@ -50,36 +50,45 @@ export class CentreService {
 
     await this.centreRepository.save(centre, { reload: true });
 
-    if (user.role == UserRole.Admin) {
-      const centreUser = new CentreUser();
-      centreUser.centreId = centre.id;
-      centreUser.userId = user.id;
+    if (user.role === UserRole.Admin) {
+      const centreAdmin = new CentreAdmin();
+      centreAdmin.centreId = centre.id;
+      centreAdmin.userId = user.id;
 
-      await this.centreUserRepository.save(centreUser, { reload: true });
+      await this.centreAdminRepository.save(centreAdmin, { reload: true });
+    }
+
+    if (user.role === UserRole.Receptionist) {
+      user.centreId = centre.id;
+
+      await this.userRepository.update(
+        { id: user.id },
+        { centreId: user.centreId },
+      );
     }
 
     return centre;
   }
 
   async get(userId: string, centreId: string): Promise<Centre> {
-    const userCentre = await this.centreUserRepository.findOne({
+    const centreAdmin = await this.centreAdminRepository.findOne({
       where: {
         userId,
         centreId,
       },
     });
 
-    return userCentre.centre;
+    return centreAdmin.centre;
   }
 
   async getAll(userId: string): Promise<Centre[]> {
-    const userCentre = await this.centreUserRepository.find({
+    const centreAdmin = await this.centreAdminRepository.find({
       where: {
         userId,
       },
     });
 
-    const centre = await Promise.all(userCentre.map((uc) => uc.centre));
+    const centre = await Promise.all(centreAdmin.map((uc) => uc.centre));
 
     return centre;
   }
