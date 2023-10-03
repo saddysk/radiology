@@ -20,5 +20,6 @@ import { ExpenseRepository } from './repositories/expense.repository';
   ],
   controllers: [CentreController, ExpenseController],
   providers: [CentreService, ExpenseService],
+  exports: [CentreService],
 })
 export class CentreModule {}

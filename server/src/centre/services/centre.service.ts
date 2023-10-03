@@ -51,11 +51,7 @@ export class CentreService {
     await this.centreRepository.save(centre, { reload: true });
 
     if (user.role === UserRole.Admin) {
-      const centreAdmin = new CentreAdmin();
-      centreAdmin.centreId = centre.id;
-      centreAdmin.userId = user.id;
-
-      await this.centreAdminRepository.save(centreAdmin, { reload: true });
+      await this.addAdminToCentre(user.id, centre.id);
     }
 
     if (user.role === UserRole.Receptionist) {
@@ -88,12 +84,26 @@ export class CentreService {
       },
     });
 
-    const centre = await Promise.all(centreAdmin.map((uc) => uc.centre));
+    const centre = await Promise.all(centreAdmin.map((ca) => ca.centre));
 
     return centre;
   }
 
   getCentres(): Promise<Centre[]> {
     return this.centreRepository.find();
+  }
+
+  async addAdminToCentre(
+    userId: string,
+    centreId: string,
+  ): Promise<CentreAdmin> {
+    const centreAdmin = new CentreAdmin();
+
+    centreAdmin.centreId = centreId;
+    centreAdmin.userId = userId;
+
+    await this.centreAdminRepository.save(centreAdmin, { reload: true });
+
+    return centreAdmin;
   }
 }

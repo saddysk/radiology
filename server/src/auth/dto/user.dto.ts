@@ -63,6 +63,7 @@ export class CreateUserDto extends PickType(UserDto, [
   'email',
   'password',
   'role',
+  'centreId',
 ]) {}
 
 export class LoginUserDto extends PickType(UserDto, ['email', 'password']) {}

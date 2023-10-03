@@ -16,6 +16,9 @@ export class CentreAdmin extends AbstractEntity {
   centreId: string;
 
   @JoinColumn({ name: 'centreId' })
-  @ManyToOne(() => Centre, (c) => c.centreAdmin)
+  @ManyToOne(() => Centre, (c) => c.centreAdmin, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   centre: Promise<Centre>;
 }
