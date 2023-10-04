@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany } from 'typeorm';
 import { AbstractEntity } from './abstract.entity';
 import { IAddress } from '../interfaces/address.interface';
 import { CentreAdmin } from './centre-admin.entity';
+import { DoctorCommission } from './doctor-commission.entity';
 
 @Entity()
 export class Centre extends AbstractEntity {
@@ -17,6 +18,9 @@ export class Centre extends AbstractEntity {
   @Column({ type: 'json' })
   address: IAddress;
 
-  @OneToMany(() => CentreAdmin, (uc) => uc.centre)
+  @OneToMany(() => CentreAdmin, (ca) => ca.centre)
   centreAdmin: Promise<CentreAdmin>;
+
+  @OneToMany(() => DoctorCommission, (dc) => dc.centre)
+  doctorCommission?: Promise<DoctorCommission>;
 }

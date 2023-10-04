@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CentreRepository } from '../repositories/centre.repository';
 import { Centre } from 'src/database/entities/centre.entity';
 import { CreateCentreDto } from '../dto/centre.dto';
@@ -27,22 +31,19 @@ export class CentreService {
       throw new UnauthorizedException(`Only admin can create a centre`);
     }
 
-    // TODO: should we check for existing centre with any combination as done below?
-    // const centre = await this.centreRepository.findOne({
-    //   where: {
-    //     email: data.email,
-    //     name: data.name,
-    //     phone: data.phone,
-    //   },
-    // });
+    const centre = await this.centreRepository.findOne({
+      where: {
+        email: data.email,
+        name: data.name,
+      },
+    });
 
-    // if (centre != null) {
-    //   throw new ConflictException(
-    //     `Centre already exist with this combination of email id: ${data.email} & name: ${data.name}`,
-    //   );
-    // }
+    if (centre != null) {
+      throw new BadRequestException(
+        `Centre already exist with this combination of email id: ${data.email} & name: ${data.name}`,
+      );
+    }
 
-    const centre = new Centre();
     centre.name = data.name;
     centre.email = data.email;
     centre.phone = data.phone;
