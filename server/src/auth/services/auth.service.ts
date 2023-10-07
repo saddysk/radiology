@@ -13,6 +13,8 @@ import { CreateUserDto, LoginUserDto } from '../dto/user.dto';
 import { AppConfig } from 'src/config/config';
 import * as bcrypt from 'bcrypt';
 import { IAuthUser } from 'libs/interfaces/auth-user.interface';
+import { UserRole } from 'src/database/enums/user.enum';
+import { CentreService } from 'src/centre/services/centre.service';
 
 const CONFIG = AppConfig();
 
@@ -22,6 +24,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly authTokenRepository: AuthTokenRepository,
+    private readonly centreService: CentreService,
   ) {}
 
   async create(data: CreateUserDto): Promise<IAuthUser> {
@@ -46,6 +49,10 @@ export class AuthService {
     user.password = hashedPassword;
 
     await this.userRepository.save(user, { reload: true });
+
+    if (user.role === UserRole.Admin && data.centreId) {
+      await this.centreService.addAdminToCentre(user.id, data.centreId);
+    }
 
     const token = await this.createAuthToken(user);
 

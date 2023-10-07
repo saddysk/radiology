@@ -9,6 +9,7 @@ import { AuthTokenRepository } from './repositories/auth-token.repository';
 import { UserRepository } from './repositories/user.repository';
 import { DatabaseModule } from 'src/database/database.module';
 import { InternalStrategy } from './strategies/internal.strategy';
+import { CentreModule } from 'src/centre/centre.module';
 
 const CONFIG = AppConfig();
 
@@ -16,6 +17,7 @@ const CONFIG = AppConfig();
   imports: [
     DatabaseModule.forRepository([UserRepository, AuthTokenRepository]),
     PassportModule,
+    CentreModule,
     JwtModule.register({
       privateKey: CONFIG.JWT_PRIVATE_KEY,
       publicKey: CONFIG.JWT_PUBLIC_KEY,
