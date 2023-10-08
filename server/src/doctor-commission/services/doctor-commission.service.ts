@@ -9,7 +9,7 @@ import {
 import { UserRepository } from 'src/auth/repositories/user.repository';
 import { UserRole } from 'src/database/enums/user.enum';
 import { CentreRepository } from 'src/centre/repositories/centre.repository';
-import { LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+import { In, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 
 @Injectable()
 export class DoctorCommissionService {
@@ -20,24 +20,34 @@ export class DoctorCommissionService {
   ) {}
 
   async add(
-    doctorId: string,
+    userId: string,
     data: CreateDoctorCommissionDto,
   ): Promise<DoctorCommission[]> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+        role: In([UserRole.Pr, UserRole.Admin]),
+      },
+    });
+    if (user == null) {
+      throw new BadRequestException(
+        `Invalid access for user: ${user.id}, only ${UserRole.Pr} and ${UserRole.Admin} can onboard a doctor`,
+      );
+    }
+
     const doctor = await this.userRepository.findOne({
       where: {
-        id: doctorId,
+        id: data.doctorId,
         role: UserRole.Doctor,
       },
     });
-
     if (doctor == null) {
       throw new BadRequestException(
-        `Invalid user: ${doctorId}, the user role should be ${UserRole.Doctor}`,
+        `Invalid user: ${data.doctorId}, the user should be a ${UserRole.Doctor}`,
       );
     }
 
     const centre = await this.centreRepository.findOneBy({ id: data.centreId });
-
     if (centre == null) {
       throw new BadRequestException(`Invalid centre: ${data.centreId}`);
     }
@@ -56,19 +66,28 @@ export class DoctorCommissionService {
   }
 
   async update(
-    doctorId: string,
+    userId: string,
     data: UpdateDoctorCommissionDto,
   ): Promise<DoctorCommission> {
-    const commission = await this.doctorCommissionRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: {
-        id: data.id,
-        doctorId,
+        id: userId,
+        role: In([UserRole.Pr, UserRole.Admin]),
       },
+    });
+    if (user == null) {
+      throw new BadRequestException(
+        `Invalid access for user: ${user.id}, only ${UserRole.Pr} and ${UserRole.Admin} can onboard a doctor`,
+      );
+    }
+
+    const commission = await this.doctorCommissionRepository.findOneBy({
+      id: data.id,
     });
 
     if (commission == null) {
       throw new BadRequestException(
-        `Doctor commission not found to update, for commission id: ${data.id}, doctor id: ${doctorId}`,
+        `Doctor commission not found to update, for commission id: ${data.id}`,
       );
     }
 
@@ -95,16 +114,28 @@ export class DoctorCommissionService {
     return newCommission;
   }
 
-  get(id: string): Promise<DoctorCommission> {
+  getById(id: string): Promise<DoctorCommission> {
     return this.doctorCommissionRepository.findOneBy({ id });
   }
 
-  getAll(centreId: string, doctorId: string): Promise<DoctorCommission[]> {
+  get(centreId: string, doctorId: string): Promise<DoctorCommission[]> {
     const currentDate = new Date();
 
     return this.doctorCommissionRepository.find({
       where: {
         doctorId,
+        centreId,
+        startDate: LessThanOrEqual(currentDate),
+        endDate: MoreThanOrEqual(currentDate),
+      },
+    });
+  }
+
+  getAll(centreId: string): Promise<DoctorCommission[]> {
+    const currentDate = new Date();
+
+    return this.doctorCommissionRepository.find({
+      where: {
         centreId,
         startDate: LessThanOrEqual(currentDate),
         endDate: MoreThanOrEqual(currentDate),

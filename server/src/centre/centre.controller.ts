@@ -4,6 +4,7 @@ import { CentreService } from './services/centre.service';
 import { GetRoute, PostRoute } from 'libs/decorators/route.decorators';
 import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
 import { CentreDto, CreateCentreDto } from './dto/centre.dto';
+import { SuccessDto } from 'libs/dtos';
 
 @Controller('api/centre')
 @ApiTags('Centre')
@@ -21,6 +22,19 @@ export class CentreController {
     const centre = await this.centreService.create(request.user.user.id, data);
 
     return new CentreDto(centre);
+  }
+
+  @PostRoute(':centreId/add-admin', {
+    Ok: SuccessDto,
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async addAdmin(
+    @Req() request: any,
+    @Param(':centreId') centreId: string,
+  ): Promise<SuccessDto> {
+    await this.centreService.addAdminToCentre(request.user.user.id, centreId);
+
+    return new SuccessDto();
   }
 
   @GetRoute('', {

@@ -98,10 +98,18 @@ export class CentreService {
     userId: string,
     centreId: string,
   ): Promise<CentreAdmin> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (user.role !== UserRole.Admin) {
+      throw new BadRequestException(
+        `User should be admin to join a centre, but found user: ${userId}`,
+      );
+    }
+
     const centreAdmin = new CentreAdmin();
 
     centreAdmin.centreId = centreId;
-    centreAdmin.userId = userId;
+    centreAdmin.userId = user.id;
 
     await this.centreAdminRepository.save(centreAdmin, { reload: true });
 
