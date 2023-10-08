@@ -42,6 +42,11 @@ export class AuthService {
     user.name = data.name;
     user.role = data.role;
 
+    if (data.centreId) {
+      user.centreId = data.centreId;
+    }
+
+
     const hashedPassword = await bcrypt.hash(data.password, 10);
     user.password = hashedPassword;
 

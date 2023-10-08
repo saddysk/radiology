@@ -29,4 +29,46 @@ export class Centre<SecurityDataType = unknown> extends HttpClient<SecurityDataT
       format: "json",
       ...params,
     });
+  /**
+   * No description
+   *
+   * @tags Centre
+   * @name CentreControllerGetAll
+   * @request GET:/api/centre
+   */
+  centreControllerGetAll = (params: RequestParams = {}) =>
+    this.request<CentreDto[], ErrorDto>({
+      path: `/api/centre`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Centre
+   * @name CentreControllerGetCentres
+   * @request GET:/api/centre/all
+   */
+  centreControllerGetCentres = (params: RequestParams = {}) =>
+    this.request<CentreDto[], ErrorDto>({
+      path: `/api/centre/all`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Centre
+   * @name CentreControllerGet
+   * @request GET:/api/centre/{id}
+   */
+  centreControllerGet = (id: string, params: RequestParams = {}) =>
+    this.request<CentreDto, ErrorDto>({
+      path: `/api/centre/${id}`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
 }

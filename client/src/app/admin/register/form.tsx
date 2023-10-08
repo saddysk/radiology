@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { auth } from "@/app/api";
 import { CreateUserDto, UserRole } from "@/app/api/data-contracts";
+import { useAllCentresData } from "@/lib/query-hooks";
 
 const createUserSchema = z.object({
   name: z.string().min(4, "Name needs to be atleast 4 characters long!"),
@@ -53,7 +54,12 @@ export function RegisterForm() {
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
-        router.push("/admin/dashboard");
+        localStorage.setItem("x-session-token", response.data.token);
+        toast({
+          title: `${response.data.user.role} Registered`,
+          variant: "default",
+        });
+        router.push("/admin/onboarding");
       }
     } catch (error: any) {
       toast({
@@ -61,6 +67,7 @@ export function RegisterForm() {
         description: error.message || "Something went wrong",
         variant: "destructive",
       });
+      localStorage.removeItem("x-session-token");
       setLoading(false);
     } finally {
       setLoading(false);
@@ -137,9 +144,9 @@ export function RegisterForm() {
             Register
           </Button>
           <p>
-            Not a user?{" "}
+            Already registered?{" "}
             <Button
-              onClick={() => router.push("/admin/login")}
+              onClick={() => router.push("/login")}
               className="underline"
               variant="link"
             >

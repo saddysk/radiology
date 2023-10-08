@@ -49,7 +49,12 @@ export function LoginForm() {
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
-        router.push("/admin/dashboard");
+        localStorage.setItem("x-session-token", response.data.token);
+        toast({
+          title: "Admin Registered",
+          variant: "default",
+        });
+        router.push("/admin/onboarding");
       }
     } catch (error: any) {
       toast({
@@ -120,16 +125,6 @@ export function LoginForm() {
           >
             Login
           </Button>
-          <p>
-            Not a user?{" "}
-            <Button
-              onClick={() => router.push("/admin/register")}
-              className="underline"
-              variant="link"
-            >
-              Register
-            </Button>
-          </p>
         </div>
       </form>
     </Form>
