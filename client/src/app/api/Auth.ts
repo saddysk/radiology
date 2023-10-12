@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { AuthUserDto, CreateUserDto, ErrorDto, LoginUserDto, SuccessDto } from "./data-contracts";
+import { AuthUserDto, CreateUserDto, ErrorDto, LoginUserDto, SuccessDto, UserDto } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Auth<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -40,6 +40,20 @@ export class Auth<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
     this.request<SuccessDto, ErrorDto>({
       path: `/api/auth`,
       method: "DELETE",
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Auth
+   * @name AuthControllerGetDoctors
+   * @request GET:/api/auth/all
+   */
+  authControllerGetDoctors = (params: RequestParams = {}) =>
+    this.request<UserDto[], ErrorDto>({
+      path: `/api/auth/all`,
+      method: "GET",
       format: "json",
       ...params,
     });

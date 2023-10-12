@@ -1,7 +1,8 @@
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Poppins } from "next/font/google";
+import { Providers } from "./providers";
 
 const inter = Poppins({ subsets: ["latin"], weight: ["400", "600"] });
 
@@ -18,8 +19,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <main className="h-[calc(100vh-2rem)]">{children}</main>
-        <Toaster />
+        <Providers>
+          <main className="h-[calc(100vh-2rem)]">{children}</main>
+          <Toaster />
+        </Providers>
       </body>
     </html>
   );

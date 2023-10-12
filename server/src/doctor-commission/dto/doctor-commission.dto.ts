@@ -34,8 +34,8 @@ export class DoctorCommissionDto {
   @NumberField()
   amount: number;
 
-  @DateField()
-  startDate: Date;
+  @DateFieldOptional()
+  startDate?: Date;
 
   @DateFieldOptional()
   endDate?: Date;
@@ -83,7 +83,7 @@ export class CommissionDto extends PickType(DoctorCommissionDto, [
   'amount',
   'startDate',
   'endDate',
-]) {}
+]) { }
 
 export class CreateDoctorCommissionDto extends PickType(DoctorCommissionDto, [
   'centreId',
@@ -98,4 +98,4 @@ export class UpdateDoctorCommissionDto extends PickType(DoctorCommissionDto, [
   'amount',
   'startDate',
   'endDate',
-]) {}
+]) { }

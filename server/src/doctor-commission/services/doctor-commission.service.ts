@@ -17,7 +17,7 @@ export class DoctorCommissionService {
     private readonly doctorCommissionRepository: DoctorCommissionRepository,
     private readonly userRepository: UserRepository,
     private readonly centreRepository: CentreRepository,
-  ) {}
+  ) { }
 
   async add(
     userId: string,
@@ -161,8 +161,10 @@ export class DoctorCommissionService {
   ): Promise<DoctorCommission> {
     doctorCommission.modality = commission.modality;
     doctorCommission.amount = commission.amount;
-    doctorCommission.startDate = commission.startDate;
 
+    if (commission.startDate) {
+      doctorCommission.startDate = commission.startDate;
+    }
     if (commission.endDate) {
       doctorCommission.endDate = commission.endDate;
     }
