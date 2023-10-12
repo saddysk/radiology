@@ -50,12 +50,36 @@ export class DoctorCommissionController {
     Ok: { dtoType: 'ArrayDto', type: DoctorCommissionDto },
   })
   @UseAuthGuard(AuthGuardOption.BEARER)
-  async getAll(
+  async getAllDoctorsForCentre(
     @Param('centreId') centreId: string,
   ): Promise<DoctorCommissionDto[]> {
-    const commissions = await this.doctorCommissionService.getAll(centreId);
+    const commissions =
+      await this.doctorCommissionService.getAllDoctorsForCentre(centreId);
 
-    return commissions.map((commission) => new DoctorCommissionDto(commission));
+    return Promise.all(
+      commissions.map((commission) =>
+        DoctorCommissionDto.toDoctorDto(commission),
+      ),
+    );
+  }
+
+  @GetRoute('centres-by-doctor', {
+    Ok: { dtoType: 'ArrayDto', type: DoctorCommissionDto },
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async getAllCentresForDoctor(
+    @Req() request: any,
+  ): Promise<DoctorCommissionDto[]> {
+    const commissions =
+      await this.doctorCommissionService.getAllCentresForDoctor(
+        request.user.user.id,
+      );
+
+    return Promise.all(
+      commissions.map((commission) =>
+        DoctorCommissionDto.toCentreDto(commission),
+      ),
+    );
   }
 
   @GetRoute(':centreId/doctor/:doctorId', {

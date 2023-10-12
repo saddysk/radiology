@@ -4,9 +4,12 @@ import {
   DateFieldOptional,
   NumberField,
   ObjectField,
+  ObjectFieldOptional,
   StringField,
   UUIDField,
 } from 'libs/decorators';
+import { UserDto } from 'src/auth/dto/user.dto';
+import { CentreDto } from 'src/centre/dto/centre.dto';
 import { DoctorCommission } from 'src/database/entities/doctor-commission.entity';
 
 export class DoctorCommissionDto {
@@ -37,6 +40,12 @@ export class DoctorCommissionDto {
   @DateFieldOptional()
   endDate?: Date;
 
+  @ObjectFieldOptional(() => UserDto)
+  doctor?: UserDto;
+
+  @ObjectFieldOptional(() => CentreDto)
+  centre?: CentreDto;
+
   constructor(doctorCommission?: DoctorCommission) {
     if (doctorCommission == null) {
       return;
@@ -51,6 +60,21 @@ export class DoctorCommissionDto {
     this.amount = doctorCommission.amount;
     this.startDate = doctorCommission.startDate;
     this.endDate = doctorCommission.endDate;
+  }
+
+  static async toDoctorDto(doctorCommission?: DoctorCommission) {
+    const dto = new DoctorCommissionDto(doctorCommission);
+
+    dto.doctor = new UserDto(await doctorCommission.doctor);
+
+    return dto;
+  }
+  static async toCentreDto(doctorCommission?: DoctorCommission) {
+    const dto = new DoctorCommissionDto(doctorCommission);
+
+    dto.centre = new CentreDto(await doctorCommission.centre);
+
+    return dto;
   }
 }
 

@@ -131,12 +131,24 @@ export class DoctorCommissionService {
     });
   }
 
-  getAll(centreId: string): Promise<DoctorCommission[]> {
+  getAllDoctorsForCentre(centreId: string): Promise<DoctorCommission[]> {
     const currentDate = new Date();
 
     return this.doctorCommissionRepository.find({
       where: {
         centreId,
+        startDate: LessThanOrEqual(currentDate),
+        endDate: MoreThanOrEqual(currentDate),
+      },
+    });
+  }
+
+  getAllCentresForDoctor(doctorId: string): Promise<DoctorCommission[]> {
+    const currentDate = new Date();
+
+    return this.doctorCommissionRepository.find({
+      where: {
+        doctorId,
         startDate: LessThanOrEqual(currentDate),
         endDate: MoreThanOrEqual(currentDate),
       },
