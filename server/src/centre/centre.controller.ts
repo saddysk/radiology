@@ -30,7 +30,7 @@ export class CentreController {
   @UseAuthGuard(AuthGuardOption.BEARER)
   async addAdmin(
     @Req() request: any,
-    @Param(':centreId') centreId: string,
+    @Param('centreId') centreId: string,
   ): Promise<SuccessDto> {
     await this.centreService.addAdminToCentre(request.user.user.id, centreId);
 

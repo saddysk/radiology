@@ -58,6 +58,10 @@ export interface ErrorDto {
   error: string;
 }
 
+export interface ListDto {
+  data: object[];
+}
+
 export interface LoginUserDto {
   email: string;
   /** @format ^[\d!#$%&*@A-Z^a-z]*$ */
@@ -94,10 +98,6 @@ export interface CentreDto {
   email: string;
   phone: string;
   address: AddressDto;
-}
-
-export interface ListDto {
-  data: object[];
 }
 
 export interface CreateExpenseDto {
@@ -164,7 +164,7 @@ export interface DoctorCommissionDto {
   /** @example 1 */
   amount: number;
   /** @format date-time */
-  startDate: string;
+  startDate?: string;
   /** @format date-time */
   endDate?: string;
 }
@@ -174,12 +174,17 @@ export interface CommissionDto {
   /** @example 1 */
   amount: number;
   /** @format date-time */
-  startDate: string;
+  startDate?: string;
   /** @format date-time */
   endDate?: string;
 }
 
 export interface CreateDoctorCommissionDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  doctorId: string;
   /**
    * @format uuid
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
@@ -197,7 +202,7 @@ export interface UpdateDoctorCommissionDto {
   /** @example 1 */
   amount: number;
   /** @format date-time */
-  startDate: string;
+  startDate?: string;
   /** @format date-time */
   endDate?: string;
 }

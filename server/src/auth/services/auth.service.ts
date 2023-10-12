@@ -13,6 +13,7 @@ import { CreateUserDto, LoginUserDto } from '../dto/user.dto';
 import { AppConfig } from 'src/config/config';
 import * as bcrypt from 'bcrypt';
 import { IAuthUser } from 'libs/interfaces/auth-user.interface';
+import { UserRole } from 'src/database/enums/user.enum';
 
 const CONFIG = AppConfig();
 
@@ -22,7 +23,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly authTokenRepository: AuthTokenRepository,
-  ) {}
+  ) { }
 
   async create(data: CreateUserDto): Promise<IAuthUser> {
     const email = data.email;
@@ -55,6 +56,10 @@ export class AuthService {
     const token = await this.createAuthToken(user);
 
     return { token, user };
+  }
+
+  getDoctors(): Promise<User[]> {
+    return this.userRepository.findBy({ role: UserRole.Doctor });
   }
 
   async login(data: LoginUserDto): Promise<IAuthUser> {

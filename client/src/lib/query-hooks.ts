@@ -12,8 +12,10 @@
 // import { useToast } from '@chakra-ui/react'
 // import { logtail } from './providers'
 
-import { centre } from "@/app/api"
-import { useQuery } from "@tanstack/react-query"
+import { auth, centre, drcommission } from "@/app/api"
+import { CommissionDto } from "@/app/api/data-contracts"
+import { useMutation, useQuery } from "@tanstack/react-query"
+
 
 // // hooks/useUserData.js
 // export const useUserData = () => {
@@ -24,8 +26,44 @@ import { useQuery } from "@tanstack/react-query"
 // }
 
 export const useAllCentresData = ({ enabled }: { enabled: boolean }) => {
+    return useQuery(["centres"], centre.centreControllerGetCentres, {
+        enabled
+    })
+}
+export const useCentreData = ({ enabled, centreId }: { enabled: boolean, centreId: string }) => {
+    return useQuery(["centre", centreId], () => centre.centreControllerGet(centreId), {
+        enabled
+    })
+}
+
+export const useAllConnectedCentresData = ({ enabled }: { enabled: boolean }) => {
     return useQuery(["centres"], centre.centreControllerGetAll, {
         enabled
+    })
+}
+
+export const useAllDoctorsData = ({ enabled }: { enabled: boolean }) => {
+    return useQuery(["doctors"], auth.authControllerGetDoctors, {
+        enabled
+    })
+}
+// export const useCentreData = ({ enabled }: { enabled: boolean }) => {
+//     return useQuery(["centre"], centre.centreControllerGet(), {
+//         enabled
+//     })
+// }
+
+export const addAdminToCentre = ({ centreId, onSuccess }: { centreId: string, onSuccess: any }) => {
+    return useMutation({ mutationFn: () => centre.centreControllerAddAdmin(centreId), onSuccess })
+}
+
+export const connectCenterToDoctor = ({ centreId, doctorId, commissions, onSuccess }: { centreId: string, doctorId: string, commissions: CommissionDto[], onSuccess: any }) => {
+    return useMutation({
+        mutationFn: () => drcommission.doctorCommissionControllerAdd({
+            doctorId,
+            centreId,
+            commissions
+        }), onSuccess
     })
 }
 // // hooks/useThreadsData.js

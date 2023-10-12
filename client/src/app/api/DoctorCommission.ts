@@ -49,10 +49,10 @@ export class DoctorCommission<SecurityDataType = unknown> extends HttpClient<Sec
    * No description
    *
    * @tags DoctorCommission
-   * @name DoctorCommissionControllerGet
+   * @name DoctorCommissionControllerGetById
    * @request GET:/api/doctor-commission/{id}
    */
-  doctorCommissionControllerGet = (id: string, params: RequestParams = {}) =>
+  doctorCommissionControllerGetById = (id: string, params: RequestParams = {}) =>
     this.request<DoctorCommissionDto, ErrorDto>({
       path: `/api/doctor-commission/${id}`,
       method: "GET",
@@ -64,9 +64,23 @@ export class DoctorCommission<SecurityDataType = unknown> extends HttpClient<Sec
    *
    * @tags DoctorCommission
    * @name DoctorCommissionControllerGetAll
+   * @request GET:/api/doctor-commission/centre/{centreId}/all
+   */
+  doctorCommissionControllerGetAll = (centreId: string, params: RequestParams = {}) =>
+    this.request<DoctorCommissionDto[], ErrorDto>({
+      path: `/api/doctor-commission/centre/${centreId}/all`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags DoctorCommission
+   * @name DoctorCommissionControllerGet
    * @request GET:/api/doctor-commission/{centreId}/doctor/{doctorId}
    */
-  doctorCommissionControllerGetAll = (centreId: string, doctorId: string, params: RequestParams = {}) =>
+  doctorCommissionControllerGet = (centreId: string, doctorId: string, params: RequestParams = {}) =>
     this.request<DoctorCommissionDto[], ErrorDto>({
       path: `/api/doctor-commission/${centreId}/doctor/${doctorId}`,
       method: "GET",

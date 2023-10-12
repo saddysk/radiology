@@ -1,7 +1,7 @@
 import { Body, Controller, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { DeleteRoute, PostRoute } from 'libs/decorators/route.decorators';
-import { AuthUserDto, CreateUserDto, LoginUserDto } from './dto/user.dto';
+import { DeleteRoute, GetRoute, PostRoute } from 'libs/decorators/route.decorators';
+import { AuthUserDto, CreateUserDto, LoginUserDto, UserDto } from './dto/user.dto';
 import { AuthService } from './services/auth.service';
 import { SuccessDto } from 'libs/dtos';
 import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
@@ -9,7 +9,9 @@ import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
 @Controller('api/auth')
 @ApiTags('Auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
+
+
 
   @PostRoute('', {
     Ok: AuthUserDto,
@@ -18,6 +20,15 @@ export class AuthController {
     const authUser = await this.authService.create(data);
 
     return new AuthUserDto(authUser);
+  }
+
+  @GetRoute('all', {
+    Ok: { dtoType: 'ArrayDto', type: UserDto },
+  })
+  async getDoctors(): Promise<UserDto[]> {
+    const centres = await this.authService.getDoctors();
+
+    return centres.map((centre) => new UserDto(centre));
   }
 
   @PostRoute('login', {

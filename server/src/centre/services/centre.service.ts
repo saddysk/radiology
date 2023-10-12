@@ -31,19 +31,20 @@ export class CentreService {
       throw new UnauthorizedException(`Only admin can create a centre`);
     }
 
-    const centre = await this.centreRepository.findOne({
+    const centreExist = await this.centreRepository.findOne({
       where: {
         email: data.email,
         name: data.name,
       },
     });
 
-    if (centre != null) {
+    if (centreExist != null) {
       throw new BadRequestException(
         `Centre already exist with this combination of email id: ${data.email} & name: ${data.name}`,
       );
     }
 
+    const centre = new Centre();
     centre.name = data.name;
     centre.email = data.email;
     centre.phone = data.phone;

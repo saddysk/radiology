@@ -10,24 +10,25 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { centre } from "@/app/api";
-import {
-  CreateCentreDto,
-  CreateUserDto,
-  UserRole,
-} from "@/app/api/data-contracts";
+import { CreateCentreDto } from "@/app/api/data-contracts";
 import { Card } from "@/components/ui/card";
-import { useAllCentresData } from "@/lib/query-hooks";
+import { addAdminToCentre, useAllCentresData } from "@/lib/query-hooks";
+import CenteredSpinner from "@/components/ui/centered-spinner";
 
 const createCentreSchema = z.object({
   name: z.string().min(4, "Name needs to be at least 4 characters long!"),
   email: z.string().email(),
-  phone: z.string(),
+  phone: z
+    .string()
+    .refine((value) => /^[1-9]\d{9}$/.test(value), "Phone number is invalid."),
   address: z.object({
     line1: z.string(),
     line2: z.string().nullable(),
@@ -64,11 +65,12 @@ export function AdminOnboarding() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
+  const [centreSelected, setCentreSelected] = useState<string | null>(null);
 
   async function onSubmit(data: CreateCentreDto) {
-    console.log("derfvv");
     setLoading(true);
 
+    data.phone = `+91${data.phone}`;
     try {
       const response = await centre.centreControllerCreate(data);
       console.log(response);
@@ -99,8 +101,13 @@ export function AdminOnboarding() {
   );
 
   const { data: dataAllCentres, isLoading: isLoadingAllCentres } =
-    useAllCentresData({ enabled: true });
+    useAllCentresData({ enabled: selectedFlow == "join" });
 
+  const { mutate: mutateAdminToCentre, isLoading: isLoadingAdminToCentre } =
+    addAdminToCentre({
+      centreId: centreSelected!,
+      onSuccess: () => {},
+    });
   console.log(dataAllCentres, "heree");
   return (
     <Card className="flex flex-col items-center justify-center py-28 space-y-6 m-4 h-full rounded-md bg-zinc-950 border-zinc-600">
@@ -290,9 +297,51 @@ export function AdminOnboarding() {
 
       {selectedFlow == "join" && (
         <div className="flex flex-col items-center justify-center py-28 space-y-6 m-4 h-full rounded-md bg-zinc-950 border-zinc-600 w-[100%]">
-          <h1 className="text-xl text-center sm:text-2xl opacity-90 flex items-center space-x-4">
+          <h1 className="text-4xl text-center opacity-90 flex items-center space-x-4 mb-12">
             <span>Join Center</span>
           </h1>
+
+          {!isLoadingAllCentres ? (
+            <div className="flex flex-col gap-12 justify-center">
+              <RadioGroup
+                className="flex flex-wrap gap-8 max-w-[60vw] mx-auto"
+                onValueChange={setCentreSelected}
+              >
+                {dataAllCentres?.data?.map((centre) => {
+                  return (
+                    <div className="flex items-center space-x-2 p-6 border border-white rounded-md">
+                      <RadioGroupItem
+                        className="bg-white focus:bg-black w-[25px] h-[25px] rounded-full shadow-blackA4 focus:shadow-[0_0_0_2px] focus:shadow-black focus:border-white outline-none cursor-default"
+                        value={centre.id}
+                        id={centre.id}
+                      />
+                      <Label htmlFor={centre.id} className="text-lg">
+                        {centre.name}
+                      </Label>
+                    </div>
+                  );
+                })}
+              </RadioGroup>
+              <Button
+                loading={loading}
+                onClick={() => {
+                  centreSelected == null
+                    ? toast({
+                        title: "Error",
+                        description: "Please select a centre",
+                        variant: "destructive",
+                      })
+                    : mutateAdminToCentre();
+                }}
+                variant="outline"
+                className="w-full m-auto sm:w-1/2 border-zinc-600"
+              >
+                Add Admin To Center
+              </Button>
+            </div>
+          ) : (
+            <CenteredSpinner />
+          )}
         </div>
       )}
     </Card>

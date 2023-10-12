@@ -17,7 +17,6 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { auth } from "@/app/api";
 import { CreateUserDto, UserRole } from "@/app/api/data-contracts";
-import { useAllCentresData } from "@/lib/query-hooks";
 
 const createUserSchema = z.object({
   name: z.string().min(4, "Name needs to be atleast 4 characters long!"),
@@ -35,7 +34,7 @@ export function RegisterForm() {
       name: "",
       email: "",
       password: "",
-      role: UserRole.Admin,
+      role: UserRole.Pr,
     },
   });
 
@@ -59,7 +58,7 @@ export function RegisterForm() {
           title: `${response.data.user.role} Registered`,
           variant: "default",
         });
-        router.push("/admin/onboarding");
+        router.push("/pr/dashboard");
       }
     } catch (error: any) {
       toast({
@@ -141,7 +140,7 @@ export function RegisterForm() {
             variant="outline"
             className="w-full sm:w-1/2  border-zinc-600"
           >
-            Register as Admin
+            Register as PR
           </Button>
           <p>
             Already registered?{" "}
