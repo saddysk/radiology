@@ -8,7 +8,6 @@ import { useAllConnectedCentresData, useCentreData } from "@/lib/query-hooks";
 import CenteredSpinner from "@/components/ui/centered-spinner";
 
 export function AdminCentre({ centreId }: { centreId: string }) {
-  console.log(centreId);
   const { toast } = useToast();
   const router = useRouter();
   const {
@@ -18,19 +17,37 @@ export function AdminCentre({ centreId }: { centreId: string }) {
     centreId,
     enabled: centreId ? true : false,
   });
-  return (
-    <Card className="flex flex-col m-4 h-full rounded-md bg-zinc-950 border-zinc-600">
-      <nav className="flex items-center justify-between gap-4 p-6 border-b border-b-zinc-600">
-        <h1 className="text-xl text-white">Admin Dashboard</h1>
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-      </nav>
 
-      <div className="p-6 flex justify-center">
-        <h1>{dataAllConnectedCentres?.data.name} Centre</h1>
-      </div>
-    </Card>
+  const tabs = [
+    {
+      title: "Dashboard",
+      path: "/dashboard",
+      icon: "",
+    },
+    {
+      title: "Users",
+      path: "/users",
+      icon: "",
+    },
+    {
+      title: "Products",
+      path: "/products",
+      icon: "",
+    },
+    {
+      title: "Orders",
+      path: "/orders",
+      icon: "",
+    },
+    {
+      title: "Settings",
+      path: "/settings",
+      icon: "",
+    },
+  ];
+  return (
+    <div>
+      <h1>{dataAllConnectedCentres?.data.name} Centre</h1>
+    </div>
   );
 }
