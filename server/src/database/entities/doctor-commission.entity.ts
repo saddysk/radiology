@@ -36,4 +36,7 @@ export class DoctorCommission extends AbstractEntity {
 
   @Column({ default: new Date('2030-12-31') })
   endDate: Date;
+
+  @Column({ default: false })
+  letGo: boolean;
 }
