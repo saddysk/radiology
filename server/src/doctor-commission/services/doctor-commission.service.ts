@@ -17,7 +17,7 @@ export class DoctorCommissionService {
     private readonly doctorCommissionRepository: DoctorCommissionRepository,
     private readonly userRepository: UserRepository,
     private readonly centreRepository: CentreRepository,
-  ) { }
+  ) {}
 
   async add(
     userId: string,

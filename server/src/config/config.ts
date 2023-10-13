@@ -5,7 +5,6 @@ import {
   cleanEnv,
   json,
   makeValidator,
-  num,
   port,
   str,
 } from 'envalid';
@@ -50,16 +49,6 @@ const env = cleanEnv(process.env, {
 
   JWT_PRIVATE_KEY: pemKeys(),
   JWT_PUBLIC_KEY: pemKeys(),
-
-  MAIL_DRIVER: str({ default: 'smtp' }),
-  MAIL_HOST: str(),
-  MAIL_PORT: num({ devDefault: 1025 }),
-  MAIL_USERNAME: str(),
-  MAIL_PASSWORD: str(),
-  MAIL_IGNORE_TLS: bool({ default: false }),
-  MAIL_SECURE: bool({ default: true }),
-  MAIL_FROM_NAME: str(),
-  MAIL_FROM_EMAIL: str(),
 
   S3_KEY: str({ default: undefined }),
   S3_SECRET: str({ default: undefined }),

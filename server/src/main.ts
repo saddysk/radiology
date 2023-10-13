@@ -9,7 +9,6 @@ import { useContainer } from 'class-validator';
 import { Logger } from '@nestjs/common';
 import { middleware as expressCtx } from 'express-ctx';
 import { setupSwagger } from 'libs/swagger/setup';
-import { join } from 'path';
 
 const CONFIG = AppConfig();
 
@@ -24,9 +23,6 @@ async function bootstrap() {
 
   // enable DI for class-validator
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
-
-  app.setBaseViewsDir(join(__dirname, '/templates'));
-  app.setViewEngine('hbs');
 
   app.use(expressCtx);
 

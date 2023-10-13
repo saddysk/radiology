@@ -7,6 +7,7 @@ import {
   PhoneField,
   StringField,
   StringFieldOptional,
+  UUIDField,
 } from 'libs/decorators';
 import { IAddress } from 'src/database/interfaces/address.interface';
 
@@ -44,7 +45,7 @@ export class AddressDto {
 }
 
 export class CentreDto {
-  @StringField()
+  @UUIDField()
   id: string;
 
   @DateField()

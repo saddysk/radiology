@@ -8,6 +8,9 @@ import { CentreAdminRepository } from './repositories/centre-admin.repository';
 import { ExpenseController } from '../centre/expense.controller';
 import { ExpenseService } from '../centre/services/expense.service';
 import { ExpenseRepository } from './repositories/expense.repository';
+import { RateListRepository } from './repositories/rate-list.repository';
+import { RateListController } from './rate-list.controller';
+import { RateListService } from './services/rate-list.service';
 
 @Module({
   imports: [
@@ -16,10 +19,11 @@ import { ExpenseRepository } from './repositories/expense.repository';
       UserRepository,
       CentreAdminRepository,
       ExpenseRepository,
+      RateListRepository,
     ]),
   ],
-  controllers: [CentreController, ExpenseController],
-  providers: [CentreService, ExpenseService],
+  controllers: [CentreController, ExpenseController, RateListController],
+  providers: [CentreService, ExpenseService, RateListService],
   exports: [CentreService],
 })
 export class CentreModule {}
