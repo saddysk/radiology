@@ -63,12 +63,26 @@ export class DoctorCommission<SecurityDataType = unknown> extends HttpClient<Sec
    * No description
    *
    * @tags DoctorCommission
-   * @name DoctorCommissionControllerGetAll
+   * @name DoctorCommissionControllerGetAllDoctorsForCentre
    * @request GET:/api/doctor-commission/centre/{centreId}/all
    */
-  doctorCommissionControllerGetAll = (centreId: string, params: RequestParams = {}) =>
+  doctorCommissionControllerGetAllDoctorsForCentre = (centreId: string, params: RequestParams = {}) =>
     this.request<DoctorCommissionDto[], ErrorDto>({
       path: `/api/doctor-commission/centre/${centreId}/all`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags DoctorCommission
+   * @name DoctorCommissionControllerGetAllCentresForDoctor
+   * @request GET:/api/doctor-commission/centres-by-doctor
+   */
+  doctorCommissionControllerGetAllCentresForDoctor = (params: RequestParams = {}) =>
+    this.request<DoctorCommissionDto[], ErrorDto>({
+      path: `/api/doctor-commission/centres-by-doctor`,
       method: "GET",
       format: "json",
       ...params,

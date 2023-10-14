@@ -47,6 +47,13 @@ export const useAllDoctorsData = ({ enabled }: { enabled: boolean }) => {
         enabled
     })
 }
+
+export const useGetAllDoctorsForCentreData = ({ centreId, enabled }: { centreId: string, enabled: boolean }) => {
+    return useQuery(["doctors", centreId],
+        () => drcommission.doctorCommissionControllerGetAllDoctorsForCentre(centreId), {
+        enabled
+    })
+}
 // export const useCentreData = ({ enabled }: { enabled: boolean }) => {
 //     return useQuery(["centre"], centre.centreControllerGet(), {
 //         enabled
