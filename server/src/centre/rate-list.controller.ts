@@ -19,18 +19,18 @@ export class RateListController {
   constructor(private readonly rateListService: RateListService) {}
 
   @PostRoute('', {
-    Ok: RateListDto,
+    Ok: { dtoType: 'ArrayDto', type: RateListDto },
   })
   @UseAuthGuard(AuthGuardOption.BEARER)
   async create(
     @Req() request: any,
     @Body() data: CreateRateListDto,
-  ): Promise<RateListDto> {
-    const rateList = await this.rateListService.create(
+  ): Promise<RateListDto[]> {
+    const rateLists = await this.rateListService.create(
       request.user.user.id,
       data,
     );
-    return new RateListDto(rateList);
+    return rateLists.map((rateList) => new RateListDto(rateList));
   }
 
   @GetRoute(':centreId/centre', {

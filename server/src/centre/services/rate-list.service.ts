@@ -30,6 +30,19 @@ export class RateListService {
       throw new BadRequestException('Only admin can create a rate list');
     }
 
+    const rateListExists = await this.rateListRepository.findOne({
+      where: {
+        centreId: data.centreId,
+        modality: In(data.rateLists.map((rateList) => rateList.modality)),
+      },
+    });
+
+    if (rateListExists) {
+      throw new BadRequestException(
+        'Rate list for the modality already exists.',
+      );
+    }
+
     // Create and Save RateList
     const rateList = await Promise.all(
       data.rateLists.map((rateList) =>
