@@ -64,11 +64,15 @@ export class RateListDto {
   }
 }
 
-export class CreateRateListDto extends PickType(RateListDto, [
-  'centreId',
+export class RateListsDto extends PickType(RateListDto, [
   'modality',
   'investigation',
 ]) {}
+
+export class CreateRateListDto extends PickType(RateListDto, ['centreId']) {
+  @ObjectField(() => RateListsDto, { isArray: true })
+  rateLists: RateListsDto[];
+}
 
 export class UpdateRateListDto extends PickType(RateListDto, [
   'id',

@@ -1,7 +1,11 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { RateListRepository } from '../repositories/rate-list.repository';
 import { RateList } from 'src/database/entities/rate-list.entity';
-import { CreateRateListDto, UpdateRateListDto } from '../dto/rate-list.dto';
+import {
+  CreateRateListDto,
+  RateListsDto,
+  UpdateRateListDto,
+} from '../dto/rate-list.dto';
 import { UserRepository } from 'src/auth/repositories/user.repository';
 import { UserRole } from 'src/database/enums/user.enum';
 import { In } from 'typeorm';
@@ -13,7 +17,7 @@ export class RateListService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async create(userId: string, data: CreateRateListDto): Promise<RateList> {
+  async create(userId: string, data: CreateRateListDto): Promise<RateList[]> {
     // Example: Ensure the user is an admin
     const user = await this.userRepository.findOne({
       where: {
@@ -27,12 +31,11 @@ export class RateListService {
     }
 
     // Create and Save RateList
-    const rateList = new RateList();
-    rateList.centreId = data.centreId;
-    rateList.modality = data.modality;
-    rateList.investigation = data.investigation;
-
-    await this.rateListRepository.save(rateList, { reload: true });
+    const rateList = await Promise.all(
+      data.rateLists.map((rateList) =>
+        this.saveRateList(data.centreId, rateList),
+      ),
+    );
 
     return rateList;
   }
@@ -101,5 +104,17 @@ export class RateListService {
     await this.rateListRepository.update(data.id, rateList);
 
     return rateList;
+  }
+
+  private saveRateList(
+    centreId: string,
+    data: RateListsDto,
+  ): Promise<RateList> {
+    const rateList = new RateList();
+    rateList.centreId = centreId;
+    rateList.modality = data.modality;
+    rateList.investigation = data.investigation;
+
+    return this.rateListRepository.save(rateList, { reload: true });
   }
 }
