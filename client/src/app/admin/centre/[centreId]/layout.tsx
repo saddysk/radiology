@@ -26,7 +26,7 @@ export default function CentreLayout({
     },
     {
       title: "Affiliated Doctors",
-      path: `/admin/centre/${params.centreId}/products`,
+      path: `/admin/centre/${params.centreId}/doctors`,
       icon: "",
     },
     {
@@ -57,6 +57,15 @@ export default function CentreLayout({
 
       <div className="flex h-full">
         <div className="border-r border-r-zinc-600 flex flex-col gap-2 py-6">
+          <p
+            className="px-4 py-2 hover:bg-zinc-900 cursor-pointer border border-zinc-600 rounded-md m-6 nowrap"
+            onClick={() =>
+              route.push(`/admin/centre/${params.centreId}/bookings/add`)
+            }
+          >
+            Add Booking {"  "} +
+          </p>
+
           {tabs.map((tab, index) => {
             return (
               <div

@@ -18,33 +18,6 @@ export function AdminCentre({ centreId }: { centreId: string }) {
     enabled: centreId ? true : false,
   });
 
-  const tabs = [
-    {
-      title: "Dashboard",
-      path: "/dashboard",
-      icon: "",
-    },
-    {
-      title: "Users",
-      path: "/users",
-      icon: "",
-    },
-    {
-      title: "Products",
-      path: "/products",
-      icon: "",
-    },
-    {
-      title: "Orders",
-      path: "/orders",
-      icon: "",
-    },
-    {
-      title: "Settings",
-      path: "/settings",
-      icon: "",
-    },
-  ];
   return (
     <div>
       <h1>{dataAllConnectedCentres?.data.name} Centre</h1>

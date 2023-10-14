@@ -35,6 +35,13 @@ export class DoctorCommissionService {
       );
     }
 
+    const doctorCommissionExists = await this.get(data.centreId, data.doctorId);
+    if(doctorCommissionExists.length > 0) {
+      throw new BadRequestException(
+        `Doctor commission already exists for doctor: ${data.doctorId} and centre: ${data.centreId}`,
+      );
+    }
+
     const doctor = await this.userRepository.findOne({
       where: {
         id: data.doctorId,
@@ -52,13 +59,9 @@ export class DoctorCommissionService {
       throw new BadRequestException(`Invalid centre: ${data.centreId}`);
     }
 
-    const doctorCommission = new DoctorCommission();
-    doctorCommission.doctorId = doctor.id;
-    doctorCommission.centreId = centre.id;
-
     const commissions = await Promise.all(
       data.commissions.map((commission) =>
-        this.addCommissions(doctorCommission, commission),
+        this.addCommissions(doctor.id, centre.id, commission),
       ),
     );
 
@@ -91,11 +94,7 @@ export class DoctorCommissionService {
       );
     }
 
-    const newCommission = new DoctorCommission();
-    newCommission.doctorId = commission.doctorId;
-    newCommission.centreId = commission.centreId;
-
-    const newCommissionSave$ = this.addCommissions(newCommission, {
+    const newCommissionSave$ = this.addCommissions(commission.doctorId, commission.centreId, {
       modality: commission.modality,
       amount: data.amount,
       startDate: data.startDate,
@@ -109,7 +108,7 @@ export class DoctorCommissionService {
       commission,
     );
 
-    await Promise.all([newCommissionSave$, existingCommissionUpdate$]);
+    const [newCommission] = await Promise.all([newCommissionSave$, existingCommissionUpdate$]);
 
     return newCommission;
   }
@@ -155,10 +154,10 @@ export class DoctorCommissionService {
     });
   }
 
-  private addCommissions(
-    doctorCommission: DoctorCommission,
-    commission: CommissionDto,
-  ): Promise<DoctorCommission> {
+  private addCommissions(doctorId: string, centreId: string, commission: CommissionDto): Promise<DoctorCommission> {
+    const doctorCommission = new DoctorCommission();
+    doctorCommission.doctorId = doctorId;
+    doctorCommission.centreId = centreId;
     doctorCommission.modality = commission.modality;
     doctorCommission.amount = commission.amount;
 

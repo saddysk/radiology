@@ -167,6 +167,8 @@ export interface DoctorCommissionDto {
   startDate?: string;
   /** @format date-time */
   endDate?: string;
+  doctor?: UserDto;
+  centre?: CentreDto;
 }
 
 export interface CommissionDto {
