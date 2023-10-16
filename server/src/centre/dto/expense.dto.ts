@@ -2,6 +2,7 @@ import { PickType } from '@nestjs/swagger';
 import {
   DateField,
   NumberField,
+  ObjectField,
   StringField,
   StringFieldOptional,
   UUIDField,
@@ -49,11 +50,17 @@ export class ExpenseDto {
   }
 }
 
-export class CreateExpenseDto extends PickType(ExpenseDto, [
-  'centreId',
+export class ExpensesDto extends PickType(ExpenseDto, [
   'amount',
   'date',
   'expenseType',
   'paymentMethod',
   'remark',
 ]) {}
+
+export class CreateExpenseDto extends PickType(ExpenseDto, ['centreId']) {
+  @ObjectField(() => ExpensesDto, { isArray: true })
+  expenses: ExpensesDto[];
+}
+
+export class UpdateExpenseDto extends PickType(ExpenseDto, []) {}

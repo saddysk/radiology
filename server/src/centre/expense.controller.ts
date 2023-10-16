@@ -11,19 +11,19 @@ export class ExpenseController {
   constructor(private readonly expenseService: ExpenseService) {}
 
   @PostRoute('', {
-    Ok: ExpenseDto,
+    Ok: { dtoType: 'ArrayDto', type: ExpenseDto },
   })
   @UseAuthGuard(AuthGuardOption.BEARER)
   async create(
     @Req() request: any,
     @Body() data: CreateExpenseDto,
-  ): Promise<ExpenseDto> {
-    const expense = await this.expenseService.create(
+  ): Promise<ExpenseDto[]> {
+    const expenses = await this.expenseService.create(
       request.user.user.id,
       data,
     );
 
-    return new ExpenseDto(expense);
+    return expenses.map((expense) => new ExpenseDto(expense));
   }
 
   @GetRoute(':centreId', {

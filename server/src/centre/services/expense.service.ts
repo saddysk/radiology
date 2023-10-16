@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateExpenseDto } from '../dto/expense.dto';
+import { CreateExpenseDto, ExpensesDto } from '../dto/expense.dto';
 import { Expense } from 'src/database/entities/expense.entity';
 import { ExpenseRepository } from '../repositories/expense.repository';
 import { CentreRepository } from 'src/centre/repositories/centre.repository';
@@ -13,7 +13,7 @@ export class ExpenseService {
     private readonly centreAdminRepository: CentreAdminRepository,
   ) {}
 
-  async create(userId: string, data: CreateExpenseDto): Promise<Expense> {
+  async create(userId: string, data: CreateExpenseDto): Promise<Expense[]> {
     const centre = await this.centreRepository.findOneBy({ id: data.centreId });
 
     if (centre == null) {
@@ -22,18 +22,14 @@ export class ExpenseService {
       );
     }
 
-    const newExpense = new Expense();
-    newExpense.createdBy = userId;
-    newExpense.centreId = data.centreId;
-    newExpense.amount = data.amount;
-    newExpense.date = data.date;
-    newExpense.expenseType = data.expenseType;
-    newExpense.paymentMethod = data.paymentMethod;
-    newExpense.remark = data.remark;
+    // Create and Save Expense
+    const expenseList = await Promise.all(
+      data.expenses.map((expense) =>
+        this.saveExpense(userId, centre.id, expense),
+      ),
+    );
 
-    await this.expenseRepository.save(newExpense, { reload: true });
-
-    return newExpense;
+    return expenseList;
   }
 
   async getAll(userId: string, centreId: string): Promise<Expense[]> {
@@ -72,5 +68,22 @@ export class ExpenseService {
     const expense = await this.expenseRepository.findOneBy({ id });
 
     return expense;
+  }
+
+  private saveExpense(
+    userId: string,
+    centreId: string,
+    data: ExpensesDto,
+  ): Promise<Expense> {
+    const newExpense = new Expense();
+    newExpense.createdBy = userId;
+    newExpense.centreId = centreId;
+    newExpense.amount = data.amount;
+    newExpense.date = data.date;
+    newExpense.expenseType = data.expenseType;
+    newExpense.paymentMethod = data.paymentMethod;
+    newExpense.remark = data.remark;
+
+    return this.expenseRepository.save(newExpense, { reload: true });
   }
 }
