@@ -6,14 +6,13 @@ import {
 } from '@nestjs/common';
 import { UserRepository } from '../repositories/user.repository';
 import { JwtService } from '@nestjs/jwt';
-import { User } from 'src/database/entities/user.entity';
+import { User, UserRole } from 'src/database/entities/user.entity';
 import { AuthTokenRepository } from '../repositories/auth-token.repository';
 import { AuthToken } from 'src/database/entities/auth-token.entity';
 import { CreateUserDto, LoginUserDto } from '../dto/user.dto';
 import { AppConfig } from 'src/config/config';
 import * as bcrypt from 'bcrypt';
 import { IAuthUser } from 'libs/interfaces/auth-user.interface';
-import { UserRole } from 'src/database/enums/user.enum';
 
 const CONFIG = AppConfig();
 
@@ -23,7 +22,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly authTokenRepository: AuthTokenRepository,
-  ) { }
+  ) {}
 
   async create(data: CreateUserDto): Promise<IAuthUser> {
     const email = data.email;
@@ -46,7 +45,6 @@ export class AuthService {
     if (data.centreId) {
       user.centreId = data.centreId;
     }
-
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
     user.password = hashedPassword;

@@ -3,7 +3,7 @@ import { Patient } from 'src/database/entities/patient.entity';
 import { CreatePatientDto, UpdatePatientDto } from '../dto/patient.dto';
 import { PatientRepository } from '../repositories/patient.repository';
 import { UserRepository } from 'src/auth/repositories/user.repository';
-import { UserRole } from 'src/database/enums/user.enum';
+import { UserRole } from 'src/database/entities/user.entity';
 
 @Injectable()
 export class PatientService {

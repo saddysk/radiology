@@ -7,9 +7,9 @@ import { CentreRepository } from '../repositories/centre.repository';
 import { Centre } from 'src/database/entities/centre.entity';
 import { CreateCentreDto } from '../dto/centre.dto';
 import { UserRepository } from 'src/auth/repositories/user.repository';
-import { UserRole } from 'src/database/enums/user.enum';
 import { CentreAdminRepository } from '../repositories/centre-admin.repository';
 import { CentreAdmin } from 'src/database/entities/centre-admin.entity';
+import { UserRole } from 'src/database/entities/user.entity';
 
 @Injectable()
 export class CentreService {

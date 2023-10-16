@@ -9,8 +9,7 @@ import {
   UUIDFieldOptional,
 } from 'libs/decorators';
 import { IAuthUser } from 'libs/interfaces/auth-user.interface';
-import { User } from 'src/database/entities/user.entity';
-import { UserRole } from 'src/database/enums/user.enum';
+import { User, UserRole } from 'src/database/entities/user.entity';
 
 export class UserDto {
   @UUIDField()
@@ -63,7 +62,7 @@ export class CreateUserDto extends PickType(UserDto, [
   'email',
   'password',
   'role',
-  'centreId'
+  'centreId',
 ]) {}
 
 export class LoginUserDto extends PickType(UserDto, ['email', 'password']) {}

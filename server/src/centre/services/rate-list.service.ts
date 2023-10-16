@@ -7,8 +7,8 @@ import {
   UpdateRateListDto,
 } from '../dto/rate-list.dto';
 import { UserRepository } from 'src/auth/repositories/user.repository';
-import { UserRole } from 'src/database/enums/user.enum';
 import { In } from 'typeorm';
+import { UserRole } from 'src/database/entities/user.entity';
 
 @Injectable()
 export class RateListService {

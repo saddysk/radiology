@@ -2,11 +2,11 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { Booking } from 'src/database/entities/booking.entity';
 import { CreateBookingDto } from '../dto/booking.dto';
 import { BookingRepository } from '../repositories/booking.repository';
-import { UserRole } from 'src/database/enums/user.enum';
 import { UserRepository } from 'src/auth/repositories/user.repository';
 import { PatientService } from 'src/patient/services/patient.service';
 import { Patient } from 'src/database/entities/patient.entity';
 import { CreatePatientDto } from 'src/patient/dto/patient.dto';
+import { UserRole } from 'src/database/entities/user.entity';
 
 @Injectable()
 export class BookingService {

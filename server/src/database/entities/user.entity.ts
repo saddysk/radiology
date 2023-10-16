@@ -1,9 +1,15 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
 import { LowerCaseTransformer } from '../transformers/lowercase';
 import { AbstractEntity } from './abstract.entity';
-import { UserRole } from '../enums/user.enum';
 import { CentreAdmin } from './centre-admin.entity';
 import { DoctorCommission } from './doctor-commission.entity';
+
+export enum UserRole {
+  Admin = 'admin',
+  Receptionist = 'receptionist',
+  Pr = 'pr',
+  Doctor = 'doctor',
+}
 
 @Entity()
 export class User extends AbstractEntity {
