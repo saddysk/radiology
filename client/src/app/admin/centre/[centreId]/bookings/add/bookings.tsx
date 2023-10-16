@@ -20,28 +20,33 @@ import { RadioGroup } from "@radix-ui/react-radio-group";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-
 const bookingSchema = z.object({
+  //user
   name: z.string(),
   email: z.string().email(),
-  smk: z.string(),
   age: z.number(), // in years and months
   gender: z.string(),
   phone: z
     .string()
     .refine((value) => /^[1-9]\d{9}$/.test(value), "Phone number is invalid."),
   address: z.string(),
-  consultant: z.string(),
-  modality: z.string(),
-  modalityType: z.string(),
-  amount: z.number(),
-  discountAmount: z.number(),
-  discountRemarks: z.string(),
-  emergencyCharges: z.number(),
-  paymentType: z.string(),
-  paymentStatus: z.string(),
-  paymentId: z.string(),
+  abhaId: z.string().nullable(),
+
+  //booking
+  centreId: z.string(),
+  patientId: z.string(),
   submittedBy: z.string(),
+  consultant: z.string(),
+
+  modality: z.string(),
+  investigation: z.string(),
+
+  amount: z.number(),
+  discount: z.number(),
+  remarks: z.string(),
+  emergencyCharges: z.number(),
+
+  paymentType: z.string(),
 });
 
 export function AddBookings({ centreId }: { centreId: string }) {
@@ -87,7 +92,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
         });
         router.push("/pr/dashboard");
       }
-    } catch (error: any) { 
+    } catch (error: any) {
       toast({
         title: "Error",
         description: error.message || "Something went wrong",

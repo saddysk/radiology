@@ -91,6 +91,10 @@ export interface CreateCentreDto {
 }
 
 export interface CentreDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
   id: string;
   /** @format date-time */
   createdAt: string;
@@ -138,6 +142,56 @@ export interface ExpenseDto {
   expenseType: string;
   paymentMethod: string;
   remark?: string;
+}
+
+export interface InvestigationDto {
+  type: string;
+  /** @example 1 */
+  amount: number;
+  /** @example 1 */
+  filmCount: number;
+}
+
+export interface RateListDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  centreId: string;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  modality: string;
+  investigation: InvestigationDto[];
+}
+
+export interface RateListsDto {
+  modality: string;
+  investigation: InvestigationDto[];
+}
+
+export interface CreateRateListDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  centreId: string;
+  rateLists: RateListsDto[];
+}
+
+export interface UpdateRateListDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
+  investigation: InvestigationDto[];
 }
 
 export interface DoctorCommissionDto {

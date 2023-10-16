@@ -16,7 +16,7 @@ import {
 @Controller('api/centre/rate-list')
 @ApiTags('Centre Rate List')
 export class RateListController {
-  constructor(private readonly rateListService: RateListService) {}
+  constructor(private readonly rateListService: RateListService) { }
 
   @PostRoute('', {
     Ok: { dtoType: 'ArrayDto', type: RateListDto },
