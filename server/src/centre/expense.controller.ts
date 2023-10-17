@@ -11,19 +11,18 @@ export class ExpenseController {
   constructor(private readonly expenseService: ExpenseService) {}
 
   @PostRoute('', {
-    Ok: { dtoType: 'ArrayDto', type: ExpenseDto },
+    Ok: ExpenseDto,
   })
   @UseAuthGuard(AuthGuardOption.BEARER)
   async create(
     @Req() request: any,
     @Body() data: CreateExpenseDto,
-  ): Promise<ExpenseDto[]> {
-    const expenses = await this.expenseService.create(
+  ): Promise<ExpenseDto> {
+    const expense = await this.expenseService.create(
       request.user.user.id,
       data,
     );
-
-    return expenses.map((expense) => new ExpenseDto(expense));
+    return new ExpenseDto(expense);
   }
 
   @GetRoute(':centreId', {
@@ -38,7 +37,6 @@ export class ExpenseController {
       request.user.user.id,
       centreId,
     );
-
     return expenses.map((expense) => new ExpenseDto(expense));
   }
 
@@ -56,7 +54,6 @@ export class ExpenseController {
       centreId,
       id,
     );
-
     return new ExpenseDto(expense);
   }
 }
