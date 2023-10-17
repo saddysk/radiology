@@ -1,4 +1,4 @@
-import { PickType } from '@nestjs/swagger';
+import { OmitType, PickType } from '@nestjs/swagger';
 import {
   UUIDField,
   StringField,
@@ -10,7 +10,25 @@ import {
   UUIDFieldOptional,
 } from 'libs/decorators';
 import { Booking } from 'src/database/entities/booking.entity';
+import { IBookingRecord } from 'src/database/interfaces/booking.interface';
 import { CreatePatientDto, PatientDto } from 'src/patient/dto/patient.dto';
+
+export class BookingRecordDto {
+  @StringField()
+  type: string;
+
+  @StringField()
+  url: string;
+
+  constructor(record?: IBookingRecord) {
+    if (record == null) {
+      return;
+    }
+
+    this.type = record.type;
+    this.url = record.url;
+  }
+}
 
 export class BookingDto {
   @UUIDField()
@@ -18,6 +36,9 @@ export class BookingDto {
 
   @DateField()
   createdAt: Date;
+
+  @DateField()
+  updatedAt: Date;
 
   @UUIDField()
   centreId: string;
@@ -53,7 +74,10 @@ export class BookingDto {
   paymentType: string;
 
   @ObjectFieldOptional(() => PatientDto)
-  patient: PatientDto;
+  patient?: PatientDto;
+
+  @ObjectFieldOptional(() => BookingRecordDto)
+  record?: BookingRecordDto;
 
   constructor(booking?: Booking) {
     if (booking == null) {
@@ -62,6 +86,7 @@ export class BookingDto {
 
     this.id = booking.id;
     this.createdAt = booking.createdAt;
+    this.updatedAt = booking.updatedAt;
     this.centreId = booking.centreId;
     this.patientId = booking.patientId;
     this.submittedBy = booking.submittedBy;
@@ -73,6 +98,7 @@ export class BookingDto {
     this.remark = booking.remark;
     this.extraCharge = booking.extraCharge;
     this.paymentType = booking.paymentType;
+    this.record = new BookingRecordDto(booking.record);
   }
 
   static async toDto(booking: Booking) {
@@ -101,3 +127,5 @@ export class CreateBookingDto extends PickType(BookingDto, [
   @ObjectFieldOptional(() => CreatePatientDto)
   patient?: CreatePatientDto;
 }
+
+export class UpdateBookingDto extends OmitType(BookingDto, ['patient']) {}

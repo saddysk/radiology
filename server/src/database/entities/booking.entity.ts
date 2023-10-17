@@ -39,12 +39,12 @@ export class Booking extends AbstractEntity {
   paymentType: string;
 
   @Column({ type: 'json', nullable: true })
-  record: IBookingRecord;
+  record?: IBookingRecord;
 
   @JoinColumn({ name: 'patientId' })
   @ManyToOne(() => Patient, (p) => p.booking, {
     cascade: true,
     onDelete: 'CASCADE',
   })
-  patient: Promise<Patient>;
+  patient?: Promise<Patient>;
 }
