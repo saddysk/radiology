@@ -104,21 +104,6 @@ export interface CentreDto {
   address: AddressDto;
 }
 
-export interface CreateExpenseDto {
-  /**
-   * @format uuid
-   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
-   */
-  centreId: string;
-  /** @format date-time */
-  date: string;
-  /** @example 1 */
-  amount: number;
-  expenseType: string;
-  paymentMethod: string;
-  remark?: string;
-}
-
 export interface ExpenseDto {
   /**
    * @format uuid
@@ -142,6 +127,25 @@ export interface ExpenseDto {
   expenseType: string;
   paymentMethod: string;
   remark?: string;
+}
+
+export interface ExpensesDto {
+  /** @format date-time */
+  date: string;
+  /** @example 1 */
+  amount: number;
+  expenseType: string;
+  paymentMethod: string;
+  remark?: string;
+}
+
+export interface CreateExpenseDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  centreId: string;
+  expenses: ExpensesDto[];
 }
 
 export interface InvestigationDto {
@@ -261,4 +265,102 @@ export interface UpdateDoctorCommissionDto {
   startDate?: string;
   /** @format date-time */
   endDate?: string;
+}
+
+export interface CreatePatientDto {
+  name: string;
+  /** @example 1 */
+  age: number;
+  gender: string;
+  phone: string;
+  email?: string;
+  address?: AddressDto;
+  abhaId?: string;
+}
+
+export interface CreateBookingDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  centreId: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  consultant: string;
+  modality: string;
+  investigation: string;
+  /** @example 1 */
+  amount: number;
+  /** @example 1 */
+  discount?: number;
+  remark?: string;
+  extraCharge?: string;
+  paymentType: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  patientId?: string;
+  patient?: CreatePatientDto;
+}
+
+export interface PatientDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
+  /** @format date-time */
+  createdAt: string;
+  name: string;
+  /** @example 1 */
+  age: number;
+  gender: string;
+  phone: string;
+  email?: string;
+  address?: AddressDto;
+  abhaId?: string;
+  booking?: any[][];
+}
+
+export interface BookingDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
+  /** @format date-time */
+  createdAt: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  centreId: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  patientId: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  submittedBy: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  consultant: string;
+  modality: string;
+  investigation: string;
+  /** @example 1 */
+  amount: number;
+  /** @example 1 */
+  discount?: number;
+  remark?: string;
+  extraCharge?: string;
+  paymentType: string;
+  patient?: PatientDto;
 }

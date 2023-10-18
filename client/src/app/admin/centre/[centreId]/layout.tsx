@@ -39,6 +39,11 @@ export default function CentreLayout({
       path: `/admin/centre/${params.centreId}/settings`,
       icon: "",
     },
+    {
+      title: "Expenses",
+      path: `/admin/centre/${params.centreId}/expenses`,
+      icon: "",
+    },
   ];
 
   return (
