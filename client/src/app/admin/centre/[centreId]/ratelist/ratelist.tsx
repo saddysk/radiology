@@ -169,7 +169,7 @@ export function RateList({ centreId }: { centreId: string }) {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {rateList.investigation.map((investigation, j) => (
+                    {rateList?.investigation?.map((investigation, j) => (
                       <TableRow key={j}>
                         <TableCell>
                           <Controller

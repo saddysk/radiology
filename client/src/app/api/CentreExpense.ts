@@ -21,7 +21,7 @@ export class CentreExpense<SecurityDataType = unknown> extends HttpClient<Securi
    * @request POST:/api/centre/expense
    */
   expenseControllerCreate = (data: CreateExpenseDto, params: RequestParams = {}) =>
-    this.request<ExpenseDto[], ErrorDto>({
+    this.request<ExpenseDto, ErrorDto>({
       path: `/api/centre/expense`,
       method: "POST",
       body: data,

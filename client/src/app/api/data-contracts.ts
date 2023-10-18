@@ -104,12 +104,31 @@ export interface CentreDto {
   address: AddressDto;
 }
 
+export interface CreateExpenseDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  centreId: string;
+  /** @format date-time */
+  date: string;
+  /** @example 1 */
+  amount: number;
+  expenseType: string;
+  paymentMethod: string;
+  remark?: string;
+}
+
 export interface ExpenseDto {
   /**
    * @format uuid
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   id: string;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
   /**
    * @format uuid
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
@@ -127,25 +146,6 @@ export interface ExpenseDto {
   expenseType: string;
   paymentMethod: string;
   remark?: string;
-}
-
-export interface ExpensesDto {
-  /** @format date-time */
-  date: string;
-  /** @example 1 */
-  amount: number;
-  expenseType: string;
-  paymentMethod: string;
-  remark?: string;
-}
-
-export interface CreateExpenseDto {
-  /**
-   * @format uuid
-   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
-   */
-  centreId: string;
-  expenses: ExpensesDto[];
 }
 
 export interface InvestigationDto {
@@ -325,6 +325,11 @@ export interface PatientDto {
   booking?: any[][];
 }
 
+export interface BookingRecordDto {
+  type: string;
+  url: string;
+}
+
 export interface BookingDto {
   /**
    * @format uuid
@@ -333,6 +338,8 @@ export interface BookingDto {
   id: string;
   /** @format date-time */
   createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
   /**
    * @format uuid
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
@@ -363,4 +370,94 @@ export interface BookingDto {
   extraCharge?: string;
   paymentType: string;
   patient?: PatientDto;
+  record?: BookingRecordDto;
+}
+
+export enum RequestType {
+  Expense = "expense",
+  Booking = "booking",
+}
+
+export enum RequestStatus {
+  Pending = "pending",
+  Accepted = "accepted",
+  Rejected = "rejected",
+}
+
+export interface UpdateBookingDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  centreId: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  patientId: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  submittedBy: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  consultant: string;
+  modality: string;
+  investigation: string;
+  /** @example 1 */
+  amount: number;
+  /** @example 1 */
+  discount?: number;
+  remark?: string;
+  extraCharge?: string;
+  paymentType: string;
+  record?: BookingRecordDto;
+}
+
+export interface CreateUpdateRequestDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  requestedBy: string;
+  type: RequestType;
+  status: RequestStatus;
+  expenseData?: ExpenseDto;
+  bookingData?: UpdateBookingDto;
+}
+
+export interface UpdateRequestDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  centreId: string;
+  /** @format date-time */
+  createdAt: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  requestedBy: string;
+  type: RequestType;
+  status: RequestStatus;
+  expenseData?: ExpenseDto;
+  bookingData?: UpdateBookingDto;
 }

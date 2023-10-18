@@ -12,7 +12,7 @@
 // import { useToast } from '@chakra-ui/react'
 // import { logtail } from './providers'
 
-import { auth, centre, drcommission, ratelist } from "@/app/api"
+import { auth, booking, centre, centreexpense, drcommission, ratelist } from "@/app/api"
 import { CommissionDto } from "@/app/api/data-contracts"
 import { useMutation, useQuery } from "@tanstack/react-query"
 
@@ -76,7 +76,22 @@ export const connectCenterToDoctor = ({ centreId, doctorId, commissions, onSucce
 
 export const useGetRateList = ({ centreId }: { centreId: string }) => {
     return useQuery({
+        queryKey: ["ratelist", centreId],
         queryFn: () => ratelist.rateListControllerGet(centreId)
+    })
+}
+
+export const useCentreExpenses = ({ centreId }: { centreId: string }) => {
+    return useQuery({
+        queryKey: ["expenses", centreId],
+        queryFn: () => centreexpense.expenseControllerGetAll(centreId)
+    })
+}
+
+export const useCentreBookings = ({ centreId }: { centreId: string }) => {
+    return useQuery({
+        queryKey: ["bookings", centreId],
+        queryFn: () => booking.bookingControllerGet(centreId)
     })
 }
 // // hooks/useThreadsData.js
