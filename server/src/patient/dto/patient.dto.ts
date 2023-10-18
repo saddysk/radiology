@@ -9,7 +9,6 @@ import {
   ObjectFieldOptional,
 } from 'libs/decorators';
 import { BookingDto } from 'src/booking/dto/booking.dto';
-import { AddressDto } from 'src/centre/dto/centre.dto';
 import { Patient } from 'src/database/entities/patient.entity';
 
 export class PatientDto {
@@ -34,8 +33,8 @@ export class PatientDto {
   @EmailFieldOptional()
   email?: string;
 
-  @ObjectFieldOptional(() => AddressDto)
-  address?: AddressDto;
+  @StringFieldOptional()
+  address?: string;
 
   @StringFieldOptional()
   abhaId?: string;

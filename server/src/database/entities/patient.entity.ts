@@ -1,7 +1,6 @@
 import { Column, Entity, OneToMany } from 'typeorm';
 import { AbstractEntity } from './abstract.entity';
 import { LowerCaseTransformer } from '../transformers/lowercase';
-import { IAddress } from '../interfaces/address.interface';
 import { Booking } from './booking.entity';
 
 @Entity()
@@ -30,8 +29,8 @@ export class Patient extends AbstractEntity {
   })
   email?: string;
 
-  @Column({ type: 'json', nullable: true })
-  address?: IAddress;
+  @Column()
+  address?: string;
 
   @Column({ nullable: true })
   abhaId?: string;
