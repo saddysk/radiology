@@ -9,6 +9,7 @@ import { CreatePatientDto } from 'src/patient/dto/patient.dto';
 import { UserRole } from 'src/database/entities/user.entity';
 import { PaymentRepository } from '../repositories/payment.repository';
 import { In } from 'typeorm';
+import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repository';
 
 @Injectable()
 export class BookingService {
@@ -17,6 +18,7 @@ export class BookingService {
     private readonly userRepository: UserRepository,
     private readonly patientService: PatientService,
     private readonly paymentRepository: PaymentRepository,
+    private readonly centreAdminRepository: CentreAdminRepository,
   ) {}
 
   async create(userId: string, data: CreateBookingDto): Promise<Booking> {
@@ -71,22 +73,34 @@ export class BookingService {
     return this.bookingRepository.findBy({ centreId });
   }
 
-  // async update(id: string, data: UpdateBookingDto): Promise<BookingDto> {
-  //   const booking = await this.bookingRepository.findOne(id);
-  //   if (!booking) {
-  //     throw new NotFoundException(`Booking with id ${id} not found.`);
-  //   }
+  async update(userId: string, bookingData: Booking): Promise<Booking> {
+    const centreAdmin = await this.centreAdminRepository.findOne({
+      where: {
+        userId,
+        centreId: bookingData.centreId,
+      },
+    });
 
-  //   Object.assign(booking, data);
+    if (centreAdmin == null) {
+      throw new BadRequestException(
+        `Centre doesn't exist for centre id: ${bookingData.centreId}, user id: ${userId}`,
+      );
+    }
 
-  //   try {
-  //     await this.bookingRepository.save(booking);
-  //   } catch (e) {
-  //     throw new BadRequestException('Failed to update booking.');
-  //   }
+    const booking = await this.bookingRepository.findOneBy({
+      id: bookingData.id,
+    });
 
-  //   return BookingDto.toDto(booking);
-  // }
+    if (booking == null) {
+      throw new BadRequestException(
+        `Expense not found to be update, requested booking id: ${bookingData.id}`,
+      );
+    }
+
+    await this.bookingRepository.save(bookingData);
+
+    return bookingData;
+  }
 
   private async getOrCreatePatient(
     userId: string,

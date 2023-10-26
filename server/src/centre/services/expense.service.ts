@@ -74,4 +74,33 @@ export class ExpenseService {
 
     return expense;
   }
+
+  async update(userId: string, expenseData: Expense): Promise<Expense> {
+    const centreAdmin = await this.centreAdminRepository.findOne({
+      where: {
+        userId,
+        centreId: expenseData.centreId,
+      },
+    });
+
+    if (centreAdmin == null) {
+      throw new BadRequestException(
+        `Centre doesn't exist for centre id: ${expenseData.centreId}, user id: ${userId}`,
+      );
+    }
+
+    const expense = await this.expenseRepository.findOneBy({
+      id: expenseData.id,
+    });
+
+    if (expense == null) {
+      throw new BadRequestException(
+        `Expense not found to be update, requested expense id: ${expenseData.id}`,
+      );
+    }
+
+    await this.expenseRepository.save(expenseData);
+
+    return expenseData;
+  }
 }

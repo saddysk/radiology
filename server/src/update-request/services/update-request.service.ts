@@ -10,6 +10,8 @@ import { UserRepository } from 'src/auth/repositories/user.repository';
 import { In } from 'typeorm';
 import { UserRole } from 'src/database/entities/user.entity';
 import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repository';
+import { ExpenseService } from 'src/centre/services/expense.service';
+import { BookingService } from 'src/booking/services/booking.service';
 
 @Injectable()
 export class UpdateRequestService {
@@ -17,6 +19,8 @@ export class UpdateRequestService {
     private readonly updateRequestRepository: UpdateRequestRepository,
     private readonly userRepository: UserRepository,
     private readonly centreAdminRepository: CentreAdminRepository,
+    private readonly expenseService: ExpenseService,
+    private readonly bookingService: BookingService,
   ) {}
 
   async save(userId: string, data: CreateUpdateRequestDto) {
@@ -76,12 +80,18 @@ export class UpdateRequestService {
   async update(userId: string, id: string, status: RequestStatus) {
     const updateRequest = await this.validateRequest(userId, id);
 
+    if (status === RequestStatus.Pending) {
+      throw new BadRequestException(
+        `Invalid request status. You can't mark a request as ${RequestStatus.Pending}.`,
+      );
+    }
+
     if (status === RequestStatus.Accepted) {
       if (updateRequest.type === RequestType.Expense) {
-        // TODO: update expense table
+        await this.expenseService.update(userId, updateRequest.expenseData);
       }
       if (updateRequest.type === RequestType.Booking) {
-        // TODO: update booking table
+        await this.bookingService.update(userId, updateRequest.bookingData);
       }
 
       await this.updateRequestRepository.upadteStatus(
