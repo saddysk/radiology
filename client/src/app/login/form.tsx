@@ -54,7 +54,15 @@ export function LoginForm() {
           title: "Admin Registered",
           variant: "default",
         });
-        router.push("/admin/onboarding");
+        if (response.data.user.role === UserRole.Admin) {
+          router.push(`/admin/onboarding`);
+        }
+        if (response.data.user.role === UserRole.Pr) {
+          router.push(`/pr/dashboard`);
+        }
+        if (response.data.user.role === UserRole.Doctor) {
+          router.push(`/doctor/dashboard`);
+        }
       }
     } catch (error: any) {
       toast({

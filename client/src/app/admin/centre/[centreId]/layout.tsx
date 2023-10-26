@@ -29,11 +29,11 @@ export default function CentreLayout({
       path: `/admin/centre/${params.centreId}/doctors`,
       icon: "",
     },
-    {
-      title: "Receptionists",
-      path: `/admin/centre/${params.centreId}/orders`,
-      icon: "",
-    },
+    // {
+    //   title: "Receptionists",
+    //   path: `/admin/centre/${params.centreId}/orders`,
+    //   icon: "",
+    // },
     {
       title: "Bookings",
       path: `/admin/centre/${params.centreId}/bookings`,

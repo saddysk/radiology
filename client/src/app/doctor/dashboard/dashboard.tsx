@@ -7,8 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAllConnectedCentresData } from "@/lib/query-hooks";
 import CenteredSpinner from "@/components/ui/centered-spinner";
 
-export function AdminDashboard() {
-  const { toast } = useToast();
+export function DoctorDashboard() {
+
   const router = useRouter();
   const {
     data: dataAllConnectedCentres,
@@ -30,7 +30,7 @@ export function AdminDashboard() {
       <div className="p-6">
         <h1>All centers connected</h1>
         {!isLoadingAllConnectedCentres ? (
-          <div className="flex gap-6 mt-8">
+          <div className="flex">
             {dataAllConnectedCentres?.data.map((centre, index) => (
               <div
                 key={index}

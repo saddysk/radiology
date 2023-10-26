@@ -5,12 +5,8 @@ import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import CenteredSpinner from "@/components/ui/centered-spinner";
 import { useState } from "react";
-import {
-  CreateBookingDto,
-  CreateDoctorCommissionDto,
-  CreateExpenseDto,
-} from "@/app/api/data-contracts";
-import { centre, centreexpense, drcommission } from "@/app/api";
+import { CreateBookingDto } from "@/app/api/data-contracts";
+import { booking } from "@/app/api";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,30 +19,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { RadioGroup } from "@radix-ui/react-radio-group";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { DatePickerDemo } from "@/components/ui/date";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-
-const expensesSchema = z.object({
-  date: z.string().refine((value) => !isNaN(Date.parse(value)), {
-    message: "Invalid date format",
-  }),
-  amount: z.number(),
-  expenseType: z.string(),
-  paymentMethod: z.string(),
-  remark: z.string().optional(),
-});
 
 const bookingSchema = z.object({
   //user
@@ -62,7 +37,6 @@ const bookingSchema = z.object({
 
   //booking
   centreId: z.string(),
-  patientId: z.string(),
   submittedBy: z.string(),
   consultant: z.string(),
 
@@ -82,11 +56,11 @@ export function AddBookings({ centreId }: { centreId: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  const addExpensesForm = useForm<CreateBookingDto>({
-    resolver: zodResolver(expensesSchema),
+  const addBookingForm = useForm<CreateBookingDto>({
+    //resolver: zodResolver(bookingSchema),
     defaultValues: {
-      centreId: "", // UUID expected, using empty string as default
-      consultant: "", // UUID expected, using empty string as default
+      centreId: centreId, // UUID expected, using empty string as default
+      consultant: "b04bc0e1-cdc5-47ef-b1b1-944425b787c3", // UUID expected, using empty string as default
       modality: "",
       investigation: "",
       amount: 0,
@@ -94,30 +68,24 @@ export function AddBookings({ centreId }: { centreId: string }) {
       remark: "", // Optional, using empty string as default
       extraCharge: "", // Optional, using empty string as default
       paymentType: "",
-      patientId: "", // UUID expected, using empty string as default
       patient: {
         name: "",
         age: 0,
         gender: "",
         phone: "",
         email: "", // Optional, using empty string as default
-        address: {
-          // Assuming AddressDto has fields like street, city, etc.
-          street: "", // Placeholder, adjust as per AddressDto structure
-          city: "", // Placeholder, adjust as per AddressDto structure
-          // ... other AddressDto fields
-        },
+        address: "",
         abhaId: "", // Optional, using empty string as default
       },
     },
   });
-
-  async function addExpenseSubmit(data: CreateBookingDto) {
+  console.log(addBookingForm, addBookingForm.getValues());
+  async function addBookingSubmit(data: CreateBookingDto) {
     console.log(data);
 
     setLoading(true);
     try {
-      const response = await centreexpense.expenseControllerCreate({
+      const response = await booking.bookingControllerCreate({
         ...data,
         centreId,
       });
@@ -146,87 +114,48 @@ export function AddBookings({ centreId }: { centreId: string }) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center py-28 space-y-6 h-full rounded-md bg-zinc-950 border-zinc-600 w-[100%] overflow-y-auto">
-      <h1 className="text-4xl text-center opacity-90 flex items-center space-x-4 mb-6">
-        <span>Add Expense</span>
+    <div className="flex flex-col items-center w-full h-[85vh] p-8 overflow-y-scroll">
+      <h1 className="text-4xl text-center opacity-90 items-center space-x-4 mb-6">
+        <span>Add Bookings</span>
       </h1>
-      <Form {...addExpensesForm}>
+      <Form {...addBookingForm}>
         <form
-          onSubmit={addExpensesForm.handleSubmit(addExpenseSubmit)}
-          className="space-y-8 sm:w-1/2 px-4 w-full"
+          onSubmit={addBookingForm.handleSubmit(addBookingSubmit)}
+          className="space-y-8 w-[60%] px-4 w-full"
         >
-          <div className="flex flex-col gap-12 justify-center">
-            <FormField
-              control={addExpensesForm.control}
-              name="date"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Date of expense created</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(
-                            "w-[240px] pl-3 text-left font-normal border-zinc-600",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          {field.value ? (
-                            format(Date.parse(field.value), "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto p-0 bg-black border-zinc-600"
-                      align="start"
-                    >
-                      <Calendar
-                        mode="single"
-                        selected={Date.parse(field.value)}
-                        onSelect={(e) =>
-                          addExpensesForm.setValue(
-                            "date",
-                            e?.toDateString() || "",
-                            {
-                              shouldValidate: true,
-                              shouldDirty: true,
-                            }
-                          )
-                        }
-                        // disabled={(date) =>
-                        //   date > new Date() || date < new Date("1900-01-01")
-                        // }
-                        className="border-zinc-600"
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+          <div className="flex flex-col gap-8 bg-zinc-900 p-4 py-8 rounded-md justify-center">
+            <h2 className="text-xl">Patient Details</h2>
 
+            <FormField
+              control={addBookingForm.control}
+              name="patient.name"
+              rules={{ required: true }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Patient Name" {...field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
             <FormField
-              control={addExpensesForm.control}
-              name="amount"
-              rules={{ required: true }}
+              control={addBookingForm.control}
+              name="patient.age"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Age</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Amount"
-                      type="number"
+                      placeholder="Age"
                       {...field}
                       onChange={(e) => {
                         const numberValue = Number(e.target.value);
                         field.onChange(numberValue);
                       }}
+                      type="number"
                     />
                   </FormControl>
                   <FormMessage />
@@ -235,13 +164,13 @@ export function AddBookings({ centreId }: { centreId: string }) {
             />
 
             <FormField
-              control={addExpensesForm.control}
-              name="expenseType"
-              rules={{ required: true }}
+              control={addBookingForm.control}
+              name="patient.gender"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Gender</FormLabel>
                   <FormControl>
-                    <Input placeholder="Expense Type" {...field} />
+                    <Input placeholder="Gender" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -249,13 +178,13 @@ export function AddBookings({ centreId }: { centreId: string }) {
             />
 
             <FormField
-              control={addExpensesForm.control}
-              name="paymentMethod"
-              rules={{ required: true }}
+              control={addBookingForm.control}
+              name="patient.phone"
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Phone</FormLabel>
                   <FormControl>
-                    <Input placeholder="Payment Method" {...field} />
+                    <Input placeholder="Phone Number" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -263,15 +192,134 @@ export function AddBookings({ centreId }: { centreId: string }) {
             />
 
             <FormField
-              control={addExpensesForm.control}
+              control={addBookingForm.control}
+              name="patient.email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Email Address" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addBookingForm.control}
+              name="patient.address"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Address</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Address" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addBookingForm.control}
+              name="patient.abhaId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Abha ID</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Abha ID" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex flex-col gap-8 bg-zinc-900 p-4 py-8 rounded-md justify-center">
+            {/* Booking Details */}
+            <h2 className="text-xl">Booking Details</h2>
+
+            <FormField
+              control={addBookingForm.control}
+              name="modality"
+              rules={{ required: true }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Modality</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Modality" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addBookingForm.control}
+              name="investigation"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Investigation</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Investigation" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addBookingForm.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Amount</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Amount"
+                      {...field}
+                      onChange={(e) => {
+                        const numberValue = Number(e.target.value);
+                        field.onChange(numberValue);
+                      }}
+                      type="number"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addBookingForm.control}
+              name="discount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Discount</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Discount"
+                      {...field}
+                      onChange={(e) => {
+                        const numberValue = Number(e.target.value);
+                        field.onChange(numberValue);
+                      }}
+                      type="number"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addBookingForm.control}
               name="remark"
-              rules={{ required: true }}
               render={({ field }) => (
                 <FormItem>
+                  <FormLabel>Remarks</FormLabel>
                   <FormControl>
                     <Textarea
                       className="border-zinc-600"
-                      placeholder="Amount"
+                      placeholder="Remarks"
                       {...field}
                     />
                   </FormControl>
@@ -279,17 +327,49 @@ export function AddBookings({ centreId }: { centreId: string }) {
                 </FormItem>
               )}
             />
-            <div className="flex flex-col items-center justify-between space-y-6">
-              <Button
-                type="submit"
-                value="submit"
-                loading={loading}
-                variant="outline"
-                className="w-full sm:w-1/2 border-zinc-600"
-              >
-                Add Expense to Centre
-              </Button>
-            </div>
+
+            <FormField
+              control={addBookingForm.control}
+              name="extraCharge"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Extra Charge</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Extra Charge"
+                      {...field}
+                      type="number"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addBookingForm.control}
+              name="paymentType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Payment Type</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Payment Type" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex flex-col items-center justify-between space-y-6">
+            <Button
+              type="submit"
+              value="submit"
+              loading={loading}
+              variant="outline"
+              className="w-full sm:w-1/2 border-zinc-600"
+            >
+              Add Booking
+            </Button>
           </div>
         </form>
       </Form>

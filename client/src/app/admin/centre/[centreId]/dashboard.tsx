@@ -17,10 +17,15 @@ export function AdminCentre({ centreId }: { centreId: string }) {
     centreId,
     enabled: centreId ? true : false,
   });
-
+  console.log(dataAllConnectedCentres);
   return (
-    <div>
-      <h1>{dataAllConnectedCentres?.data.name} Centre</h1>
+    <div className="w-full h-[85vh] p-8 overflow-y-scroll">
+      <h3 className="text-xl font-bold mb-4">
+        {dataAllConnectedCentres?.data.name} Centre{" "}
+      </h3>
+      <h3 className="text-sm mb-4 opacity-80">
+        {dataAllConnectedCentres?.data.id}
+      </h3>
     </div>
   );
 }

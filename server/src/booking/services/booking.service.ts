@@ -7,6 +7,7 @@ import { PatientService } from 'src/patient/services/patient.service';
 import { Patient } from 'src/database/entities/patient.entity';
 import { CreatePatientDto } from 'src/patient/dto/patient.dto';
 import { UserRole } from 'src/database/entities/user.entity';
+import { In } from 'typeorm';
 
 @Injectable()
 export class BookingService {
@@ -14,23 +15,25 @@ export class BookingService {
     private readonly bookingRepository: BookingRepository,
     private readonly userRepository: UserRepository,
     private readonly patientService: PatientService,
-  ) {}
+  ) { }
 
   async create(userId: string, data: CreateBookingDto): Promise<Booking> {
-    const receptionist = await this.userRepository.findOneBy({
+    const user = await this.userRepository.findOneBy({
       id: userId,
-      role: UserRole.Receptionist,
-      centreId: data.centreId,
+      role: In([UserRole.Admin, UserRole.Receptionist]),
     });
-    if (receptionist == null) {
-      throw new BadRequestException(
-        `Inavlid user role user id: ${userId}. User should be ${UserRole.Receptionist} to add patient.`,
-      );
-    }
+
+    
+    console.log(user, "user");
+    // if (user == null) {
+    //   throw new BadRequestException(
+    //     `Inavlid user role user id: ${userId}. User should be ${UserRole.Receptionist} to add patient.`,
+    //   );
+    // }
 
     const booking = new Booking();
-    booking.centreId = receptionist.centreId;
-    booking.submittedBy = receptionist.id;
+    booking.centreId = user.centreId;
+    booking.submittedBy = user.id;
     booking.consultant = data.consultant;
     booking.modality = data.modality;
     booking.investigation = data.investigation;

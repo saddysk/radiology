@@ -274,7 +274,7 @@ export interface CreatePatientDto {
   gender: string;
   phone: string;
   email?: string;
-  address?: AddressDto;
+  address?: string;
   abhaId?: string;
 }
 
@@ -320,7 +320,7 @@ export interface PatientDto {
   gender: string;
   phone: string;
   email?: string;
-  address?: AddressDto;
+  address?: string;
   abhaId?: string;
   booking?: any[][];
 }

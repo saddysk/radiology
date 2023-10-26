@@ -25,6 +25,12 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 // 	})
 // }
 
+// export const useUserData = ({ enabled }: { enabled: boolean }) => {
+//     return useQuery(["user"], auth., {
+//         enabled
+//     })
+// }
+
 export const useAllCentresData = ({ enabled }: { enabled: boolean }) => {
     return useQuery(["centres"], centre.centreControllerGetCentres, {
         enabled
@@ -47,6 +53,8 @@ export const useAllDoctorsData = ({ enabled }: { enabled: boolean }) => {
         enabled
     })
 }
+
+
 
 export const useGetAllDoctorsForCentreData = ({ centreId, enabled }: { centreId: string, enabled: boolean }) => {
     return useQuery(["doctors", centreId],
