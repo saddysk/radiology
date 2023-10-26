@@ -2,16 +2,16 @@ import { OmitType, PickType } from '@nestjs/swagger';
 import {
   UUIDField,
   StringField,
-  NumberField,
   ObjectFieldOptional,
   StringFieldOptional,
-  NumberFieldOptional,
   DateField,
   UUIDFieldOptional,
+  ObjectField,
 } from 'libs/decorators';
 import { Booking } from 'src/database/entities/booking.entity';
 import { IBookingRecord } from 'src/database/interfaces/booking.interface';
 import { CreatePatientDto, PatientDto } from 'src/patient/dto/patient.dto';
+import { CreatePaymentDto, PaymentDto } from './payment.dto';
 
 export class BookingRecordDto {
   @StringField()
@@ -58,26 +58,19 @@ export class BookingDto {
   @StringField()
   investigation: string;
 
-  @NumberField()
-  amount: number;
-
-  @NumberFieldOptional()
-  discount?: number;
-
   @StringFieldOptional()
   remark?: string;
 
-  @StringFieldOptional()
-  extraCharge?: string;
+  @ObjectFieldOptional(() => BookingRecordDto)
+  record?: BookingRecordDto;
 
-  @StringField()
-  paymentType: string;
+  @ObjectFieldOptional(() => PaymentDto, {
+    isArray: true,
+  })
+  payment?: PaymentDto[];
 
   @ObjectFieldOptional(() => PatientDto)
   patient?: PatientDto;
-
-  @ObjectFieldOptional(() => BookingRecordDto)
-  record?: BookingRecordDto;
 
   constructor(booking?: Booking) {
     if (booking == null) {
@@ -93,11 +86,7 @@ export class BookingDto {
     this.consultant = booking.consultant;
     this.modality = booking.modality;
     this.investigation = booking.investigation;
-    this.amount = booking.amount;
-    this.discount = booking.discount;
     this.remark = booking.remark;
-    this.extraCharge = booking.extraCharge;
-    this.paymentType = booking.paymentType;
     this.record = new BookingRecordDto(booking.record);
   }
 
@@ -105,6 +94,11 @@ export class BookingDto {
     const dto = new BookingDto(booking);
 
     dto.patient = new PatientDto(await booking.patient);
+
+    const payments = await booking.payment;
+    dto.payment = await Promise.all(
+      payments.map((payment) => new PaymentDto(payment)),
+    );
 
     return dto;
   }
@@ -115,17 +109,21 @@ export class CreateBookingDto extends PickType(BookingDto, [
   'consultant',
   'modality',
   'investigation',
-  'amount',
-  'discount',
   'remark',
-  'extraCharge',
-  'paymentType',
 ]) {
   @UUIDFieldOptional()
   patientId?: string;
 
   @ObjectFieldOptional(() => CreatePatientDto)
   patient?: CreatePatientDto;
+
+  @ObjectField(() => CreatePaymentDto, {
+    isArray: true,
+  })
+  payment: CreatePaymentDto[];
 }
 
-export class UpdateBookingDto extends OmitType(BookingDto, ['patient']) {}
+export class UpdateBookingDto extends OmitType(BookingDto, [
+  'patient',
+  'payment',
+]) {}

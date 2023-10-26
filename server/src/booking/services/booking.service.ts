@@ -7,6 +7,7 @@ import { PatientService } from 'src/patient/services/patient.service';
 import { Patient } from 'src/database/entities/patient.entity';
 import { CreatePatientDto } from 'src/patient/dto/patient.dto';
 import { UserRole } from 'src/database/entities/user.entity';
+import { PaymentRepository } from '../repositories/payment.repository';
 import { In } from 'typeorm';
 
 @Injectable()
@@ -15,7 +16,8 @@ export class BookingService {
     private readonly bookingRepository: BookingRepository,
     private readonly userRepository: UserRepository,
     private readonly patientService: PatientService,
-  ) { }
+    private readonly paymentRepository: PaymentRepository,
+  ) {}
 
   async create(userId: string, data: CreateBookingDto): Promise<Booking> {
     const user = await this.userRepository.findOneBy({
@@ -23,8 +25,6 @@ export class BookingService {
       role: In([UserRole.Admin, UserRole.Receptionist]),
     });
 
-    
-    console.log(user, "user");
     // if (user == null) {
     //   throw new BadRequestException(
     //     `Inavlid user role user id: ${userId}. User should be ${UserRole.Receptionist} to add patient.`,
@@ -37,11 +37,8 @@ export class BookingService {
     booking.consultant = data.consultant;
     booking.modality = data.modality;
     booking.investigation = data.investigation;
-    booking.amount = data.amount;
-    booking.discount = data.discount;
     booking.remark = data.remark;
-    booking.extraCharge = data.extraCharge;
-    booking.paymentType = data.paymentType;
+    // booking.payment = data.payment;
 
     booking.patientId = await this.getOrCreatePatient(
       userId,
@@ -50,6 +47,12 @@ export class BookingService {
     );
 
     await this.bookingRepository.save(booking);
+
+    await Promise.all(
+      data.payment.map((payment) =>
+        this.paymentRepository.savePayment(booking.id, payment),
+      ),
+    );
 
     return booking;
   }

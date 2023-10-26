@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { AbstractEntity } from './abstract.entity';
 import { Patient } from './patient.entity';
 import { IBookingRecord } from '../interfaces/booking.interface';
+import { Payment } from './payment.entity';
 
 @Entity()
 export class Booking extends AbstractEntity {
@@ -23,23 +24,14 @@ export class Booking extends AbstractEntity {
   @Column()
   investigation: string;
 
-  @Column()
-  amount: number;
-
-  @Column({ nullable: true })
-  discount?: number;
-
   @Column({ nullable: true })
   remark?: string;
 
-  @Column({ nullable: true })
-  extraCharge?: string;
-
-  @Column()
-  paymentType: string;
-
   @Column({ type: 'json', nullable: true })
   record?: IBookingRecord;
+
+  @OneToMany(() => Payment, (p) => p.booking)
+  payment?: Promise<Payment[]>;
 
   @JoinColumn({ name: 'patientId' })
   @ManyToOne(() => Patient, (p) => p.booking, {

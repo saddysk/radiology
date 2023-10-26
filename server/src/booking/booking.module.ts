@@ -5,10 +5,15 @@ import { BookingService } from './services/booking.service';
 import { BookingController } from './booking.controller';
 import { UserRepository } from 'src/auth/repositories/user.repository';
 import { PatientModule } from 'src/patient/patient.module';
+import { PaymentRepository } from './repositories/payment.repository';
 
 @Module({
   imports: [
-    DatabaseModule.forRepository([BookingRepository, UserRepository]),
+    DatabaseModule.forRepository([
+      BookingRepository,
+      UserRepository,
+      PaymentRepository,
+    ]),
     PatientModule,
   ],
   controllers: [BookingController],
