@@ -24,6 +24,6 @@ import { RateListService } from './services/rate-list.service';
   ],
   controllers: [CentreController, ExpenseController, RateListController],
   providers: [CentreService, ExpenseService, RateListService],
-  exports: [CentreService],
+  exports: [CentreService, ExpenseService],
 })
 export class CentreModule {}

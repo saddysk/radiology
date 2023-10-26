@@ -5,6 +5,8 @@ import { UpdateRequestController } from './update-request.controller';
 import { UpdateRequestService } from './services/update-request.service';
 import { UserRepository } from 'src/auth/repositories/user.repository';
 import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repository';
+import { CentreModule } from 'src/centre/centre.module';
+import { BookingModule } from 'src/booking/booking.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repo
       UserRepository,
       CentreAdminRepository,
     ]),
+    CentreModule,
+    BookingModule,
   ],
   controllers: [UpdateRequestController],
   providers: [UpdateRequestService],
