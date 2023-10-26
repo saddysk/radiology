@@ -8,15 +8,17 @@ import {
 } from './dto/rate-list.dto';
 import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
 import {
+  DeleteRoute,
   GetRoute,
   PostRoute,
   PutRoute,
 } from 'libs/decorators/route.decorators';
+import { SuccessDto } from 'libs/dtos';
 
 @Controller('api/centre/rate-list')
 @ApiTags('Centre Rate List')
 export class RateListController {
-  constructor(private readonly rateListService: RateListService) { }
+  constructor(private readonly rateListService: RateListService) {}
 
   @PostRoute('', {
     Ok: { dtoType: 'ArrayDto', type: RateListDto },
@@ -70,5 +72,17 @@ export class RateListController {
       data,
     );
     return new RateListDto(rateList);
+  }
+
+  @DeleteRoute(':id', {
+    Ok: SuccessDto,
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async delete(
+    @Req() request: any,
+    @Param('id') id: string,
+  ): Promise<SuccessDto> {
+    await this.rateListService.delete(request.user.user.id, id);
+    return new SuccessDto();
   }
 }

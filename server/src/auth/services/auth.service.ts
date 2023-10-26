@@ -56,10 +56,6 @@ export class AuthService {
     return { token, user };
   }
 
-  getDoctors(): Promise<User[]> {
-    return this.userRepository.findBy({ role: UserRole.Doctor });
-  }
-
   async login(data: LoginUserDto): Promise<IAuthUser> {
     const { email, password } = data;
 
@@ -100,6 +96,14 @@ export class AuthService {
     }
 
     return this.authTokenRepository.validateAndGetToken(token);
+  }
+
+  getDoctors(): Promise<User[]> {
+    return this.userRepository.findBy({ role: UserRole.Doctor });
+  }
+
+  get(id: string): Promise<User> {
+    return this.userRepository.findOneBy({ id });
   }
 
   private async createAuthToken(user: User): Promise<AuthToken> {

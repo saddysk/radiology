@@ -20,7 +20,6 @@ export class CentreController {
     @Body() data: CreateCentreDto,
   ): Promise<CentreDto> {
     const centre = await this.centreService.create(request.user.user.id, data);
-
     return new CentreDto(centre);
   }
 
@@ -33,7 +32,6 @@ export class CentreController {
     @Param('centreId') centreId: string,
   ): Promise<SuccessDto> {
     await this.centreService.addAdminToCentre(request.user.user.id, centreId);
-
     return new SuccessDto();
   }
 
@@ -43,7 +41,6 @@ export class CentreController {
   @UseAuthGuard(AuthGuardOption.BEARER)
   async getAll(@Req() request: any): Promise<CentreDto[]> {
     const centres = await this.centreService.getAll(request.user.user.id);
-
     return centres.map((centre) => new CentreDto(centre));
   }
 
@@ -52,7 +49,6 @@ export class CentreController {
   })
   async getCentres(): Promise<CentreDto[]> {
     const centres = await this.centreService.getCentres();
-
     return centres.map((centre) => new CentreDto(centre));
   }
 
@@ -62,7 +58,6 @@ export class CentreController {
   @UseAuthGuard(AuthGuardOption.BEARER)
   async get(@Req() request: any, @Param('id') id: string): Promise<CentreDto> {
     const centre = await this.centreService.get(request.user.user.id, id);
-
     return new CentreDto(centre);
   }
 }

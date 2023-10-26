@@ -119,6 +119,23 @@ export class RateListService {
     return rateList;
   }
 
+  async delete(userId: string, id: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+        role: UserRole.Admin,
+      },
+    });
+
+    if (user == null) {
+      throw new BadRequestException('Only admin can delete a rate list');
+    }
+
+    const rateList = await this.getById(id);
+
+    await this.rateListRepository.remove([rateList]);
+  }
+
   private saveRateList(
     centreId: string,
     data: RateListsDto,
