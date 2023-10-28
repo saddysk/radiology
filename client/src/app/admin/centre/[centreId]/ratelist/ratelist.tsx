@@ -14,6 +14,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 import { Button } from "@/components/ui/button";
 import { ratelist } from "@/app/api";
 import { useToast } from "@/components/ui/use-toast";
@@ -21,6 +32,7 @@ import { useRouter } from "next/navigation";
 import { Form } from "@/components/ui/form";
 import { useGetRateList } from "@/lib/query-hooks";
 import CenteredSpinner from "@/components/ui/centered-spinner";
+import { useQueryClient } from "@tanstack/react-query";
 
 const rateListsSchema = z.object({
   rateLists: z.array(
@@ -52,10 +64,12 @@ type Investigations = {
 
 export function RateList({ centreId }: { centreId: string }) {
   const [loading, setLoading] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
   const { data: dataRateList, isLoading: IsLoadingRateList } = useGetRateList({
     centreId,
   });
   console.log(dataRateList, "here");
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -88,7 +102,7 @@ export function RateList({ centreId }: { centreId: string }) {
       }),
     },
   });
-  console.log(form.formState.errors, form.getValues());
+
   type TselectedRows = {
     [key: string]: boolean;
   };
@@ -143,6 +157,67 @@ export function RateList({ centreId }: { centreId: string }) {
     }
     console.log("Data to be sent:", filteredData);
   }
+  const [investigationUpdates, setInvestigationUpdates] = useState({
+    id: "",
+    type: "",
+    amount: 0,
+    filmCount: 0,
+  });
+  const updateRateList = async ({
+    ratelistId,
+    e,
+  }: {
+    ratelistId: string;
+    e: any;
+  }) => {
+    e.preventDefault();
+    try {
+      if (!dataRateList?.data) {
+        throw new Error("No data found");
+      }
+
+      setLoading(true);
+      const updatedInvestigations =
+        dataRateList.data
+          .find((rateList) => rateList.id === investigationUpdates.id)
+          ?.investigation?.map((investigation) => {
+            if (investigation.type === investigationUpdates.type) {
+              return {
+                ...investigation,
+                amount: investigationUpdates.amount,
+                filmCount: investigationUpdates.filmCount,
+              };
+            } else {
+              return investigation;
+            }
+          }) || []; // Fallback to empty array if undefined
+
+      const response = await ratelist.rateListControllerUpdate({
+        id: ratelistId,
+        investigation: updatedInvestigations,
+      });
+
+      if (response?.status !== 200) {
+        throw new Error(response?.statusText);
+      } else {
+        queryClient.invalidateQueries(["ratelist", centreId]);
+        toast({
+          title: "Ratelist Updated",
+          variant: "default",
+        });
+        setLoading(false);
+        setOpenEdit(false);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+      //localStorage.removeItem("x-session-token");
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
@@ -234,7 +309,7 @@ export function RateList({ centreId }: { centreId: string }) {
             <Button
               type="submit"
               loading={loading}
-              variant="outline"
+              variant={"default"}
               className="w-full sm:w-1/2 border-zinc-600"
             >
               Submit
@@ -269,12 +344,132 @@ export function RateList({ centreId }: { centreId: string }) {
                       <TableCell>{investigation.amount}</TableCell>
                       <TableCell>{investigation.filmCount}</TableCell>
                       <TableCell className="space-x-4 text-right">
-                        <Button size="sm" variant="outline">
-                          Edit
-                        </Button>
-                        <Button size="sm" variant="outline">
-                          Delete
-                        </Button>
+                        <Dialog open={openEdit} onOpenChange={setOpenEdit}>
+                          <DialogTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setInvestigationUpdates({
+                                  id: rateList.id,
+                                  type: investigation.type,
+                                  amount: investigation.amount,
+                                  filmCount: investigation.filmCount,
+                                });
+                              }}
+                            >
+                              Edit
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="bg-zinc-900 p-8">
+                            <DialogHeader>
+                              <DialogTitle>Edit investigation</DialogTitle>
+                              <DialogDescription>
+                                Make changes to your investigation here. Click
+                                save when you're done.
+                              </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <label htmlFor="name">Type</label>
+                                <Input
+                                  id="name"
+                                  value={investigationUpdates.type}
+                                  className="col-span-3"
+                                />
+                              </div>
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <label htmlFor="name">Amount</label>
+                                <Input
+                                  id="amount"
+                                  type="number"
+                                  value={investigationUpdates.amount}
+                                  onChange={(e) => {
+                                    setInvestigationUpdates({
+                                      ...investigationUpdates,
+                                      amount: Number(e.target.value),
+                                    });
+                                  }}
+                                  className="col-span-3"
+                                />
+                              </div>
+                              <div className="grid grid-cols-4 items-center gap-4">
+                                <label htmlFor="name">Film Count</label>
+                                <Input
+                                  id="count"
+                                  type="number"
+                                  value={investigationUpdates.filmCount}
+                                  onChange={(e) => {
+                                    setInvestigationUpdates({
+                                      ...investigationUpdates,
+                                      filmCount: Number(e.target.value),
+                                    });
+                                  }}
+                                  className="col-span-3"
+                                />
+                              </div>
+                            </div>
+                            <DialogFooter>
+                              <DialogClose>
+                                <Button
+                                  type="button"
+                                  loading={loading}
+                                  onClick={(e) => {
+                                    updateRateList({
+                                      ratelistId: rateList.id,
+                                      e,
+                                    });
+                                  }}
+                                  className="border border-zinc-200"
+                                >
+                                  Save changes
+                                </Button>
+                              </DialogClose>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                setInvestigationUpdates({
+                                  id: rateList.id,
+                                  type: investigation.type,
+                                  amount: investigation.amount,
+                                  filmCount: investigation.filmCount,
+                                });
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="bg-zinc-900 p-8">
+                            <DialogHeader>
+                              <DialogTitle>Delete investigation</DialogTitle>
+                              <DialogDescription>
+                                Make changes to your investigation here. Click
+                                save when you're done.
+                              </DialogDescription>
+                            </DialogHeader>
+
+                            <DialogFooter>
+                              <Button
+                                loading={loading}
+                                onClick={(e) => {
+                                  updateRateList({
+                                    ratelistId: rateList.id,
+                                    e,
+                                  });
+                                }}
+                                className="border border-zinc-200"
+                              >
+                                Save change
+                              </Button>
+                            </DialogFooter>
+                          </DialogContent>
+                        </Dialog>
                       </TableCell>
                     </TableRow>
                   ))}
