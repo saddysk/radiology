@@ -155,7 +155,7 @@ export function PRDashboard() {
     }
   }
   const [selectedFlow, setSelectedFlow] = useState<"create" | "join" | null>(
-    null
+    null,
   );
 
   const { data: dataAllCentres, isLoading: isLoadingAllCentres } =
@@ -274,7 +274,7 @@ export function PRDashboard() {
           <Form {...addDoctorToCentreForm}>
             <form
               onSubmit={addDoctorToCentreForm.handleSubmit(
-                addDoctorToCentreSubmit
+                addDoctorToCentreSubmit,
               )}
               className="space-y-8 sm:w-1/2 px-4 w-full"
             >
@@ -365,7 +365,7 @@ export function PRDashboard() {
                                     {...field}
                                     onChange={(e) => {
                                       const numberValue = Number(
-                                        e.target.value
+                                        e.target.value,
                                       );
                                       field.onChange(numberValue);
                                     }}

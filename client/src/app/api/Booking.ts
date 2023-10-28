@@ -12,7 +12,9 @@
 import { BookingDto, CreateBookingDto, ErrorDto } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class Booking<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
+export class Booking<
+  SecurityDataType = unknown,
+> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -20,7 +22,10 @@ export class Booking<SecurityDataType = unknown> extends HttpClient<SecurityData
    * @name BookingControllerCreate
    * @request POST:/api/booking
    */
-  bookingControllerCreate = (data: CreateBookingDto, params: RequestParams = {}) =>
+  bookingControllerCreate = (
+    data: CreateBookingDto,
+    params: RequestParams = {},
+  ) =>
     this.request<BookingDto, ErrorDto>({
       path: `/api/booking`,
       method: "POST",

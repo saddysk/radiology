@@ -8,7 +8,6 @@ import { useAllConnectedCentresData } from "@/lib/query-hooks";
 import CenteredSpinner from "@/components/ui/centered-spinner";
 
 export function DoctorDashboard() {
-
   const router = useRouter();
   const {
     data: dataAllConnectedCentres,

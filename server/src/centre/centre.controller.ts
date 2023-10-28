@@ -44,13 +44,13 @@ export class CentreController {
     return centres.map((centre) => new CentreDto(centre));
   }
 
-  @GetRoute('all', {
-    Ok: { dtoType: 'ArrayDto', type: CentreDto },
-  })
-  async getCentres(): Promise<CentreDto[]> {
-    const centres = await this.centreService.getCentres();
-    return centres.map((centre) => new CentreDto(centre));
-  }
+  // @GetRoute('all', {
+  //   Ok: { dtoType: 'ArrayDto', type: CentreDto },
+  // })
+  // async getCentres(): Promise<CentreDto[]> {
+  //   const centres = await this.centreService.getCentres();
+  //   return centres.map((centre) => new CentreDto(centre));
+  // }
 
   @GetRoute(':id', {
     Ok: CentreDto,

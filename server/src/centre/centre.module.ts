@@ -11,6 +11,9 @@ import { ExpenseRepository } from './repositories/expense.repository';
 import { RateListRepository } from './repositories/rate-list.repository';
 import { RateListController } from './rate-list.controller';
 import { RateListService } from './services/rate-list.service';
+import { CentrePrRepository } from './repositories/centre-pr.repository';
+import { DoctorCommissionRepository } from 'src/doctor-commission/repositories/doctor-commission.repository';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -18,9 +21,12 @@ import { RateListService } from './services/rate-list.service';
       CentreRepository,
       UserRepository,
       CentreAdminRepository,
+      CentrePrRepository,
+      DoctorCommissionRepository,
       ExpenseRepository,
       RateListRepository,
     ]),
+    AuthModule,
   ],
   controllers: [CentreController, ExpenseController, RateListController],
   providers: [CentreService, ExpenseService, RateListService],

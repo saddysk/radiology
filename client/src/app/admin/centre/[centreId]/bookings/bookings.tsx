@@ -89,11 +89,11 @@ export function Bookings({ centreId }: { centreId: string }) {
 
   const filteredBookings: BookingDto[] = dataCentreBookings?.data
     ? dataCentreBookings.data.filter((booking) =>
-        doesBookingMatchTerm(booking, searchTerm)
+        doesBookingMatchTerm(booking, searchTerm),
       )
     : [];
   const sortedBookings = [...filteredBookings].sort((a, b) =>
-    compareSortValues(a, b, sortField, sortDirection)
+    compareSortValues(a, b, sortField, sortDirection),
   );
   const handleSortChange = (value: string) => {
     setSortField(value);

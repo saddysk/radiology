@@ -42,8 +42,8 @@ export function Expenses({ centreId }: { centreId: string }) {
     if (searchQuery) {
       result = result.filter((expense) =>
         Object.values(expense).some((val) =>
-          String(val).toLowerCase().includes(searchQuery.toLowerCase())
-        )
+          String(val).toLowerCase().includes(searchQuery.toLowerCase()),
+        ),
       );
     }
 

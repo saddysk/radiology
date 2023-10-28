@@ -13,6 +13,8 @@ import { CreateUserDto, LoginUserDto } from '../dto/user.dto';
 import { AppConfig } from 'src/config/config';
 import * as bcrypt from 'bcrypt';
 import { IAuthUser } from 'libs/interfaces/auth-user.interface';
+import { CentrePr } from 'src/database/entities/centre-pr.entity';
+import { CentrePrRepository } from 'src/centre/repositories/centre-pr.repository';
 
 const CONFIG = AppConfig();
 
@@ -22,6 +24,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly authTokenRepository: AuthTokenRepository,
+    private readonly centrePrRepository: CentrePrRepository,
   ) {}
 
   async create(data: CreateUserDto): Promise<IAuthUser> {
@@ -50,6 +53,10 @@ export class AuthService {
     user.password = hashedPassword;
 
     await this.userRepository.save(user, { reload: true });
+
+    if (user.role === UserRole.Pr) {
+      await this.addPrToCentre(user.id, data.centreId);
+    }
 
     const token = await this.createAuthToken(user);
 
@@ -121,5 +128,27 @@ export class AuthService {
     );
 
     return token;
+  }
+
+  private async addPrToCentre(
+    userId: string,
+    centreId: string,
+  ): Promise<CentrePr> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (user.role !== UserRole.Pr) {
+      throw new BadRequestException(
+        `User should be pr to join a centre, but found user: ${userId}`,
+      );
+    }
+
+    const centrePr = new CentrePr();
+
+    centrePr.centreId = centreId;
+    centrePr.userId = user.id;
+
+    await this.centrePrRepository.save(centrePr, { reload: true });
+
+    return centrePr;
   }
 }

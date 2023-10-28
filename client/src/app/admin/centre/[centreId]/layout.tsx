@@ -74,6 +74,7 @@ export default function CentreLayout({
           {tabs.map((tab, index) => {
             return (
               <div
+                key={index}
                 className={clsx(
                   "px-6 py-2 hover:bg-zinc-900 cursor-pointer",
                   pathname == tab.path && "bg-zinc-700"

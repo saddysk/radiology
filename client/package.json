@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "gen": "fse move ./src/app/api/http-client.ts ./src/app/api/http-client.ts.bak && curl http://localhost:3010/api/doc-json --output ./resources/.swagger.json && swagger-typescript-api -p ./resources/.swagger.json -o ./src/app/api --axios --no-client --modular --module-name-first-tag && fse move --overwrite ./src/app/api/http-client.ts.bak ./src/app/api/http-client.ts"
+    "gen": "fse move ./src/app/api/http-client.ts ./src/app/api/http-client.ts.bak && curl http://localhost:3010/api/doc-json --output ./resources/.swagger.json && swagger-typescript-api -p ./resources/.swagger.json -o ./src/app/api --axios --no-client --modular --module-name-first-tag && fse move --overwrite ./src/app/api/http-client.ts.bak ./src/app/api/http-client.ts",
+    "format": "prettier --write \"**/*.{ts,tsx,css,html,js,jsx,json}\""
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",
@@ -51,7 +52,10 @@
     "autoprefixer": "latest",
     "eslint": "^8.50.0",
     "eslint-config-next": "latest",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
     "postcss": "latest",
+    "prettier": "^3.0.3",
     "tailwindcss": "latest",
     "typescript": "latest"
   }

@@ -9,15 +9,20 @@ import { AuthTokenRepository } from './repositories/auth-token.repository';
 import { UserRepository } from './repositories/user.repository';
 import { DatabaseModule } from 'src/database/database.module';
 import { InternalStrategy } from './strategies/internal.strategy';
-import { CentreModule } from 'src/centre/centre.module';
+import { CentrePrRepository } from 'src/centre/repositories/centre-pr.repository';
+import { CentreRepository } from 'src/centre/repositories/centre.repository';
 
 const CONFIG = AppConfig();
 
 @Module({
   imports: [
-    DatabaseModule.forRepository([UserRepository, AuthTokenRepository]),
+    DatabaseModule.forRepository([
+      UserRepository,
+      AuthTokenRepository,
+      CentrePrRepository,
+      CentreRepository,
+    ]),
     PassportModule,
-    CentreModule,
     JwtModule.register({
       privateKey: CONFIG.JWT_PRIVATE_KEY,
       publicKey: CONFIG.JWT_PUBLIC_KEY,
@@ -31,5 +36,6 @@ const CONFIG = AppConfig();
   ],
   controllers: [AuthController],
   providers: [InternalStrategy, BearerStrategy, AuthService],
+  exports: [AuthService],
 })
 export class AuthModule {}

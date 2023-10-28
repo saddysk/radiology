@@ -9,10 +9,17 @@
  * ---------------------------------------------------------------
  */
 
-import { CreateUpdateRequestDto, ErrorDto, SuccessDto, UpdateRequestDto } from "./data-contracts";
+import {
+  CreateUpdateRequestDto,
+  ErrorDto,
+  SuccessDto,
+  UpdateRequestDto,
+} from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class UpdateRequest<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
+export class UpdateRequest<
+  SecurityDataType = unknown,
+> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -20,7 +27,10 @@ export class UpdateRequest<SecurityDataType = unknown> extends HttpClient<Securi
    * @name UpdateRequestControllerSave
    * @request POST:/api/update-request
    */
-  updateRequestControllerSave = (data: CreateUpdateRequestDto, params: RequestParams = {}) =>
+  updateRequestControllerSave = (
+    data: CreateUpdateRequestDto,
+    params: RequestParams = {},
+  ) =>
     this.request<SuccessDto, ErrorDto>({
       path: `/api/update-request`,
       method: "POST",

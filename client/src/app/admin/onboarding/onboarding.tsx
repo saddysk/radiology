@@ -37,7 +37,7 @@ const createCentreSchema = z.object({
       .string()
       .refine(
         (value: any) => /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/.test(value),
-        "Postal code format is invalid."
+        "Postal code format is invalid.",
       ),
     state: z.string(),
     country: z.string().nullable(),
@@ -97,7 +97,7 @@ export function AdminOnboarding() {
     }
   }
   const [selectedFlow, setSelectedFlow] = useState<"create" | "join" | null>(
-    null
+    null,
   );
 
   const { data: dataAllCentres, isLoading: isLoadingAllCentres } =

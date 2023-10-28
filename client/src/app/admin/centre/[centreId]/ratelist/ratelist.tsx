@@ -32,9 +32,9 @@ const rateListsSchema = z.object({
           amount: z.number(),
           filmCount: z.number(),
           isSelected: z.boolean(),
-        })
+        }),
       ),
-    })
+    }),
   ),
 });
 
@@ -103,7 +103,7 @@ export function RateList({ centreId }: { centreId: string }) {
         investigation: rateList.investigation
           .filter(
             (investigation, index) =>
-              selectedRows[`${rateList.modality}-${index}`]
+              selectedRows[`${rateList.modality}-${index}`],
           )
           .map((i) => {
             return { type: i.type, amount: i.amount, filmCount: i.filmCount };
@@ -245,10 +245,14 @@ export function RateList({ centreId }: { centreId: string }) {
         <div className="">
           {dataRateList.data.map((rateList, i) => (
             <div key={i} className="p-6 my-4 rounded-lg shadow-lg bg-zinc-900">
-              <h3 className="text-xl font-bold mb-4 uppercase">{rateList.modality}</h3>
+              <h3 className="text-xl font-bold mb-4 uppercase">
+                {rateList.modality}
+              </h3>
               <Table>
                 {rateList.investigation.length == 0 && (
-                  <TableCaption className="py-6">No modality added</TableCaption>
+                  <TableCaption className="py-6">
+                    No modality added
+                  </TableCaption>
                 )}
                 <TableHeader>
                   <TableRow>

@@ -12,10 +12,16 @@
 // import { useToast } from '@chakra-ui/react'
 // import { logtail } from './providers'
 
-import { auth, booking, centre, centreexpense, drcommission, ratelist } from "@/app/api"
-import { CommissionDto } from "@/app/api/data-contracts"
-import { useMutation, useQuery } from "@tanstack/react-query"
-
+import {
+  auth,
+  booking,
+  centre,
+  centreexpense,
+  drcommission,
+  ratelist,
+} from "@/app/api";
+import { CommissionDto } from "@/app/api/data-contracts";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 // // hooks/useUserData.js
 // export const useUserData = () => {
@@ -32,76 +38,119 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 // }
 
 export const useAllCentresData = ({ enabled }: { enabled: boolean }) => {
-    return useQuery(["centres"], centre.centreControllerGetCentres, {
-        enabled
-    })
-}
-export const useCentreData = ({ enabled, centreId }: { enabled: boolean, centreId: string }) => {
-    return useQuery(["centre", centreId], () => centre.centreControllerGet(centreId), {
-        enabled
-    })
-}
+  return useQuery(["centres"], centre.centreControllerGetCentres, {
+    enabled,
+  });
+};
+export const useCentreData = ({
+  enabled,
+  centreId,
+}: {
+  enabled: boolean;
+  centreId: string;
+}) => {
+  return useQuery(
+    ["centre", centreId],
+    () => centre.centreControllerGet(centreId),
+    {
+      enabled,
+    },
+  );
+};
 
-export const useAllConnectedCentresData = ({ enabled }: { enabled: boolean }) => {
-    return useQuery(["centres"], centre.centreControllerGetAll, {
-        enabled
-    })
-}
+export const useAllConnectedCentresData = ({
+  enabled,
+}: {
+  enabled: boolean;
+}) => {
+  return useQuery(["centres"], centre.centreControllerGetAll, {
+    enabled,
+  });
+};
 
 export const useAllDoctorsData = ({ enabled }: { enabled: boolean }) => {
-    return useQuery(["doctors"], auth.authControllerGetDoctors, {
-        enabled
-    })
-}
+  return useQuery(["doctors"], auth.authControllerGetDoctors, {
+    enabled,
+  });
+};
 
-
-
-export const useGetAllDoctorsForCentreData = ({ centreId, enabled }: { centreId: string, enabled: boolean }) => {
-    return useQuery(["doctors", centreId],
-        () => drcommission.doctorCommissionControllerGetAllDoctorsForCentre(centreId), {
-        enabled
-    })
-}
+export const useGetAllDoctorsForCentreData = ({
+  centreId,
+  enabled,
+}: {
+  centreId: string;
+  enabled: boolean;
+}) => {
+  return useQuery(
+    ["doctors", centreId],
+    () =>
+      drcommission.doctorCommissionControllerGetAllDoctorsForCentre(centreId),
+    {
+      enabled,
+    },
+  );
+};
 // export const useCentreData = ({ enabled }: { enabled: boolean }) => {
 //     return useQuery(["centre"], centre.centreControllerGet(), {
 //         enabled
 //     })
 // }
 
-export const addAdminToCentre = ({ centreId, onSuccess }: { centreId: string, onSuccess: any }) => {
-    return useMutation({ mutationFn: () => centre.centreControllerAddAdmin(centreId), onSuccess })
-}
+export const addAdminToCentre = ({
+  centreId,
+  onSuccess,
+}: {
+  centreId: string;
+  onSuccess: any;
+}) => {
+  return useMutation({
+    mutationFn: () => centre.centreControllerAddAdmin(centreId),
+    onSuccess,
+  });
+};
 
-export const connectCenterToDoctor = ({ centreId, doctorId, commissions, onSuccess }: { centreId: string, doctorId: string, commissions: CommissionDto[], onSuccess: any }) => {
-    return useMutation({
-        mutationFn: () => drcommission.doctorCommissionControllerAdd({
-            doctorId,
-            centreId,
-            commissions
-        }), onSuccess
-    })
-}
+export const connectCenterToDoctor = ({
+  centreId,
+  doctorId,
+  commissions,
+  onSuccess,
+}: {
+  centreId: string;
+  doctorId: string;
+  commissions: CommissionDto[];
+  onSuccess: any;
+}) => {
+  return useMutation({
+    mutationFn: () =>
+      drcommission.doctorCommissionControllerAdd({
+        doctorId,
+        centreId,
+        commissions,
+      }),
+    onSuccess,
+  });
+};
 
 export const useGetRateList = ({ centreId }: { centreId: string }) => {
-    return useQuery({
-        queryKey: ["ratelist", centreId],
-        queryFn: () => ratelist.rateListControllerGet(centreId)
-    })
-}
+  return useQuery({
+    queryKey: ["ratelist", centreId],
+    queryFn: () => ratelist.rateListControllerGet(centreId),
+  });
+};
 
 export const useCentreExpenses = ({ centreId }: { centreId: string }) => {
-    return useQuery({
-        queryKey: ["expenses", centreId],
-        queryFn: () => centreexpense.expenseControllerGetAll(centreId)
-    })
-}
+  return useQuery({
+    queryKey: ["expenses", centreId],
+    queryFn: () => centreexpense.expenseControllerGetAll(centreId),
+  });
+};
 
 export const useCentreBookings = ({ centreId }: { centreId: string }) => {
-    return useQuery({
-        queryKey: ["bookings", centreId],
-        queryFn: () => booking.bookingControllerGet(centreId)
-    })
-}
+  return useQuery({
+    queryKey: ["bookings", centreId],
+    queryFn: () => booking.bookingControllerGet(centreId),
+  });
+};
 // // hooks/useThreadsData.js
 // export const useThreadsData = ({ enabled, funcArgs }) => {
 // 	return useQuery({

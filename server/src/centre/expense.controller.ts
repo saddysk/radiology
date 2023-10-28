@@ -1,9 +1,14 @@
 import { Body, Controller, Param, Req } from '@nestjs/common';
 import { ExpenseService } from './services/expense.service';
 import { ApiTags } from '@nestjs/swagger';
-import { GetRoute, PostRoute } from 'libs/decorators/route.decorators';
+import {
+  GetRoute,
+  PostRoute,
+  PutRoute,
+} from 'libs/decorators/route.decorators';
 import { CreateExpenseDto, ExpenseDto } from './dto/expense.dto';
 import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
+import { Expense } from 'src/database/entities/expense.entity';
 
 @Controller('api/centre/expense')
 @ApiTags('Centre Expense')
@@ -53,6 +58,21 @@ export class ExpenseController {
       request.user.user.id,
       centreId,
       id,
+    );
+    return new ExpenseDto(expense);
+  }
+
+  @PutRoute('', {
+    Ok: ExpenseDto,
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async update(
+    @Req() request: any,
+    @Body() data: Expense,
+  ): Promise<ExpenseDto> {
+    const expense = await this.expenseService.update(
+      request.user.user.id,
+      data,
     );
     return new ExpenseDto(expense);
   }

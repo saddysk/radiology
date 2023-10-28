@@ -11,11 +11,11 @@ export const globalAxios = axios.create({
 
 globalAxios.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('x-session-token')
+    const token = localStorage.getItem("x-session-token");
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
-    return config
+    return config;
   },
-  (error) => Promise.reject(error)
-)
+  (error) => Promise.reject(error),
+);
