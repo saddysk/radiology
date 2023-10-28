@@ -77,7 +77,7 @@ export default function CentreLayout({
                 key={index}
                 className={clsx(
                   "px-6 py-2 hover:bg-zinc-900 cursor-pointer",
-                  pathname == tab.path && "bg-zinc-700"
+                  pathname == tab.path && "bg-zinc-700",
                 )}
                 onClick={() => route.push(tab.path)}
               >
