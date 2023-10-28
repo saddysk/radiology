@@ -29,7 +29,7 @@ export class Patient extends AbstractEntity {
   })
   email?: string;
 
-  @Column()
+  @Column({ nullable: true })
   address?: string;
 
   @Column({ nullable: true })

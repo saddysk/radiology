@@ -2,18 +2,14 @@
 
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
-import CenteredSpinner from "@/components/ui/centered-spinner";
 import { useState } from "react";
 import { CreateBookingDto } from "@/app/api/data-contracts";
 import { booking } from "@/app/api";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -60,53 +56,57 @@ export function AddBookings({ centreId }: { centreId: string }) {
     //resolver: zodResolver(bookingSchema),
     defaultValues: {
       centreId: centreId, // UUID expected, using empty string as default
-      consultant: "b04bc0e1-cdc5-47ef-b1b1-944425b787c3", // UUID expected, using empty string as default
+      consultant: "", // UUID expected, using empty string as default
       modality: "",
       investigation: "",
-      amount: 0,
-      discount: 0, // Optional, defaulting to 0
-      remark: "", // Optional, using empty string as default
-      extraCharge: "", // Optional, using empty string as default
-      paymentType: "",
+      remark: "",
       patient: {
         name: "",
         age: 0,
         gender: "",
         phone: "",
-        email: "", // Optional, using empty string as default
+        email: "",
         address: "",
-        abhaId: "", // Optional, using empty string as default
+        abhaId: "",
       },
+      payment: [
+        {
+          amount: 0,
+          discount: 0,
+          extraCharge: "",
+          paymentType: "",
+        },
+      ],
     },
   });
-  console.log(addBookingForm, addBookingForm.getValues());
-  async function addBookingSubmit(data: CreateBookingDto) {
-    console.log(data);
 
+  async function addBookingSubmit(data: CreateBookingDto) {
     setLoading(true);
     try {
       const response = await booking.bookingControllerCreate({
         ...data,
         centreId,
       });
-      console.log(response);
+
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
         toast({
-          title: `Expense added to centre`,
+          title: `Booking successful`,
           variant: "default",
         });
-        router.push(`/admin/centre/${centreId}`);
+        router.push(`/admin/centre/${centreId}/bookings`);
       }
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Something went wrong",
+        description:
+          error.response.data.statuCode === 400
+            ? error.response.data.message
+            : "Something went wrong",
         variant: "destructive",
       });
-      //localStorage.removeItem("x-session-token");
-      //router.push("/login");
+
       setLoading(false);
     } finally {
       setLoading(false);
@@ -121,7 +121,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
       <Form {...addBookingForm}>
         <form
           onSubmit={addBookingForm.handleSubmit(addBookingSubmit)}
-          className="space-y-8 w-[60%] px-4 w-full"
+          className="space-y-8 px-4 sm:w-[60%] w-full"
         >
           <div className="flex flex-col gap-8 bg-zinc-900 p-4 py-8 rounded-md justify-center">
             <h2 className="text-xl">Patient Details</h2>
@@ -239,6 +239,21 @@ export function AddBookings({ centreId }: { centreId: string }) {
 
             <FormField
               control={addBookingForm.control}
+              name="consultant"
+              rules={{ required: true }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Consultant</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Consultant" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addBookingForm.control}
               name="modality"
               rules={{ required: true }}
               render={({ field }) => (
@@ -268,7 +283,25 @@ export function AddBookings({ centreId }: { centreId: string }) {
 
             <FormField
               control={addBookingForm.control}
-              name="amount"
+              name="remark"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Remarks</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      className="border-zinc-600"
+                      placeholder="Remarks"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addBookingForm.control}
+              name={`payment.${0}.amount`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Amount</FormLabel>
@@ -290,7 +323,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
 
             <FormField
               control={addBookingForm.control}
-              name="discount"
+              name={`payment.${0}.discount`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Discount</FormLabel>
@@ -312,25 +345,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
 
             <FormField
               control={addBookingForm.control}
-              name="remark"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Remarks</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      className="border-zinc-600"
-                      placeholder="Remarks"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={addBookingForm.control}
-              name="extraCharge"
+              name={`payment.${0}.extraCharge`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Extra Charge</FormLabel>
@@ -348,7 +363,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
 
             <FormField
               control={addBookingForm.control}
-              name="paymentType"
+              name={`payment.${0}.paymentType`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Payment Type</FormLabel>

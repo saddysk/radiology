@@ -11,9 +11,9 @@ import {
   retry,
 } from 'cockatiel';
 
-const onUniqueConstraint = handleWhen((e: any) => e.code === '23505');
+export const onUniqueConstraint = handleWhen((e: any) => e.code === '23505');
 
-const handleUniqueConstraint = retry(onUniqueConstraint, {
+export const handleUniqueConstraint = retry(onUniqueConstraint, {
   maxAttempts: 10,
   backoff: new ExponentialBackoff({
     maxDelay: 10 * 1000, // 10 seconds
@@ -52,7 +52,7 @@ export class PatientRepository extends AbstractRepository<Patient> {
       const hash = toBase34x(createHash('sha256').update(patient.id).digest());
 
       patient.patientNumber =
-        hash.slice(0, 5) + hash.charAt(5 + context.attempt - 1);
+        'P_' + hash.slice(0, 5) + hash.charAt(5 + context.attempt - 1);
 
       await this.update(
         {

@@ -9,17 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import {
-  CentreDto,
-  CreateCentreDto,
-  ErrorDto,
-  SuccessDto,
-} from "./data-contracts";
+import { CentreDto, CreateCentreDto, ErrorDto, SuccessDto } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class Centre<
-  SecurityDataType = unknown,
-> extends HttpClient<SecurityDataType> {
+export class Centre<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -27,10 +20,7 @@ export class Centre<
    * @name CentreControllerCreate
    * @request POST:/api/centre
    */
-  centreControllerCreate = (
-    data: CreateCentreDto,
-    params: RequestParams = {},
-  ) =>
+  centreControllerCreate = (data: CreateCentreDto, params: RequestParams = {}) =>
     this.request<CentreDto, ErrorDto>({
       path: `/api/centre`,
       method: "POST",
@@ -64,20 +54,6 @@ export class Centre<
     this.request<SuccessDto, ErrorDto>({
       path: `/api/centre/${centreId}/add-admin`,
       method: "POST",
-      format: "json",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags Centre
-   * @name CentreControllerGetCentres
-   * @request GET:/api/centre/all
-   */
-  centreControllerGetCentres = (params: RequestParams = {}) =>
-    this.request<CentreDto[], ErrorDto>({
-      path: `/api/centre/all`,
-      method: "GET",
       format: "json",
       ...params,
     });

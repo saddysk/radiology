@@ -37,11 +37,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 //     })
 // }
 
-export const useAllCentresData = ({ enabled }: { enabled: boolean }) => {
-  return useQuery(["centres"], centre.centreControllerGetCentres, {
-    enabled,
-  });
-};
 export const useCentreData = ({
   enabled,
   centreId,
@@ -54,7 +49,7 @@ export const useCentreData = ({
     () => centre.centreControllerGet(centreId),
     {
       enabled,
-    },
+    }
   );
 };
 
@@ -87,7 +82,7 @@ export const useGetAllDoctorsForCentreData = ({
       drcommission.doctorCommissionControllerGetAllDoctorsForCentre(centreId),
     {
       enabled,
-    },
+    }
   );
 };
 // export const useCentreData = ({ enabled }: { enabled: boolean }) => {
@@ -96,20 +91,23 @@ export const useGetAllDoctorsForCentreData = ({
 //     })
 // }
 
-export const addAdminToCentre = ({
+export const useAddAdminToCentre = ({
   centreId,
   onSuccess,
+  onError,
 }: {
   centreId: string;
   onSuccess: any;
+  onError: any;
 }) => {
   return useMutation({
     mutationFn: () => centre.centreControllerAddAdmin(centreId),
     onSuccess,
+    onError,
   });
 };
 
-export const connectCenterToDoctor = ({
+export const useConnectCenterToDoctor = ({
   centreId,
   doctorId,
   commissions,

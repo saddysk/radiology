@@ -1,11 +1,10 @@
 "use client";
 
-import { useCentreBookings, useCentreExpenses } from "@/lib/query-hooks";
+import { useCentreBookings } from "@/lib/query-hooks";
 import { useState } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -24,35 +23,45 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import CenteredSpinner from "@/components/ui/centered-spinner";
+import {
+  ArrowDownIcon,
+  ArrowUp01Icon,
+  ArrowUpIcon,
+  ArrowUpLeftIcon,
+} from "lucide-react";
 
 export function Bookings({ centreId }: { centreId: string }) {
-  const [visibleColumns, setVisibleColumns] = useState({
-    bookingId: true,
-    patientId: true,
+  const [visibleColumns, setVisibleColumns] = useState<{
+    [key: string]: boolean;
+  }>({
+    bookingId: false,
+    patientId: false,
     name: true,
-    age: true,
-    gender: true,
-    phone: true,
-    submittedBy: true,
+    age: false,
+    gender: false,
+    phone: false,
+    submittedBy: false,
     consultant: true,
     modality: true,
     investigation: true,
-    amount: true,
-    discount: true,
     remark: true,
-    extraCharge: true,
-    paymentType: true,
+    // amount: false,
+    // discount: false,
+    // extraCharge: false,
+    // paymentType: false,
+    payment: true,
   });
 
   const [loading, setLoading] = useState(false);
-  const { data: dataCentreBookings, isLoading: IsLoadingCentreBookings } =
+  const { data: dataCentreBookings, isLoading: isLoadingCentreBookings } =
     useCentreBookings({
       centreId,
     });
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortField, setSortField] = useState("");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [sortField, setSortField] = useState("createdAt");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   const doesBookingMatchTerm = (booking: BookingDto, term: string) => {
     const loweredTerm = term.toLowerCase();
@@ -61,14 +70,14 @@ export function Bookings({ centreId }: { centreId: string }) {
     for (const column in visibleColumns) {
       if (visibleColumns[column]) {
         // If the column is visible
-        let value = booking[column]; // Get the booking's value for this column
+        let value = booking[column as keyof BookingDto]; // Get the booking's value for this column
 
         // For nested properties (like patient.name, patient.age, etc.)
         if (column === "name" && booking.patient) {
           value = booking.patient.name;
         }
         if (column === "age" && booking.patient) {
-          value = booking.patient.age;
+          value = booking.patient.age.toString();
         }
         if (column === "gender" && booking.patient) {
           value = booking.patient.gender;
@@ -87,18 +96,19 @@ export function Bookings({ centreId }: { centreId: string }) {
     return false; // No match found after checking all visible columns
   };
 
+  if (isLoadingCentreBookings) {
+    return <CenteredSpinner />;
+  }
+
   const filteredBookings: BookingDto[] = dataCentreBookings?.data
     ? dataCentreBookings.data.filter((booking) =>
-        doesBookingMatchTerm(booking, searchTerm),
+        doesBookingMatchTerm(booking, searchTerm)
       )
     : [];
-  const sortedBookings = [...filteredBookings].sort((a, b) =>
-    compareSortValues(a, b, sortField, sortDirection),
+  const sortedBookings = filteredBookings.sort((a, b) =>
+    compareSortValues(a, b, sortField, sortDirection)
   );
-  const handleSortChange = (value: string) => {
-    setSortField(value);
-    setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
-  };
+
   return (
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
       <div className="w-full flex">
@@ -106,12 +116,11 @@ export function Bookings({ centreId }: { centreId: string }) {
           <Button className="bg-white text-black hover:opacity-80 ml-auto">
             Add New Booking
           </Button>
-        </Link>{" "}
+        </Link>
       </div>
       <div className="p-6 my-4 rounded-lg shadow-lg bg-zinc-900">
         <div className="flex justify-between mb-4">
-          {" "}
-          <h3 className="text-xl font-bold  uppercase">All bookings Table</h3>
+          <h3 className="text-xl font-bold">All bookings</h3>
           <Input
             type="text"
             className="w-[300px] border border-zinc-600"
@@ -119,17 +128,32 @@ export function Bookings({ centreId }: { centreId: string }) {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <Select defaultValue={sortField} onValueChange={handleSortChange}>
-            <SelectTrigger className="w-[180px] border-zinc-600">
-              <SelectValue placeholder="Sort By" />
-            </SelectTrigger>
-            <SelectContent className="bg-zinc-900 border-zinc-600">
-              <SelectItem value="name">Sort by Name</SelectItem>
-              <SelectItem value="amount">Sort by Amount</SelectItem>
-              <SelectItem value="createdAt">Sort by Created At</SelectItem>
-              {/* Add other fields if you want */}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-3">
+            <Select defaultValue={sortField} onValueChange={setSortField}>
+              <SelectTrigger className="w-[180px] border-zinc-600">
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent className="bg-zinc-900 border-zinc-600">
+                <SelectItem value="patient.name">Sort by Name</SelectItem>
+                <SelectItem value="createdAt">Sort by Created At</SelectItem>
+                {/* Add other fields if you want */}
+              </SelectContent>
+            </Select>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="border border-zinc-600"
+              onClick={() =>
+                setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
+              }
+            >
+              {sortDirection === "asc" ? (
+                <ArrowUpIcon size={16} />
+              ) : (
+                <ArrowDownIcon size={16} />
+              )}
+            </Button>
+          </div>
           <DropdownMenuCheckboxes
             visibleColumns={visibleColumns}
             setVisibleColumns={setVisibleColumns}
@@ -149,13 +173,14 @@ export function Bookings({ centreId }: { centreId: string }) {
             {visibleColumns.investigation && (
               <TableHead>Investigation</TableHead>
             )}
-            {visibleColumns.amount && <TableHead>Amount</TableHead>}
-            {visibleColumns.discount && <TableHead>Discount</TableHead>}
             {visibleColumns.remark && <TableHead>Remark</TableHead>}
+            {/* {visibleColumns.amount && <TableHead>Amount</TableHead>}
+            {visibleColumns.discount && <TableHead>Discount</TableHead>}
             {visibleColumns.extraCharge && <TableHead>Extra Charges</TableHead>}
-            {visibleColumns.paymentType && <TableHead>Payment Type</TableHead>}
+            {visibleColumns.paymentType && <TableHead>Payment Type</TableHead>} */}
+            {visibleColumns.payment && <TableHead>Payment</TableHead>}
 
-            <TableHead className="text-right">Options</TableHead>
+            <TableHead className="text-right">More</TableHead>
           </TableHeader>
           <TableBody>
             {sortedBookings?.map((booking, index) => (
@@ -182,7 +207,7 @@ export function Bookings({ centreId }: { centreId: string }) {
                   <TableCell>{booking.submittedBy}</TableCell>
                 )}
                 {visibleColumns.consultant && (
-                  <TableCell>{booking.consultant}</TableCell>
+                  <TableCell>{booking.consultantName}</TableCell>
                 )}
                 {visibleColumns.modality && (
                   <TableCell>{booking.modality}</TableCell>
@@ -190,28 +215,30 @@ export function Bookings({ centreId }: { centreId: string }) {
                 {visibleColumns.investigation && (
                   <TableCell>{booking.investigation}</TableCell>
                 )}
-                {visibleColumns.amount && (
+                {visibleColumns.remark && (
+                  <TableCell>{booking.remark || "-"}</TableCell>
+                )}
+                {/* {visibleColumns.amount && (
                   <TableCell>{booking.amount}</TableCell>
                 )}
                 {visibleColumns.discount && (
                   <TableCell>{booking.discount}</TableCell>
-                )}
-                {visibleColumns.remark && (
-                  <TableCell>{booking.remark}</TableCell>
                 )}
                 {visibleColumns.extraCharge && (
                   <TableCell>{booking.extraCharge}</TableCell>
                 )}
                 {visibleColumns.paymentType && (
                   <TableCell>{booking.paymentType}</TableCell>
+                )} */}
+                {visibleColumns.payment && (
+                  <TableCell>
+                    {booking.payment?.map((payment) => payment.amount)}
+                  </TableCell>
                 )}
 
                 <TableCell className="space-x-4 text-right">
                   <Button size="sm" variant="outline">
                     Edit
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    Delete
                   </Button>
                 </TableCell>
               </TableRow>

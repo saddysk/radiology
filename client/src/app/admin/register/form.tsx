@@ -17,7 +17,6 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { auth } from "@/app/api";
 import { CreateUserDto, UserRole } from "@/app/api/data-contracts";
-import { useAllCentresData } from "@/lib/query-hooks";
 
 const createUserSchema = z.object({
   name: z.string().min(4, "Name needs to be atleast 4 characters long!"),

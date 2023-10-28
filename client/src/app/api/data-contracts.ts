@@ -96,6 +96,7 @@ export interface CentreDto {
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   id: string;
+  centreNumber: string;
   /** @format date-time */
   createdAt: string;
   name: string;
@@ -147,6 +148,8 @@ export interface ExpenseDto {
   paymentMethod: string;
   remark?: string;
 }
+
+export type Expense = object;
 
 export interface InvestigationDto {
   type: string;
@@ -278,6 +281,15 @@ export interface CreatePatientDto {
   abhaId?: string;
 }
 
+export interface CreatePaymentDto {
+  /** @example 1 */
+  amount: number;
+  /** @example 1 */
+  discount?: number;
+  extraCharge?: string;
+  paymentType: string;
+}
+
 export interface CreateBookingDto {
   /**
    * @format uuid
@@ -291,19 +303,40 @@ export interface CreateBookingDto {
   consultant: string;
   modality: string;
   investigation: string;
-  /** @example 1 */
-  amount: number;
-  /** @example 1 */
-  discount?: number;
   remark?: string;
-  extraCharge?: string;
-  paymentType: string;
   /**
    * @format uuid
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   patientId?: string;
   patient?: CreatePatientDto;
+  payment: CreatePaymentDto[];
+}
+
+export interface BookingRecordDto {
+  type: string;
+  url: string;
+}
+
+export interface PaymentDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
+  /** @format date-time */
+  createdAt: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  bookingId: string;
+  /** @example 1 */
+  amount: number;
+  /** @example 1 */
+  discount?: number;
+  extraCharge?: string;
+  paymentType: string;
 }
 
 export interface PatientDto {
@@ -312,6 +345,7 @@ export interface PatientDto {
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   id: string;
+  patientNumber: string;
   /** @format date-time */
   createdAt: string;
   name: string;
@@ -323,11 +357,6 @@ export interface PatientDto {
   address?: string;
   abhaId?: string;
   booking?: any[][];
-}
-
-export interface BookingRecordDto {
-  type: string;
-  url: string;
 }
 
 export interface BookingDto {
@@ -360,18 +389,16 @@ export interface BookingDto {
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   consultant: string;
+  consultantName: string;
   modality: string;
   investigation: string;
-  /** @example 1 */
-  amount: number;
-  /** @example 1 */
-  discount?: number;
   remark?: string;
-  extraCharge?: string;
-  paymentType: string;
-  patient?: PatientDto;
   record?: BookingRecordDto;
+  payment?: PaymentDto[];
+  patient?: PatientDto;
 }
+
+export type Booking = object;
 
 export enum RequestType {
   Expense = "expense",
@@ -414,15 +441,10 @@ export interface UpdateBookingDto {
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   consultant: string;
+  consultantName: string;
   modality: string;
   investigation: string;
-  /** @example 1 */
-  amount: number;
-  /** @example 1 */
-  discount?: number;
   remark?: string;
-  extraCharge?: string;
-  paymentType: string;
   record?: BookingRecordDto;
 }
 

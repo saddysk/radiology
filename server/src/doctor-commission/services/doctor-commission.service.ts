@@ -37,9 +37,7 @@ export class DoctorCommissionService {
 
     const doctorCommissionExists = await this.get(data.centreId, data.doctorId);
     if (doctorCommissionExists.length > 0) {
-      throw new BadRequestException(
-        `Doctor commission already exists for doctor: ${data.doctorId} and centre: ${data.centreId}`,
-      );
+      throw new BadRequestException('Doctor commission already exists');
     }
 
     const doctor = await this.userRepository.findOne({

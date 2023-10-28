@@ -25,7 +25,7 @@ const pemKeys = makeValidator((input: string): string => {
 
 const env = cleanEnv(process.env, {
   HOST: str({ default: undefined }),
-  PORT: port({ default: 3001 }),
+  PORT: port({ default: 3010 }),
   API_URL: str({ default: '/' }),
   FRONTEND_URL: str({ default: '/' }),
 

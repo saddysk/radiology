@@ -58,8 +58,12 @@ export class CentreService {
 
     await this.centreRepository.save(centre, { reload: true });
 
+    const updatedCentre = await this.centreRepository.generateCentreNumber(
+      centre,
+    );
+
     if (user.role === UserRole.Admin) {
-      await this.addAdminToCentre(user.id, centre.id);
+      await this.addAdminToCentre(user.id, updatedCentre.centreNumber);
     } else if (user.role === UserRole.Receptionist) {
       user.centreId = centre.id;
 
@@ -74,7 +78,7 @@ export class CentreService {
 
   async addAdminToCentre(
     userId: string,
-    centreId: string,
+    centreNumber: string,
   ): Promise<CentreAdmin> {
     const user = await this.userRepository.findOneBy({ id: userId });
 
@@ -84,9 +88,26 @@ export class CentreService {
       );
     }
 
-    const centreAdmin = new CentreAdmin();
+    const centre = await this.centreRepository.findOneBy({ centreNumber });
 
-    centreAdmin.centreId = centreId;
+    if (centre == null) {
+      throw new BadRequestException(
+        `Centre not found for centre number: ${centreNumber}, user id: ${userId}`,
+      );
+    }
+
+    let centreAdmin = await this.centreAdminRepository.findOneBy({
+      userId,
+      centreId: centre.id,
+    });
+
+    if (centreAdmin != null) {
+      throw new BadRequestException('Admin already added to the centre');
+    }
+
+    centreAdmin = new CentreAdmin();
+
+    centreAdmin.centreId = centre.id;
     centreAdmin.userId = user.id;
 
     await this.centreAdminRepository.save(centreAdmin, { reload: true });

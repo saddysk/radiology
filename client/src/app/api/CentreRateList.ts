@@ -9,17 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import {
-  CreateRateListDto,
-  ErrorDto,
-  RateListDto,
-  UpdateRateListDto,
-} from "./data-contracts";
+import { CreateRateListDto, ErrorDto, RateListDto, SuccessDto, UpdateRateListDto } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class CentreRateList<
-  SecurityDataType = unknown,
-> extends HttpClient<SecurityDataType> {
+export class CentreRateList<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -27,10 +20,7 @@ export class CentreRateList<
    * @name RateListControllerCreate
    * @request POST:/api/centre/rate-list
    */
-  rateListControllerCreate = (
-    data: CreateRateListDto,
-    params: RequestParams = {},
-  ) =>
+  rateListControllerCreate = (data: CreateRateListDto, params: RequestParams = {}) =>
     this.request<RateListDto[], ErrorDto>({
       path: `/api/centre/rate-list`,
       method: "POST",
@@ -46,10 +36,7 @@ export class CentreRateList<
    * @name RateListControllerUpdate
    * @request PUT:/api/centre/rate-list
    */
-  rateListControllerUpdate = (
-    data: UpdateRateListDto,
-    params: RequestParams = {},
-  ) =>
+  rateListControllerUpdate = (data: UpdateRateListDto, params: RequestParams = {}) =>
     this.request<RateListDto, ErrorDto>({
       path: `/api/centre/rate-list`,
       method: "PUT",
@@ -83,6 +70,20 @@ export class CentreRateList<
     this.request<RateListDto, ErrorDto>({
       path: `/api/centre/rate-list/${id}`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Centre Rate List
+   * @name RateListControllerDelete
+   * @request DELETE:/api/centre/rate-list/{id}
+   */
+  rateListControllerDelete = (id: string, params: RequestParams = {}) =>
+    this.request<SuccessDto, ErrorDto>({
+      path: `/api/centre/rate-list/${id}`,
+      method: "DELETE",
       format: "json",
       ...params,
     });

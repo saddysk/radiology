@@ -48,6 +48,9 @@ export class CentreDto {
   @UUIDField()
   id: string;
 
+  @StringField()
+  centreNumber: string;
+
   @DateField()
   createdAt: Date;
 
@@ -69,6 +72,7 @@ export class CentreDto {
     }
 
     this.id = centre.id;
+    this.centreNumber = centre.centreNumber;
     this.createdAt = centre.createdAt;
     this.name = centre.name;
     this.email = centre.email;

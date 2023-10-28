@@ -7,6 +7,12 @@ import { CentrePr } from './centre-pr.entity';
 
 @Entity()
 export class Centre extends AbstractEntity {
+  @Column({
+    nullable: true,
+    unique: true,
+  })
+  centreNumber?: string;
+
   @Column()
   name: string;
 

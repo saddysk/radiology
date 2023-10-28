@@ -9,12 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import { CreateExpenseDto, ErrorDto, ExpenseDto } from "./data-contracts";
+import { CreateExpenseDto, ErrorDto, Expense, ExpenseDto } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class CentreExpense<
-  SecurityDataType = unknown,
-> extends HttpClient<SecurityDataType> {
+export class CentreExpense<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -22,13 +20,26 @@ export class CentreExpense<
    * @name ExpenseControllerCreate
    * @request POST:/api/centre/expense
    */
-  expenseControllerCreate = (
-    data: CreateExpenseDto,
-    params: RequestParams = {},
-  ) =>
+  expenseControllerCreate = (data: CreateExpenseDto, params: RequestParams = {}) =>
     this.request<ExpenseDto, ErrorDto>({
       path: `/api/centre/expense`,
       method: "POST",
+      body: data,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Centre Expense
+   * @name ExpenseControllerUpdate
+   * @request PUT:/api/centre/expense
+   */
+  expenseControllerUpdate = (data: Expense, params: RequestParams = {}) =>
+    this.request<ExpenseDto, ErrorDto>({
+      path: `/api/centre/expense`,
+      method: "PUT",
       body: data,
       type: ContentType.Json,
       format: "json",
@@ -55,11 +66,7 @@ export class CentreExpense<
    * @name ExpenseControllerGet
    * @request GET:/api/centre/expense/{centreId}/{id}
    */
-  expenseControllerGet = (
-    id: string,
-    centreId: string,
-    params: RequestParams = {},
-  ) =>
+  expenseControllerGet = (id: string, centreId: string, params: RequestParams = {}) =>
     this.request<ExpenseDto, ErrorDto>({
       path: `/api/centre/expense/${centreId}/${id}`,
       method: "GET",

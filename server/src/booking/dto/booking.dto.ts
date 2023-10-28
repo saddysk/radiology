@@ -12,6 +12,7 @@ import { Booking } from 'src/database/entities/booking.entity';
 import { IBookingRecord } from 'src/database/interfaces/booking.interface';
 import { CreatePatientDto, PatientDto } from 'src/patient/dto/patient.dto';
 import { CreatePaymentDto, PaymentDto } from './payment.dto';
+import { AuthService } from 'src/auth/services/auth.service';
 
 export class BookingRecordDto {
   @StringField()
@@ -53,6 +54,9 @@ export class BookingDto {
   consultant: string;
 
   @StringField()
+  consultantName: string;
+
+  @StringField()
   modality: string;
 
   @StringField()
@@ -90,7 +94,7 @@ export class BookingDto {
     this.record = new BookingRecordDto(booking.record);
   }
 
-  static async toDto(booking: Booking) {
+  static async toDto(booking: Booking, authService?: AuthService) {
     const dto = new BookingDto(booking);
 
     dto.patient = new PatientDto(await booking.patient);
@@ -99,6 +103,11 @@ export class BookingDto {
     dto.payment = await Promise.all(
       payments.map((payment) => new PaymentDto(payment)),
     );
+
+    if (authService) {
+      const consultant = await authService.get(booking.consultant);
+      dto.consultantName = consultant.name;
+    }
 
     return dto;
   }

@@ -15,6 +15,9 @@ export class PatientDto {
   @UUIDField()
   id: string;
 
+  @StringField()
+  patientNumber: string;
+
   @DateField()
   createdAt: Date;
 
@@ -50,6 +53,7 @@ export class PatientDto {
     }
 
     this.id = patient.id;
+    this.patientNumber = patient.patientNumber;
     this.createdAt = patient.createdAt;
     this.name = patient.name;
     this.age = patient.age;

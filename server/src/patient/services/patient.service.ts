@@ -2,25 +2,24 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { Patient } from 'src/database/entities/patient.entity';
 import { CreatePatientDto, UpdatePatientDto } from '../dto/patient.dto';
 import { PatientRepository } from '../repositories/patient.repository';
-import { UserRepository } from 'src/auth/repositories/user.repository';
-import { UserRole } from 'src/database/entities/user.entity';
+import { CentreService } from 'src/centre/services/centre.service';
 
 @Injectable()
 export class PatientService {
   constructor(
     private readonly patientRepository: PatientRepository,
-    private readonly userRepository: UserRepository,
+    private readonly centreService: CentreService,
   ) {}
 
-  async create(userId: string, data: CreatePatientDto): Promise<Patient> {
-    const user = await this.userRepository.findOneBy({
-      id: userId,
-      role: UserRole.Receptionist,
-    });
-    if (user == null) {
-      throw new BadRequestException(
-        `Inavlid user role user id: ${userId}. User should be ${UserRole.Receptionist} to add patient.`,
-      );
+  async create(
+    userId: string,
+    centreId: string,
+    data: CreatePatientDto,
+  ): Promise<Patient> {
+    const centre = await this.centreService.get(userId, centreId);
+
+    if (centre == null) {
+      throw new BadRequestException(`Invalid centre.`);
     }
 
     let patient = await this.patientRepository.findOne({

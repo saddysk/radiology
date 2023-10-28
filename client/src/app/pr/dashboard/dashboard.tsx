@@ -15,21 +15,17 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { auth, centre, drcommission } from "@/app/api";
+import { auth, drcommission } from "@/app/api";
 import {
-  CreateCentreDto,
   CreateDoctorCommissionDto,
   CreateUserDto,
-  DoctorCommissionDto,
   UserRole,
 } from "@/app/api/data-contracts";
 import { Card } from "@/components/ui/card";
 import {
-  addAdminToCentre,
-  connectCenterToDoctor,
-  useAllCentresData,
+  useAllConnectedCentresData,
   useAllDoctorsData,
 } from "@/lib/query-hooks";
 import CenteredSpinner from "@/components/ui/centered-spinner";
@@ -88,7 +84,6 @@ export function PRDashboard() {
     },
   });
 
-  console.log(addDoctorToCentreForm.formState.errors);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -99,7 +94,6 @@ export function PRDashboard() {
     setLoading(true);
     try {
       const response = await auth.authControllerRegister(data);
-      console.log(response);
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
@@ -114,11 +108,13 @@ export function PRDashboard() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "Something went wrong",
+        description:
+          error.response.data.statuCode === 400
+            ? error.response.data.message
+            : "Something went wrong",
         variant: "destructive",
       });
-      //localStorage.removeItem("x-session-token");
-      //router.push("/login");
+
       setLoading(false);
     } finally {
       setLoading(false);
@@ -126,12 +122,10 @@ export function PRDashboard() {
   }
 
   async function addDoctorToCentreSubmit(data: CreateDoctorCommissionDto) {
-    console.log("here");
-
     setLoading(true);
     try {
       const response = await drcommission.doctorCommissionControllerAdd(data);
-      console.log(response);
+
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
@@ -143,8 +137,11 @@ export function PRDashboard() {
       }
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: error.message || "Something went wrong",
+        title: "Error!",
+        description:
+          error.response.data.statusCode === 400
+            ? error.response.data.message
+            : "Can not add connect doctor to the centre",
         variant: "destructive",
       });
       //localStorage.removeItem("x-session-token");
@@ -155,14 +152,16 @@ export function PRDashboard() {
     }
   }
   const [selectedFlow, setSelectedFlow] = useState<"create" | "join" | null>(
-    null,
+    null
   );
 
-  const { data: dataAllCentres, isLoading: isLoadingAllCentres } =
-    useAllCentresData({ enabled: selectedFlow == "join" });
+  // const { data: dataAllCentres, isLoading: isLoadingAllCentres } =
+  //   useAllCentresData({ enabled: selectedFlow == "join" });
 
   const { data: dataAllDoctors, isLoading: isLoadingAllDoctors } =
     useAllDoctorsData({ enabled: selectedFlow == "join" });
+  const { data: dataAllCentres, isLoading: isLoadingAllCentres } =
+    useAllConnectedCentresData({ enabled: selectedFlow == "join" });
 
   return (
     <Card className="flex flex-col items-center justify-center py-28 space-y-6 m-4 h-full rounded-md bg-zinc-950 border-zinc-600">
@@ -274,7 +273,7 @@ export function PRDashboard() {
           <Form {...addDoctorToCentreForm}>
             <form
               onSubmit={addDoctorToCentreForm.handleSubmit(
-                addDoctorToCentreSubmit,
+                addDoctorToCentreSubmit
               )}
               className="space-y-8 sm:w-1/2 px-4 w-full"
             >
@@ -365,7 +364,7 @@ export function PRDashboard() {
                                     {...field}
                                     onChange={(e) => {
                                       const numberValue = Number(
-                                        e.target.value,
+                                        e.target.value
                                       );
                                       field.onChange(numberValue);
                                     }}

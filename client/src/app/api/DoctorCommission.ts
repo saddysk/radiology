@@ -9,17 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import {
-  CreateDoctorCommissionDto,
-  DoctorCommissionDto,
-  ErrorDto,
-  UpdateDoctorCommissionDto,
-} from "./data-contracts";
+import { CreateDoctorCommissionDto, DoctorCommissionDto, ErrorDto, UpdateDoctorCommissionDto } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
-export class DoctorCommission<
-  SecurityDataType = unknown,
-> extends HttpClient<SecurityDataType> {
+export class DoctorCommission<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
   /**
    * No description
    *
@@ -27,10 +20,7 @@ export class DoctorCommission<
    * @name DoctorCommissionControllerAdd
    * @request POST:/api/doctor-commission
    */
-  doctorCommissionControllerAdd = (
-    data: CreateDoctorCommissionDto,
-    params: RequestParams = {},
-  ) =>
+  doctorCommissionControllerAdd = (data: CreateDoctorCommissionDto, params: RequestParams = {}) =>
     this.request<DoctorCommissionDto[], ErrorDto>({
       path: `/api/doctor-commission`,
       method: "POST",
@@ -46,10 +36,7 @@ export class DoctorCommission<
    * @name DoctorCommissionControllerUpdate
    * @request PUT:/api/doctor-commission
    */
-  doctorCommissionControllerUpdate = (
-    data: UpdateDoctorCommissionDto,
-    params: RequestParams = {},
-  ) =>
+  doctorCommissionControllerUpdate = (data: UpdateDoctorCommissionDto, params: RequestParams = {}) =>
     this.request<DoctorCommissionDto, ErrorDto>({
       path: `/api/doctor-commission`,
       method: "PUT",
@@ -65,10 +52,7 @@ export class DoctorCommission<
    * @name DoctorCommissionControllerGetById
    * @request GET:/api/doctor-commission/{id}
    */
-  doctorCommissionControllerGetById = (
-    id: string,
-    params: RequestParams = {},
-  ) =>
+  doctorCommissionControllerGetById = (id: string, params: RequestParams = {}) =>
     this.request<DoctorCommissionDto, ErrorDto>({
       path: `/api/doctor-commission/${id}`,
       method: "GET",
@@ -82,10 +66,7 @@ export class DoctorCommission<
    * @name DoctorCommissionControllerGetAllDoctorsForCentre
    * @request GET:/api/doctor-commission/centre/{centreId}/all
    */
-  doctorCommissionControllerGetAllDoctorsForCentre = (
-    centreId: string,
-    params: RequestParams = {},
-  ) =>
+  doctorCommissionControllerGetAllDoctorsForCentre = (centreId: string, params: RequestParams = {}) =>
     this.request<DoctorCommissionDto[], ErrorDto>({
       path: `/api/doctor-commission/centre/${centreId}/all`,
       method: "GET",
@@ -99,9 +80,7 @@ export class DoctorCommission<
    * @name DoctorCommissionControllerGetAllCentresForDoctor
    * @request GET:/api/doctor-commission/centres-by-doctor
    */
-  doctorCommissionControllerGetAllCentresForDoctor = (
-    params: RequestParams = {},
-  ) =>
+  doctorCommissionControllerGetAllCentresForDoctor = (params: RequestParams = {}) =>
     this.request<DoctorCommissionDto[], ErrorDto>({
       path: `/api/doctor-commission/centres-by-doctor`,
       method: "GET",
@@ -115,11 +94,7 @@ export class DoctorCommission<
    * @name DoctorCommissionControllerGet
    * @request GET:/api/doctor-commission/{centreId}/doctor/{doctorId}
    */
-  doctorCommissionControllerGet = (
-    centreId: string,
-    doctorId: string,
-    params: RequestParams = {},
-  ) =>
+  doctorCommissionControllerGet = (centreId: string, doctorId: string, params: RequestParams = {}) =>
     this.request<DoctorCommissionDto[], ErrorDto>({
       path: `/api/doctor-commission/${centreId}/doctor/${doctorId}`,
       method: "GET",
