@@ -18,6 +18,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  useGetAllDoctorsForCentreData,
+  useGetRateList,
+} from "@/lib/query-hooks";
 
 const bookingSchema = z.object({
   //user
@@ -51,6 +62,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
   const { toast } = useToast();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [selectedModality, setSelectedModality] = useState("");
 
   const addBookingForm = useForm<CreateBookingDto>({
     //resolver: zodResolver(bookingSchema),
@@ -79,12 +91,53 @@ export function AddBookings({ centreId }: { centreId: string }) {
       ],
     },
   });
+  console.log(addBookingForm, addBookingForm.getValues());
 
+  const { data: dataRateList, isLoading: IsLoadingRateList } = useGetRateList({
+    centreId,
+  });
+  const {
+    data: dataAllDoctorsForCentre,
+    isLoading: isLoadingAllDoctorsForCentre,
+  } = useGetAllDoctorsForCentreData({
+    centreId,
+    enabled: true,
+  });
+  function aggregateDoctorData(data = []) {
+    let result = {};
+
+    for (let entry of data) {
+      const doctorId = entry.doctorId;
+      const modality = entry.modality;
+      const amount = entry.amount;
+
+      // If doctor doesn't exist in the result, add them
+      if (!result[doctorId]) {
+        result[doctorId] = {
+          doctor: entry.doctor,
+        };
+      }
+
+      // Convert modality names to proper case for the output format
+      const modalityName = modality.charAt(0).toUpperCase() + modality.slice(1);
+
+      // Add the modality and amount to the doctor entry
+      result[doctorId][modalityName] = amount;
+    }
+
+    // Convert the result to an array format
+    return Object.values(result);
+  }
+
+  const doctors: any = aggregateDoctorData(dataAllDoctorsForCentre?.data);
+  console.log(doctors, "docs");
   async function addBookingSubmit(data: CreateBookingDto) {
     setLoading(true);
     try {
       const response = await booking.bookingControllerCreate({
         ...data,
+        modality: dataRateList?.data.find((e) => e.id == data.modality)
+          ?.modality!,
         centreId,
       });
 
@@ -112,7 +165,13 @@ export function AddBookings({ centreId }: { centreId: string }) {
       setLoading(false);
     }
   }
-
+  {
+    console.log(
+      addBookingForm.getValues("modality"),
+      "modal",
+      addBookingForm.formState.errors
+    );
+  }
   return (
     <div className="flex flex-col items-center w-full h-[85vh] p-8 overflow-y-scroll">
       <h1 className="text-4xl text-center opacity-90 items-center space-x-4 mb-6">
@@ -152,10 +211,13 @@ export function AddBookings({ centreId }: { centreId: string }) {
                       placeholder="Age"
                       {...field}
                       onChange={(e) => {
-                        const numberValue = Number(e.target.value);
-                        field.onChange(numberValue);
+                        const value = e.target.value;
+                        // Use a regular expression to check if the input value is numeric
+                        if (/^\d*\.?\d*$/.test(value)) {
+                          const numberValue = Number(value);
+                          field.onChange(numberValue);
+                        }
                       }}
-                      type="number"
                     />
                   </FormControl>
                   <FormMessage />
@@ -198,7 +260,11 @@ export function AddBookings({ centreId }: { centreId: string }) {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Email Address" {...field} />
+                    <Input
+                      placeholder="Email Address"
+                      type="email"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -212,7 +278,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input placeholder="Address" {...field} />
+                    <Input placeholder="Address" type="address" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -245,7 +311,26 @@ export function AddBookings({ centreId }: { centreId: string }) {
                 <FormItem>
                   <FormLabel>Consultant</FormLabel>
                   <FormControl>
-                    <Input placeholder="Consultant" {...field} />
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value); // This should update the form state
+                        setSelectedModality("");
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger className="w-full border border-zinc-600 shadow-none">
+                        <SelectValue placeholder="Select a consultant" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-zinc-900 border-zinc-600">
+                        {doctors.map((doctor: any, i: number) => {
+                          return (
+                            <SelectItem value={doctor?.doctor?.id} key={i}>
+                              {doctor?.doctor?.name.toUpperCase()}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -260,7 +345,31 @@ export function AddBookings({ centreId }: { centreId: string }) {
                 <FormItem>
                   <FormLabel>Modality</FormLabel>
                   <FormControl>
-                    <Input placeholder="Modality" {...field} />
+                    <Select
+                      onValueChange={(value) => {
+                        console.log("Selected Value: ", value);
+                        field.onChange(value); // This should update the form state
+                        setSelectedModality(value);
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger className="w-full border border-zinc-600 shadow-none">
+                        <SelectValue placeholder="Select a Modality" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-zinc-900 border-zinc-600">
+                        {dataRateList?.data
+                          .filter(
+                            (ratelist) => ratelist.investigation.length !== 0
+                          )
+                          .map((rateList, i) => {
+                            return (
+                              <SelectItem value={rateList.id} key={rateList.id}>
+                                {rateList.modality.toUpperCase()}
+                              </SelectItem>
+                            );
+                          })}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -310,10 +419,13 @@ export function AddBookings({ centreId }: { centreId: string }) {
                       placeholder="Amount"
                       {...field}
                       onChange={(e) => {
-                        const numberValue = Number(e.target.value);
-                        field.onChange(numberValue);
+                        const value = e.target.value;
+                        // Use a regular expression to check if the input value is numeric
+                        if (/^\d*\.?\d*$/.test(value)) {
+                          const numberValue = Number(value);
+                          field.onChange(numberValue);
+                        }
                       }}
-                      type="number"
                     />
                   </FormControl>
                   <FormMessage />
@@ -332,8 +444,12 @@ export function AddBookings({ centreId }: { centreId: string }) {
                       placeholder="Discount"
                       {...field}
                       onChange={(e) => {
-                        const numberValue = Number(e.target.value);
-                        field.onChange(numberValue);
+                        const value = e.target.value;
+                        // Use a regular expression to check if the input value is numeric
+                        if (/^\d*\.?\d*$/.test(value)) {
+                          const numberValue = Number(value);
+                          field.onChange(numberValue);
+                        }
                       }}
                       type="number"
                     />
@@ -345,7 +461,25 @@ export function AddBookings({ centreId }: { centreId: string }) {
 
             <FormField
               control={addBookingForm.control}
-              name={`payment.${0}.extraCharge`}
+              name="remark"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Remarks</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      className="border-zinc-600"
+                      placeholder="Remarks"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addBookingForm.control}
+              name="extraCharge"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Extra Charge</FormLabel>
@@ -353,7 +487,14 @@ export function AddBookings({ centreId }: { centreId: string }) {
                     <Input
                       placeholder="Extra Charge"
                       {...field}
-                      type="number"
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Use a regular expression to check if the input value is numeric
+                        if (/^\d*\.?\d*$/.test(value)) {
+                          const numberValue = Number(value);
+                          field.onChange(numberValue);
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

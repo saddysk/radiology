@@ -60,7 +60,7 @@ export function DoctorsList({ centreId }: { centreId: string }) {
     return Object.values(result);
   }
 
-  const doctor = aggregateDoctorData(dataAllDoctorsForCentre?.data);
+  const doctors = aggregateDoctorData(dataAllDoctorsForCentre?.data);
   return (
     <div className="w-full p-8 overflow-y-scroll">
       <div className="p-6 my-4 rounded-lg shadow-lg bg-zinc-900">
@@ -85,13 +85,13 @@ export function DoctorsList({ centreId }: { centreId: string }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {doctor?.map((doctor, index) => (
+            {doctors?.map((doctor, index) => (
               <TableRow className="border-b-zinc-600">
                 <TableCell className="font-medium">{index + 1}</TableCell>
                 <TableCell>{doctor?.doctor?.name}</TableCell>
-                <TableCell>₹{doctor["Ct-scan"]}</TableCell>
-                <TableCell>₹{doctor["Usg"]}</TableCell>
-                <TableCell>₹{doctor["X-ray"]}</TableCell>{" "}
+                <TableCell>{doctor["Ct-scan"]}</TableCell>
+                <TableCell>{doctor["Usg"]}</TableCell>
+                <TableCell>{doctor["X-ray"]}</TableCell>{" "}
                 {/* <TableCell className="text-right">{item.rate}</TableCell>
               <TableCell className="text-right">{item.film_count}</TableCell> */}
               </TableRow>
