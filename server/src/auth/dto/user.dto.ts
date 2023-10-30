@@ -1,10 +1,12 @@
 import { PickType } from '@nestjs/swagger';
 import {
+  BooleanFieldOptional,
   EmailField,
   EnumField,
   ObjectField,
   PasswordField,
   StringField,
+  StringFieldOptional,
   UUIDField,
   UUIDFieldOptional,
 } from 'libs/decorators';
@@ -30,6 +32,9 @@ export class UserDto {
   @EnumField(() => UserRole)
   role: UserRole;
 
+  @BooleanFieldOptional()
+  isFirstLogin?: boolean;
+
   constructor(user?: User) {
     if (user == null) {
       return;
@@ -40,6 +45,7 @@ export class UserDto {
     this.email = user.email;
     this.password = user.password;
     this.role = user.role;
+    this.isFirstLogin = user.isFirstLogin;
     this.centreId = user.centreId;
   }
 }
@@ -66,3 +72,13 @@ export class CreateUserDto extends PickType(UserDto, [
 ]) {}
 
 export class LoginUserDto extends PickType(UserDto, ['email', 'password']) {}
+
+export class ResetPasswordDto extends PickType(UserDto, ['email']) {
+  @PasswordField()
+  newPassword: string;
+}
+
+export class UpdateUserDto {
+  @StringFieldOptional()
+  name?: string;
+}

@@ -32,6 +32,9 @@ export class User extends AbstractEntity {
   })
   role: UserRole;
 
+  @Column({ default: true })
+  isFirstLogin: boolean;
+
   @Column({ type: 'uuid', nullable: true })
   centreId?: string;
 

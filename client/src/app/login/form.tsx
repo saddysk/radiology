@@ -65,12 +65,20 @@ export function LoginForm() {
         }
       }
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Something went wrong",
-        variant: "destructive",
-      });
-      setLoading(false);
+      if (error.response.status === 423) {
+        router.push(`/reset-password/${error.response.data.message}`);
+        toast({
+          title: "First time login",
+          description: "Please reset password for the first time",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: error.message || "Something went wrong",
+          variant: "destructive",
+        });
+        setLoading(false);
+      }
     } finally {
       setLoading(false);
     }
@@ -80,7 +88,7 @@ export function LoginForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 sm:w-1/2 px-4"
+        className="space-y-8 sm:w-1/3 px-4"
       >
         <FormField
           control={form.control}

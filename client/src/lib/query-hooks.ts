@@ -37,6 +37,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 //     })
 // }
 
+export const useGetUserById = (id: string) => {
+  return useQuery(["get-user-by-id", id], () => auth.authControllerGetById(id));
+};
+
 export const useCentreData = ({
   enabled,
   centreId,

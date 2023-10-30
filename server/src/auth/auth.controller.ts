@@ -1,14 +1,17 @@
-import { Body, Controller, Req } from '@nestjs/common';
+import { Body, Controller, Param, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import {
   DeleteRoute,
   GetRoute,
   PostRoute,
+  PutRoute,
 } from 'libs/decorators/route.decorators';
 import {
   AuthUserDto,
   CreateUserDto,
   LoginUserDto,
+  ResetPasswordDto,
+  UpdateUserDto,
   UserDto,
 } from './dto/user.dto';
 import { AuthService } from './services/auth.service';
@@ -31,14 +34,24 @@ export class AuthController {
   @GetRoute('', {
     Ok: UserDto,
   })
+  @UseAuthGuard(AuthGuardOption.BEARER)
   async get(@Req() request: any): Promise<UserDto> {
     const user = await this.authService.get(request.user.user.id);
+    return new UserDto(user);
+  }
+
+  @GetRoute(':id', {
+    Ok: UserDto,
+  })
+  async getById(@Param('id') id: string): Promise<UserDto> {
+    const user = await this.authService.get(id);
     return new UserDto(user);
   }
 
   @GetRoute('all-doctors', {
     Ok: { dtoType: 'ArrayDto', type: UserDto },
   })
+  @UseAuthGuard(AuthGuardOption.BEARER)
   async getDoctors(): Promise<UserDto[]> {
     const doctors = await this.authService.getDoctors();
     return doctors.map((doctor) => new UserDto(doctor));
@@ -49,6 +62,26 @@ export class AuthController {
   })
   async login(@Body() data: LoginUserDto): Promise<AuthUserDto> {
     const authUser = await this.authService.login(data);
+    return new AuthUserDto(authUser);
+  }
+
+  @PutRoute('', {
+    Ok: UserDto,
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async update(
+    @Req() request: any,
+    @Body() data: UpdateUserDto,
+  ): Promise<UserDto> {
+    const user = await this.authService.update(request.user.user.id, data);
+    return new UserDto(user);
+  }
+
+  @PutRoute('reset-password', {
+    Ok: AuthUserDto,
+  })
+  async resetPassword(@Body() data: ResetPasswordDto): Promise<AuthUserDto> {
+    const authUser = await this.authService.resetPassword(data);
     return new AuthUserDto(authUser);
   }
 

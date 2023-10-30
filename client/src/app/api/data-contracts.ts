@@ -45,6 +45,7 @@ export interface UserDto {
    */
   centreId?: string;
   role: UserRole;
+  isFirstLogin?: boolean;
 }
 
 export interface AuthUserDto {
@@ -66,6 +67,16 @@ export interface LoginUserDto {
   email: string;
   /** @format ^[\d!#$%&*@A-Z^a-z]*$ */
   password: string;
+}
+
+export interface UpdateUserDto {
+  name?: string;
+}
+
+export interface ResetPasswordDto {
+  email: string;
+  /** @format ^[\d!#$%&*@A-Z^a-z]*$ */
+  newPassword: string;
 }
 
 export interface SuccessDto {

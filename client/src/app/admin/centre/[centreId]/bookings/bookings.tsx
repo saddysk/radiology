@@ -24,12 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import CenteredSpinner from "@/components/ui/centered-spinner";
-import {
-  ArrowDownIcon,
-  ArrowUp01Icon,
-  ArrowUpIcon,
-  ArrowUpLeftIcon,
-} from "lucide-react";
+import { ArrowDownIcon, ArrowUpIcon, IndianRupeeIcon } from "lucide-react";
 
 export function Bookings({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState<{
@@ -45,11 +40,7 @@ export function Bookings({ centreId }: { centreId: string }) {
     consultant: true,
     modality: true,
     investigation: true,
-    remark: true,
-    // amount: false,
-    // discount: false,
-    // extraCharge: false,
-    // paymentType: false,
+    remark: false,
     payment: true,
   });
 
@@ -174,10 +165,6 @@ export function Bookings({ centreId }: { centreId: string }) {
               <TableHead>Investigation</TableHead>
             )}
             {visibleColumns.remark && <TableHead>Remark</TableHead>}
-            {/* {visibleColumns.amount && <TableHead>Amount</TableHead>}
-            {visibleColumns.discount && <TableHead>Discount</TableHead>}
-            {visibleColumns.extraCharge && <TableHead>Extra Charges</TableHead>}
-            {visibleColumns.paymentType && <TableHead>Payment Type</TableHead>} */}
             {visibleColumns.payment && <TableHead>Payment</TableHead>}
 
             <TableHead className="text-right">More</TableHead>
@@ -218,21 +205,18 @@ export function Bookings({ centreId }: { centreId: string }) {
                 {visibleColumns.remark && (
                   <TableCell>{booking.remark || "-"}</TableCell>
                 )}
-                {/* {visibleColumns.amount && (
-                  <TableCell>{booking.amount}</TableCell>
-                )}
-                {visibleColumns.discount && (
-                  <TableCell>{booking.discount}</TableCell>
-                )}
-                {visibleColumns.extraCharge && (
-                  <TableCell>{booking.extraCharge}</TableCell>
-                )}
-                {visibleColumns.paymentType && (
-                  <TableCell>{booking.paymentType}</TableCell>
-                )} */}
                 {visibleColumns.payment && (
                   <TableCell>
-                    {booking.payment?.map((payment) => payment.amount)}
+                    {booking.payment?.map((payment) => (
+                      <div key={payment.id} className="flex items-center">
+                        <IndianRupeeIcon size={14} />
+                        <div className="flex items-center gap-2">
+                          <span>{payment.amount}</span>
+                          <span>via</span>
+                          <span>{payment.paymentType}</span>
+                        </div>
+                      </div>
+                    ))}
                   </TableCell>
                 )}
 

@@ -9,7 +9,16 @@
  * ---------------------------------------------------------------
  */
 
-import { AuthUserDto, CreateUserDto, ErrorDto, LoginUserDto, SuccessDto, UserDto } from "./data-contracts";
+import {
+  AuthUserDto,
+  CreateUserDto,
+  ErrorDto,
+  LoginUserDto,
+  ResetPasswordDto,
+  SuccessDto,
+  UpdateUserDto,
+  UserDto,
+} from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Auth<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -47,6 +56,22 @@ export class Auth<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * No description
    *
    * @tags Auth
+   * @name AuthControllerUpdate
+   * @request PUT:/api/auth
+   */
+  authControllerUpdate = (data: UpdateUserDto, params: RequestParams = {}) =>
+    this.request<UserDto, ErrorDto>({
+      path: `/api/auth`,
+      method: "PUT",
+      body: data,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Auth
    * @name AuthControllerLogout
    * @request DELETE:/api/auth
    */
@@ -54,6 +79,20 @@ export class Auth<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
     this.request<SuccessDto, ErrorDto>({
       path: `/api/auth`,
       method: "DELETE",
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Auth
+   * @name AuthControllerGetById
+   * @request GET:/api/auth/{id}
+   */
+  authControllerGetById = (id: string, params: RequestParams = {}) =>
+    this.request<UserDto, ErrorDto>({
+      path: `/api/auth/${id}`,
+      method: "GET",
       format: "json",
       ...params,
     });
@@ -82,6 +121,22 @@ export class Auth<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
     this.request<AuthUserDto, ErrorDto>({
       path: `/api/auth/login`,
       method: "POST",
+      body: data,
+      type: ContentType.Json,
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Auth
+   * @name AuthControllerResetPassword
+   * @request PUT:/api/auth/reset-password
+   */
+  authControllerResetPassword = (data: ResetPasswordDto, params: RequestParams = {}) =>
+    this.request<AuthUserDto, ErrorDto>({
+      path: `/api/auth/reset-password`,
+      method: "PUT",
       body: data,
       type: ContentType.Json,
       format: "json",

@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  HttpException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -9,7 +10,12 @@ import { JwtService } from '@nestjs/jwt';
 import { User, UserRole } from 'src/database/entities/user.entity';
 import { AuthTokenRepository } from '../repositories/auth-token.repository';
 import { AuthToken } from 'src/database/entities/auth-token.entity';
-import { CreateUserDto, LoginUserDto } from '../dto/user.dto';
+import {
+  CreateUserDto,
+  LoginUserDto,
+  ResetPasswordDto,
+  UpdateUserDto,
+} from '../dto/user.dto';
 import { AppConfig } from 'src/config/config';
 import * as bcrypt from 'bcrypt';
 import { IAuthUser } from 'libs/interfaces/auth-user.interface';
@@ -30,9 +36,7 @@ export class AuthService {
   async create(data: CreateUserDto): Promise<IAuthUser> {
     const email = data.email;
 
-    let user = await this.userRepository.findOne({
-      where: { email },
-    });
+    let user = await this.userRepository.findOneBy({ email });
 
     if (user != null) {
       throw new ConflictException(
@@ -45,6 +49,9 @@ export class AuthService {
     user.name = data.name;
     user.role = data.role;
 
+    if (data.role === UserRole.Admin) {
+      user.isFirstLogin = false;
+    }
     if (data.centreId) {
       user.centreId = data.centreId;
     }
@@ -67,7 +74,7 @@ export class AuthService {
     const { email, password } = data;
 
     // Find the user by email
-    const user = await this.userRepository.findOne({ where: { email } });
+    const user = await this.userRepository.findOneBy({ email });
 
     // Check if the user exists
     if (!user) {
@@ -81,7 +88,42 @@ export class AuthService {
       throw new UnauthorizedException('Invalid password');
     }
 
+    if (user.role !== UserRole.Admin && user.isFirstLogin) {
+      throw new HttpException(user.id, 423);
+    }
+
     // Create an auth token record
+    const token = await this.createAuthToken(user);
+
+    return { token, user };
+  }
+
+  async resetPassword(data: ResetPasswordDto): Promise<IAuthUser> {
+    const { email, newPassword } = data;
+
+    // Find the user by email
+    const user = await this.userRepository.findOneBy({ email });
+
+    if (user == null) {
+      throw new BadRequestException(
+        `Can't reset password. User not found for email id: ${email}.`,
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+    if (user.isFirstLogin) {
+      user.isFirstLogin = false;
+    }
+
+    await this.userRepository.update(user.id, {
+      password: user.password,
+      isFirstLogin: user.isFirstLogin,
+    });
+
+    console.log(user);
+
     const token = await this.createAuthToken(user);
 
     return { token, user };
@@ -103,6 +145,22 @@ export class AuthService {
     }
 
     return this.authTokenRepository.validateAndGetToken(token);
+  }
+
+  async update(userId: string, data: UpdateUserDto): Promise<User> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    if (user == null) {
+      throw new BadRequestException(`User not found, id: ${userId}`);
+    }
+
+    if (data.name) {
+      user.name = data.name;
+    }
+
+    await this.userRepository.save(user);
+
+    return user;
   }
 
   getDoctors(): Promise<User[]> {
