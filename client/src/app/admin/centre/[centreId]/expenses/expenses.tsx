@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DropdownMenuCheckboxes } from "@/components/ui/dropdown-checkbox-custom";
 import { Input } from "@/components/ui/input";
+import { ExpenseDto } from "@/app/api/data-contracts";
 
 export function Expenses({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState({
@@ -42,13 +43,13 @@ export function Expenses({ centreId }: { centreId: string }) {
     if (searchQuery) {
       result = result.filter((expense) =>
         Object.values(expense).some((val) =>
-          String(val).toLowerCase().includes(searchQuery.toLowerCase()),
-        ),
+          String(val).toLowerCase().includes(searchQuery.toLowerCase())
+        )
       );
     }
 
     // Sort
-    result.sort((a, b) => {
+    result.sort((a: any, b: any) => {
       const valA = a[sortField];
       const valB = b[sortField];
       let comparison = 0;
@@ -57,19 +58,19 @@ export function Expenses({ centreId }: { centreId: string }) {
       return sortOrder === "desc" ? comparison * -1 : comparison;
     });
 
-    setFilteredData(result);
+    setFilteredData(result as any);
   }, [dataCentreExpenses, searchQuery, sortOrder, sortField]);
 
   return (
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
       <div className="w-full flex">
         <Link href={`/admin/centre/${centreId}/expenses/add`}>
-          <Button className="bg-white text-black hover:opacity-80 ml-auto">
+          <Button className="bg-blue-50 text-blue-950 hover:opacity-80 ml-auto border border-blue-200 shadow-none">
             Add New Expense
           </Button>
         </Link>{" "}
       </div>
-      <div className="p-6 my-4 rounded-lg shadow-lg bg-zinc-900">
+      <div className="p-6 my-4 rounded-lg   bg-blue-100">
         <div className="flex justify-between mb-4">
           {" "}
           <h3 className="text-xl font-bold  uppercase">Expenses Table</h3>

@@ -41,7 +41,7 @@ export function AdminCentre({ centreId }: { centreId: string }) {
       <div className="flex items-center gap-4">
         <h3 className="text-xl font-bold capitalize">{centre.name}</h3>
         <button
-          className="flex items-center gap-3 text-xs opacity-80 bg-zinc-700 border border-zinc-500 rounded px-3 py-1.5"
+          className="flex items-center gap-3 text-xs opacity-80 bg-blue-300 border border-blue-500 rounded px-3 py-1.5"
           onClick={copyCentreNumber}
         >
           {centre.centreNumber}

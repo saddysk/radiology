@@ -11,7 +11,7 @@ const Card = React.forwardRef<
       "rounded-md border text-card-foreground bg-card shadow overflow-hidden",
       className,
       props.onClick &&
-        "cursor-pointer hover:shadow-lg hover:border-accent hover:text-accent-foreground",
+        "cursor-pointer hover:  hover:border-accent hover:text-accent-foreground"
     )}
     {...props}
   />

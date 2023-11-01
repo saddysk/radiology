@@ -32,6 +32,7 @@ import {
   useGetAllDoctorsForCentreData,
   useGetRateList,
 } from "@/lib/query-hooks";
+import { aggregateDoctorData } from "@/lib/utils";
 
 const bookingSchema = z.object({
   //user
@@ -106,39 +107,9 @@ export function AddBookings({ centreId }: { centreId: string }) {
     centreId,
     enabled: true,
   });
-  function aggregateDoctorData(data: DoctorCommissionDto[] = []) {
-    type Result = {
-      doctorId: string;
-      doctor: {
-        doctorId: string;
-      };
-    };
-    let result: Result | {} = {};
-
-    for (let entry of data) {
-      const doctorId = entry.doctorId;
-      const modality = entry.modality;
-      const amount = entry.amount;
-
-      // If doctor doesn't exist in the result, add them
-      if (!result[doctorId]) {
-        result[doctorId] = {
-          doctor: entry.doctor,
-        };
-      }
-
-      // Convert modality names to proper case for the output format
-      const modalityName = modality.charAt(0).toUpperCase() + modality.slice(1);
-
-      // Add the modality and amount to the doctor entry
-      result[doctorId][modalityName] = amount;
-    }
-
-    // Convert the result to an array format
-    return Object.values(result);
-  }
 
   const doctors = aggregateDoctorData(dataAllDoctorsForCentre?.data);
+
   console.log(doctors, "docs");
   async function addBookingSubmit(data: CreateBookingDto) {
     setLoading(true);
@@ -191,7 +162,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
           onSubmit={addBookingForm.handleSubmit(addBookingSubmit)}
           className="space-y-8 px-4 sm:w-[60%] w-full"
         >
-          <div className="flex flex-col gap-8 bg-zinc-900 p-4 py-8 rounded-md justify-center">
+          <div className="flex flex-col gap-8 bg-blue-100 p-8 py-8 rounded-md justify-center">
             <h2 className="text-xl">Patient Details</h2>
 
             <FormField
@@ -308,7 +279,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
               )}
             />
           </div>
-          <div className="flex flex-col gap-8 bg-zinc-900 p-4 py-8 rounded-md justify-center">
+          <div className="flex flex-col gap-8 bg-blue-100 p-4 py-8 rounded-md justify-center">
             {/* Booking Details */}
             <h2 className="text-xl">Booking Details</h2>
 
@@ -327,10 +298,10 @@ export function AddBookings({ centreId }: { centreId: string }) {
                       }}
                       defaultValue={field.value}
                     >
-                      <SelectTrigger className="w-full border border-zinc-600 shadow-none">
+                      <SelectTrigger className="w-full border border-blue-200 shadow-none">
                         <SelectValue placeholder="Select a consultant" />
                       </SelectTrigger>
-                      <SelectContent className="bg-zinc-900 border-zinc-600">
+                      <SelectContent className="bg-blue-100 border-blue-200">
                         {doctors.map((doctor: any, i: number) => {
                           return (
                             <SelectItem value={doctor?.doctor?.id} key={i}>
@@ -362,10 +333,10 @@ export function AddBookings({ centreId }: { centreId: string }) {
                       }}
                       defaultValue={field.value}
                     >
-                      <SelectTrigger className="w-full border border-zinc-600 shadow-none">
+                      <SelectTrigger className="w-full border border-blue-200 shadow-none">
                         <SelectValue placeholder="Select a Modality" />
                       </SelectTrigger>
-                      <SelectContent className="bg-zinc-900 border-zinc-600">
+                      <SelectContent className="bg-blue-100 border-blue-200">
                         {dataRateList?.data
                           .filter(
                             (ratelist) => ratelist.investigation.length !== 0
@@ -407,7 +378,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
                   <FormLabel>Remarks</FormLabel>
                   <FormControl>
                     <Textarea
-                      className="border-zinc-600"
+                      className="border-blue-200"
                       placeholder="Remarks"
                       {...field}
                     />
@@ -476,7 +447,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
                   <FormLabel>Remarks</FormLabel>
                   <FormControl>
                     <Textarea
-                      className="border-zinc-600"
+                      className="border-blue-200"
                       placeholder="Remarks"
                       {...field}
                     />
@@ -488,7 +459,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
 
             <FormField
               control={addBookingForm.control}
-              name="extraCharge"
+              name={`payment.${0}.extraCharge`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Extra Charge</FormLabel>
@@ -531,7 +502,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
               value="submit"
               loading={loading}
               variant="outline"
-              className="w-full sm:w-1/2 border-zinc-600"
+              className="w-full sm:w-1/2 border-blue-200"
             >
               Add Booking
             </Button>

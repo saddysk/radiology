@@ -224,10 +224,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
             onSubmit={form.handleSubmit(onSubmit)}
           >
             {ratelistData.map((rateList, i) => (
-              <div
-                key={i}
-                className="p-6 my-4 rounded-lg shadow-lg bg-zinc-900"
-              >
+              <div key={i} className="p-6 my-4 rounded-lg   bg-blue-100">
                 <h3 className="text-xl font-bold mb-4">{rateList.modality}</h3>
                 <Table>
                   <TableHeader>
@@ -305,7 +302,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
               type="submit"
               loading={loading}
               variant={"default"}
-              className="w-full border sm:w-1/2 border-zinc-600 m-auto mt-10"
+              className="w-full border sm:w-1/2 border-blue-200 m-auto mt-10"
             >
               Submit
             </Button>
@@ -322,13 +319,13 @@ export function AddRateList({ centreId }: { centreId: string }) {
                   setInvestigationUpdates({ ...investigationUpdates, id: val })
                 }
               >
-                <SelectTrigger className="w-full border border-zinc-600 shadow-none">
+                <SelectTrigger className="w-full border border-blue-200 shadow-none">
                   <SelectValue placeholder="Select a Modality" />
                 </SelectTrigger>
-                <SelectContent className="bg-zinc-950 border-zinc-600">
+                <SelectContent className="bg-blue-50 border-blue-200">
                   {dataRateList.data.map((rateList, i) => {
                     return (
-                      <SelectItem value={rateList.id}>
+                      <SelectItem value={rateList.id} key={i}>
                         {rateList.modality.toUpperCase()}
                       </SelectItem>
                     );
@@ -391,7 +388,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
                 e,
               });
             }}
-            className="border border-zinc-200"
+            className="border border-blue-200"
           >
             Save changes
           </Button>

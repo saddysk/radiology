@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { Booking, BookingDto, CreateBookingDto, ErrorDto } from "./data-contracts";
+import { BookingDto, CreateBookingDto, ErrorDto } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Booking<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {

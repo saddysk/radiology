@@ -32,7 +32,7 @@ export function DropdownMenuCheckboxes({
   return (
     <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
       <DropdownMenuTrigger>
-        <Button variant="outline" className="border-zinc-600">
+        <Button variant="outline" className="border-blue-200">
           Select Columns to Display
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -48,7 +48,7 @@ export function DropdownMenuCheckboxes({
           </svg>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 p-2 bg-zinc-900 border-zinc-600">
+      <DropdownMenuContent className="w-56 p-2 bg-blue-100 border-blue-200">
         <DropdownMenuLabel>Appearance</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {Object.keys(visibleColumns).map((columnKey) => (

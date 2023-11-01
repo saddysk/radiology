@@ -109,7 +109,13 @@ export function RateList({ centreId }: { centreId: string }) {
       setLoading(false);
     }
   };
-  const updateRateList = async ({ e }: { e: any }) => {
+  const updateRateList = async ({
+    ratelistId,
+    e,
+  }: {
+    ratelistId: any;
+    e: any;
+  }) => {
     e.preventDefault();
     try {
       if (!dataRateList?.data) {
@@ -163,7 +169,7 @@ export function RateList({ centreId }: { centreId: string }) {
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
       <div className="w-full flex">
         <Link href={`/admin/centre/${centreId}/ratelist/add`}>
-          <Button className="bg-white text-black hover:opacity-80 ml-auto">
+          <Button className="bg-blue-50 text-blue-950 hover:opacity-80 ml-auto border border-blue-200 shadow-none">
             Add New Ratelist
           </Button>
         </Link>{" "}
@@ -188,10 +194,7 @@ export function RateList({ centreId }: { centreId: string }) {
           {dataRateList.data
             .sort((a, b) => a.modality.localeCompare(b.modality))
             .map((rateList, i) => (
-              <div
-                key={i}
-                className="p-6 my-4 rounded-lg shadow-lg bg-zinc-900"
-              >
+              <div key={i} className="p-6 my-4 rounded-lg   bg-blue-100">
                 <h3 className="text-xl font-bold mb-4 uppercase">
                   {rateList.modality}
                 </h3>
@@ -248,12 +251,12 @@ export function RateList({ centreId }: { centreId: string }) {
                                   Edit
                                 </Button>
                               </DialogTrigger>
-                              <DialogContent className="bg-zinc-900 p-8">
+                              <DialogContent className="bg-blue-100 p-8">
                                 <DialogHeader>
                                   <DialogTitle>Edit investigation</DialogTitle>
                                   <DialogDescription>
                                     Make changes to your investigation here.
-                                    Click save when you're done.
+                                    Click save when you&apos;re done.
                                   </DialogDescription>
                                 </DialogHeader>
                                 <div className="grid gap-4 py-4">
@@ -307,7 +310,7 @@ export function RateList({ centreId }: { centreId: string }) {
                                           e,
                                         });
                                       }}
-                                      className="border border-zinc-200"
+                                      className="border border-blue-200"
                                     >
                                       Save changes
                                     </Button>
@@ -332,7 +335,7 @@ export function RateList({ centreId }: { centreId: string }) {
                                   Delete
                                 </Button>
                               </DialogTrigger>
-                              <DialogContent className="bg-zinc-900 p-8">
+                              <DialogContent className="bg-blue-100 p-8">
                                 <DialogHeader>
                                   <DialogTitle>
                                     Delete investigation

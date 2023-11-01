@@ -35,7 +35,7 @@ function CenteredSpinner({
         className="mx-auto"
       />
       {text && (
-        <div className="w-full text-white flex justify-center mt-4">
+        <div className="w-full  text-blue-950 flex justify-center mt-4">
           <p className="text-md">{text}</p>
         </div>
       )}

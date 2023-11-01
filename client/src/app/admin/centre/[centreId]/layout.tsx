@@ -47,9 +47,9 @@ export default function CentreLayout({
   ];
 
   return (
-    <Card className="flex flex-col m-4 h-full rounded-md bg-zinc-950 border-zinc-600">
-      <nav className="flex items-center justify-between gap-4 p-6 border-b border-b-zinc-600">
-        <h1 className="text-xl text-white">Admin Dashboard</h1>
+    <Card className="flex flex-col m-4 h-full rounded-md bg-blue-50 border-blue-200">
+      <nav className="flex items-center justify-between gap-4 p-6 border-b border-b-blue-200">
+        <h1 className="text-xl  text-blue-950">Admin Dashboard</h1>
         <Avatar>
           <AvatarImage
             className="w-[30px] rounded-xl"
@@ -61,9 +61,9 @@ export default function CentreLayout({
       </nav>
 
       <div className="flex h-full">
-        <div className="border-r border-r-zinc-600 flex flex-col gap-2 py-6">
+        <div className="border-r border-r-blue-200 flex flex-col gap-2 py-6">
           <p
-            className="px-4 py-2 hover:bg-zinc-900 cursor-pointer border border-zinc-600 rounded-md m-6 nowrap whitespace-nowrap"
+            className="px-4 py-2 hover:bg-blue-100 cursor-pointer border border-blue-200 rounded-md m-6 nowrap whitespace-nowrap"
             onClick={() =>
               route.push(`/admin/centre/${params.centreId}/bookings/add`)
             }
@@ -76,8 +76,8 @@ export default function CentreLayout({
               <div
                 key={index}
                 className={clsx(
-                  "px-6 py-2 hover:bg-zinc-900 cursor-pointer",
-                  pathname == tab.path && "bg-zinc-700"
+                  "px-6 py-2 hover:bg-blue-100 text-blue-950 cursor-pointer",
+                  pathname == tab.path && "bg-blue-200"
                 )}
                 onClick={() => route.push(tab.path)}
               >
