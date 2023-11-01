@@ -6,6 +6,7 @@ import {
   DateField,
   StringFieldOptional,
   NumberFieldOptional,
+  ObjectField,
 } from 'libs/decorators';
 import { Payment } from 'src/database/entities/payment.entity';
 
@@ -52,3 +53,18 @@ export class CreatePaymentDto extends PickType(PaymentDto, [
   'extraCharge',
   'paymentType',
 ]) {}
+
+export class BookingPaymentsDto extends PickType(PaymentDto, [
+  'amount',
+  'paymentType',
+]) {}
+
+export class BookingPaymentDto extends PickType(PaymentDto, [
+  'discount',
+  'extraCharge',
+]) {
+  @ObjectField(() => BookingPaymentsDto, {
+    isArray: true,
+  })
+  payments: BookingPaymentsDto[];
+}

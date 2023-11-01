@@ -5,6 +5,8 @@ import { ExpenseRepository } from '../repositories/expense.repository';
 import { CentreRepository } from 'src/centre/repositories/centre.repository';
 import { CentreAdminRepository } from '../repositories/centre-admin.repository';
 import { CentreService } from './centre.service';
+import { UserRole } from 'src/database/entities/user.entity';
+import { UserRepository } from 'src/auth/repositories/user.repository';
 
 @Injectable()
 export class ExpenseService {
@@ -13,6 +15,7 @@ export class ExpenseService {
     private readonly centreRepository: CentreRepository,
     private readonly centreService: CentreService,
     private readonly centreAdminRepository: CentreAdminRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async create(userId: string, data: CreateExpenseDto): Promise<Expense> {
@@ -94,5 +97,22 @@ export class ExpenseService {
     await this.expenseRepository.save(expenseData);
 
     return expenseData;
+  }
+
+  async delete(userId: string, id: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+        role: UserRole.Admin,
+      },
+    });
+
+    if (user == null) {
+      throw new BadRequestException('Only admin can delete an expense');
+    }
+
+    const expense = await this.expenseRepository.findOneBy({ id });
+
+    await this.expenseRepository.remove([expense]);
   }
 }

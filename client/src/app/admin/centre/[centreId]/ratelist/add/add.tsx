@@ -67,7 +67,11 @@ export function AddRateList({ centreId }: { centreId: string }) {
     amount: 0,
     filmCount: 0,
   });
-  const { data: dataRateList, isLoading: isLoadingRateList } = useGetRateList({
+  const {
+    data: dataRateList,
+    isLoading: isLoadingRateList,
+    isError,
+  } = useGetRateList({
     centreId,
   });
 
@@ -201,12 +205,15 @@ export function AddRateList({ centreId }: { centreId: string }) {
     }
   }
 
-  if (isLoadingRateList || dataRateList == null) {
+  if (isLoadingRateList) {
     return (
       <div className="w-full h-full flex justify-center align-center">
         <CenteredSpinner />
       </div>
     );
+  }
+  if (isError) {
+    return <div className="m-10">No ratelist added</div>;
   }
 
   return (

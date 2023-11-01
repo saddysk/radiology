@@ -2,6 +2,7 @@ import { Body, Controller, Param, Req } from '@nestjs/common';
 import { ExpenseService } from './services/expense.service';
 import { ApiTags } from '@nestjs/swagger';
 import {
+  DeleteRoute,
   GetRoute,
   PostRoute,
   PutRoute,
@@ -9,6 +10,7 @@ import {
 import { CreateExpenseDto, ExpenseDto } from './dto/expense.dto';
 import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
 import { Expense } from 'src/database/entities/expense.entity';
+import { SuccessDto } from 'libs/dtos';
 
 @Controller('api/centre/expense')
 @ApiTags('Centre Expense')
@@ -75,5 +77,17 @@ export class ExpenseController {
       data,
     );
     return new ExpenseDto(expense);
+  }
+
+  @DeleteRoute(':id', {
+    Ok: SuccessDto,
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async delete(
+    @Req() request: any,
+    @Param('id') id: string,
+  ): Promise<SuccessDto> {
+    await this.expenseService.delete(request.user.user.id, id);
+    return new SuccessDto();
   }
 }

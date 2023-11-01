@@ -176,6 +176,9 @@ export class DoctorCommissionService {
     if (commission.endDate) {
       doctorCommission.endDate = commission.endDate;
     }
+    if (commission.letGo) {
+      doctorCommission.letGo = commission.letGo;
+    }
 
     return this.doctorCommissionRepository.save(doctorCommission, {
       reload: true,

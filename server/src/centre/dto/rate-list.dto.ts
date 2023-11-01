@@ -10,6 +10,9 @@ import { RateList } from 'src/database/entities/rate-list.entity';
 import { IInvestigation } from 'src/database/interfaces/rate-list.interface';
 
 export class InvestigationDto {
+  @UUIDField()
+  id: string;
+
   @StringField()
   type: string;
 
@@ -24,6 +27,7 @@ export class InvestigationDto {
       return;
     }
 
+    this.id = investigation.id;
     this.type = investigation.type;
     this.amount = investigation.amount;
     this.filmCount = investigation.filmCount;

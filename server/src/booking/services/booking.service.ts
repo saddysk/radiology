@@ -45,8 +45,12 @@ export class BookingService {
     await this.bookingRepository.save(booking);
 
     await Promise.all(
-      data.payment.map((payment) =>
-        this.paymentRepository.savePayment(booking.id, payment),
+      data.payment.payments.map((payment) =>
+        this.paymentRepository.savePayment(booking.id, {
+          discount: data.payment.discount,
+          extraCharge: data.payment.extraCharge,
+          ...payment,
+        }),
       ),
     );
 

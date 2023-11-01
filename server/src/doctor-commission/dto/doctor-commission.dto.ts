@@ -1,5 +1,6 @@
 import { PickType } from '@nestjs/swagger';
 import {
+  BooleanFieldOptional,
   DateField,
   DateFieldOptional,
   NumberField,
@@ -40,6 +41,9 @@ export class DoctorCommissionDto {
   @DateFieldOptional()
   endDate?: Date;
 
+  @BooleanFieldOptional()
+  letGo?: boolean;
+
   @ObjectFieldOptional(() => UserDto)
   doctor?: UserDto;
 
@@ -60,6 +64,7 @@ export class DoctorCommissionDto {
     this.amount = doctorCommission.amount;
     this.startDate = doctorCommission.startDate;
     this.endDate = doctorCommission.endDate;
+    this.letGo = doctorCommission.letGo;
   }
 
   static async toDoctorDto(doctorCommission?: DoctorCommission) {
@@ -83,7 +88,8 @@ export class CommissionDto extends PickType(DoctorCommissionDto, [
   'amount',
   'startDate',
   'endDate',
-]) { }
+  'letGo',
+]) {}
 
 export class CreateDoctorCommissionDto extends PickType(DoctorCommissionDto, [
   'centreId',
@@ -98,4 +104,4 @@ export class UpdateDoctorCommissionDto extends PickType(DoctorCommissionDto, [
   'amount',
   'startDate',
   'endDate',
-]) { }
+]) {}

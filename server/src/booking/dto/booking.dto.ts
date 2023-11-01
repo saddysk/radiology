@@ -11,7 +11,7 @@ import {
 import { Booking } from 'src/database/entities/booking.entity';
 import { IBookingRecord } from 'src/database/interfaces/booking.interface';
 import { CreatePatientDto, PatientDto } from 'src/patient/dto/patient.dto';
-import { CreatePaymentDto, PaymentDto } from './payment.dto';
+import { BookingPaymentDto, PaymentDto } from './payment.dto';
 import { AuthService } from 'src/auth/services/auth.service';
 
 export class BookingRecordDto {
@@ -126,10 +126,8 @@ export class CreateBookingDto extends PickType(BookingDto, [
   @ObjectFieldOptional(() => CreatePatientDto)
   patient?: CreatePatientDto;
 
-  @ObjectField(() => CreatePaymentDto, {
-    isArray: true,
-  })
-  payment: CreatePaymentDto[];
+  @ObjectField(() => BookingPaymentDto)
+  payment: BookingPaymentDto;
 }
 
 export class UpdateBookingDto extends OmitType(BookingDto, [

@@ -18,7 +18,6 @@ import * as z from "zod";
 import { centre } from "@/app/api";
 import { CreateCentreDto } from "@/app/api/data-contracts";
 import { Card } from "@/components/ui/card";
-import { useAddAdminToCentre } from "@/lib/query-hooks";
 import { ArrowLeftIcon } from "lucide-react";
 
 const createCentreSchema = z.object({
@@ -63,7 +62,6 @@ export function AdminOnboarding() {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
-  const [centreSelected, setCentreSelected] = useState<string | null>(null);
 
   const redirectOnSuccess = (message: string) => {
     toast({
@@ -98,24 +96,7 @@ export function AdminOnboarding() {
       setLoading(false);
     }
   }
-  const [selectedFlow, setSelectedFlow] = useState<"create" | "join" | null>(
-    null
-  );
-
-  const { mutate: mutateAdminToCentre, isLoading: isLoadingAdminToCentre } =
-    useAddAdminToCentre({
-      centreId: centreSelected!,
-      onSuccess: () => redirectOnSuccess("Joined to the centre"),
-      onError: (error: any) =>
-        toast({
-          title: "Error!",
-          description:
-            error.response.data.statusCode === 400
-              ? error.response.data.message
-              : "Failed to join centre. Please verify the centre id before joining.",
-          variant: "destructive",
-        }),
-    });
+  const [selectedFlow, setSelectedFlow] = useState<"create" | null>(null);
 
   return (
     <Card className="m-4 h-full rounded-md bg-blue-50 border-blue-200">
@@ -138,7 +119,7 @@ export function AdminOnboarding() {
             </Card>
             <Card
               className="flex flex-col items-center justify-center rounded-md p-10 bg-blue-50 border-blue-200"
-              onClick={() => setSelectedFlow("join")}
+              onClick={() => router.push("/admin/centre/join")}
             >
               <h1 className="text-xl text-center sm:text-2xl opacity-90 flex items-center space-x-4">
                 Join Center
@@ -307,37 +288,6 @@ export function AdminOnboarding() {
                 </div>
               </form>
             </Form>
-          </div>
-        )}
-
-        {selectedFlow == "join" && (
-          <div className="flex flex-col items-center justify-center py-28 space-y-6 m-4 h-full rounded-md bg-blue-50 border-blue-200 sm:w-1/3 w-full">
-            <h1 className="text-xl text-center sm:text-2xl opacity-90 flex items-center space-x-4">
-              <span>Join Center</span>
-            </h1>
-
-            <Input
-              placeholder="Enter Centre Id"
-              autoFocus
-              onChange={(e) => setCentreSelected(e.target.value)}
-            />
-
-            <Button
-              loading={isLoadingAdminToCentre}
-              variant="outline"
-              className="w-full sm:w-1/2 border-blue-200"
-              onClick={() => {
-                centreSelected == null
-                  ? toast({
-                      title: "Error!",
-                      description: "Please enter a centre id.",
-                      variant: "destructive",
-                    })
-                  : mutateAdminToCentre();
-              }}
-            >
-              Join
-            </Button>
           </div>
         )}
       </div>

@@ -92,7 +92,7 @@ export class CentreService {
 
     if (centre == null) {
       throw new BadRequestException(
-        `Centre not found for centre number: ${centreNumber}, user id: ${userId}`,
+        `Centre not found for centre number: ${centreNumber}`,
       );
     }
 
