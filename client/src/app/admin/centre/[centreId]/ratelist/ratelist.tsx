@@ -49,7 +49,7 @@ export function RateList({ centreId }: { centreId: string }) {
   const { data: dataRateList, isLoading: IsLoadingRateList } = useGetRateList({
     centreId,
   });
-  console.log(dataRateList, "here");
+
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const router = useRouter();
@@ -109,13 +109,7 @@ export function RateList({ centreId }: { centreId: string }) {
       setLoading(false);
     }
   };
-  const updateRateList = async ({
-    ratelistId,
-    e,
-  }: {
-    ratelistId: string;
-    e: any;
-  }) => {
+  const updateRateList = async ({ e }: { e: any }) => {
     e.preventDefault();
     try {
       if (!dataRateList?.data) {
@@ -139,7 +133,7 @@ export function RateList({ centreId }: { centreId: string }) {
           }) || []; // Fallback to empty array if undefined
 
       const response = await ratelist.rateListControllerUpdate({
-        id: ratelistId,
+        id: investigationUpdates.id,
         investigation: updatedInvestigations,
       });
 
@@ -191,173 +185,188 @@ export function RateList({ centreId }: { centreId: string }) {
         </h3>
       ) : (
         <div className="">
-          {dataRateList.data.map((rateList, i) => (
-            <div key={i} className="p-6 my-4 rounded-lg shadow-lg bg-zinc-900">
-              <h3 className="text-xl font-bold mb-4 uppercase">
-                {rateList.modality}
-              </h3>
-              <Table>
-                {rateList.investigation.length == 0 && (
-                  <TableCaption className="py-6">
-                    No modality added. <br />
-                    Add modalities to get started!{" "}
-                    <Link
-                      className="underline"
-                      href={`/admin/centre/${centreId}/ratelist/add`}
-                    >
-                      Here{" "}
-                    </Link>
-                  </TableCaption>
-                )}
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Rate (in Rs.)</TableHead>
-                    <TableHead>Film Count</TableHead>
-                    <TableHead className="text-right">Options</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {rateList.investigation.map((investigation, j) => (
-                    <TableRow key={j}>
-                      <TableCell>{investigation.type}</TableCell>
-                      <TableCell>{investigation.amount}</TableCell>
-                      <TableCell>{investigation.filmCount}</TableCell>
-                      <TableCell className="space-x-4 text-right">
-                        <Dialog open={openEdit} onOpenChange={setOpenEdit}>
-                          <DialogTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setInvestigationUpdates({
-                                  id: rateList.id,
-                                  type: investigation.type,
-                                  amount: investigation.amount,
-                                  filmCount: investigation.filmCount,
-                                });
-                              }}
-                            >
-                              Edit
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="bg-zinc-900 p-8">
-                            <DialogHeader>
-                              <DialogTitle>Edit investigation</DialogTitle>
-                              <DialogDescription>
-                                Make changes to your investigation here. Click
-                                save when you're done.
-                              </DialogDescription>
-                            </DialogHeader>
-                            <div className="grid gap-4 py-4">
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <label htmlFor="name">Type</label>
-                                <Input
-                                  id="name"
-                                  value={investigationUpdates.type}
-                                  className="col-span-3"
-                                />
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <label htmlFor="name">Amount</label>
-                                <Input
-                                  id="amount"
-                                  type="number"
-                                  value={investigationUpdates.amount}
-                                  onChange={(e) => {
-                                    setInvestigationUpdates({
-                                      ...investigationUpdates,
-                                      amount: Number(e.target.value),
-                                    });
-                                  }}
-                                  className="col-span-3"
-                                />
-                              </div>
-                              <div className="grid grid-cols-4 items-center gap-4">
-                                <label htmlFor="name">Film Count</label>
-                                <Input
-                                  id="count"
-                                  type="number"
-                                  value={investigationUpdates.filmCount}
-                                  onChange={(e) => {
-                                    setInvestigationUpdates({
-                                      ...investigationUpdates,
-                                      filmCount: Number(e.target.value),
-                                    });
-                                  }}
-                                  className="col-span-3"
-                                />
-                              </div>
-                            </div>
-                            <DialogFooter>
-                              <DialogClose>
-                                <Button
-                                  type="button"
-                                  loading={loading}
-                                  onClick={(e) => {
-                                    updateRateList({
-                                      ratelistId: rateList.id,
-                                      e,
-                                    });
-                                  }}
-                                  className="border border-zinc-200"
-                                >
-                                  Save changes
-                                </Button>
-                              </DialogClose>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                setInvestigationUpdates({
-                                  id: rateList.id,
-                                  type: investigation.type,
-                                  amount: investigation.amount,
-                                  filmCount: investigation.filmCount,
-                                });
-                              }}
-                            >
-                              Delete
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="bg-zinc-900 p-8">
-                            <DialogHeader>
-                              <DialogTitle>Delete investigation</DialogTitle>
-                              <DialogDescription>
-                                Investigation once deleted will be gone
-                                foreever.
-                              </DialogDescription>
-                            </DialogHeader>
-
-                            <DialogFooter>
-                              <Button
-                                loading={loading}
-                                onClick={(e) => {
-                                  deleteRateList({
-                                    ratelistId: rateList.id,
-                                    investigation: investigation.type,
-                                    e,
-                                  });
-                                }}
-                                className="border border-red-950 mt-12 bg-red-800"
-                              >
-                                Confirm Delete
-                              </Button>
-                            </DialogFooter>
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
+          {dataRateList.data
+            .sort((a, b) => a.modality.localeCompare(b.modality))
+            .map((rateList, i) => (
+              <div
+                key={i}
+                className="p-6 my-4 rounded-lg shadow-lg bg-zinc-900"
+              >
+                <h3 className="text-xl font-bold mb-4 uppercase">
+                  {rateList.modality}
+                </h3>
+                <Table>
+                  {rateList.investigation.length == 0 && (
+                    <TableCaption className="py-6">
+                      No modality added. <br />
+                      Add modalities to get started!{" "}
+                      <Link
+                        className="underline"
+                        href={`/admin/centre/${centreId}/ratelist/add`}
+                      >
+                        Here{" "}
+                      </Link>
+                    </TableCaption>
+                  )}
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Rate (in Rs.)</TableHead>
+                      <TableHead>Film Count</TableHead>
+                      <TableHead className="text-right">Options</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          ))}
+                  </TableHeader>
+                  <TableBody>
+                    {rateList.investigation
+                      .sort((a, b) => a.type.localeCompare(b.type))
+                      .map((investigation, j) => (
+                        <TableRow key={j}>
+                          <TableCell>{investigation.type}</TableCell>
+                          <TableCell>{investigation.amount}</TableCell>
+                          <TableCell>{investigation.filmCount}</TableCell>
+                          <TableCell className="space-x-4 text-right">
+                            <Dialog open={openEdit} onOpenChange={setOpenEdit}>
+                              <DialogTrigger asChild>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    console.log({
+                                      id: rateList.id,
+                                      type: investigation.type,
+                                      amount: investigation.amount,
+                                      filmCount: investigation.filmCount,
+                                    });
+                                    setInvestigationUpdates({
+                                      id: rateList.id,
+                                      type: investigation.type,
+                                      amount: investigation.amount,
+                                      filmCount: investigation.filmCount,
+                                    });
+                                  }}
+                                >
+                                  Edit
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="bg-zinc-900 p-8">
+                                <DialogHeader>
+                                  <DialogTitle>Edit investigation</DialogTitle>
+                                  <DialogDescription>
+                                    Make changes to your investigation here.
+                                    Click save when you're done.
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="grid gap-4 py-4">
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <label htmlFor="name">Type</label>
+                                    <Input
+                                      id="name"
+                                      value={investigationUpdates.type}
+                                      className="col-span-3"
+                                    />
+                                  </div>
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <label htmlFor="name">Amount</label>
+                                    <Input
+                                      id="amount"
+                                      type="number"
+                                      value={investigationUpdates.amount}
+                                      onChange={(e) => {
+                                        setInvestigationUpdates({
+                                          ...investigationUpdates,
+                                          amount: Number(e.target.value),
+                                        });
+                                      }}
+                                      className="col-span-3"
+                                    />
+                                  </div>
+                                  <div className="grid grid-cols-4 items-center gap-4">
+                                    <label htmlFor="name">Film Count</label>
+                                    <Input
+                                      id="count"
+                                      type="number"
+                                      value={investigationUpdates.filmCount}
+                                      onChange={(e) => {
+                                        setInvestigationUpdates({
+                                          ...investigationUpdates,
+                                          filmCount: Number(e.target.value),
+                                        });
+                                      }}
+                                      className="col-span-3"
+                                    />
+                                  </div>
+                                </div>
+                                <DialogFooter>
+                                  <DialogClose>
+                                    <Button
+                                      type="button"
+                                      loading={loading}
+                                      onClick={(e) => {
+                                        updateRateList({
+                                          ratelistId: rateList.id,
+                                          e,
+                                        });
+                                      }}
+                                      className="border border-zinc-200"
+                                    >
+                                      Save changes
+                                    </Button>
+                                  </DialogClose>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    setInvestigationUpdates({
+                                      id: rateList.id,
+                                      type: investigation.type,
+                                      amount: investigation.amount,
+                                      filmCount: investigation.filmCount,
+                                    });
+                                  }}
+                                >
+                                  Delete
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="bg-zinc-900 p-8">
+                                <DialogHeader>
+                                  <DialogTitle>
+                                    Delete investigation
+                                  </DialogTitle>
+                                  <DialogDescription>
+                                    Investigation once deleted will be gone
+                                    foreever.
+                                  </DialogDescription>
+                                </DialogHeader>
+
+                                <DialogFooter>
+                                  <Button
+                                    loading={loading}
+                                    onClick={(e) => {
+                                      deleteRateList({
+                                        ratelistId: rateList.id,
+                                        investigation: investigation.type,
+                                        e,
+                                      });
+                                    }}
+                                    className="border border-red-950 mt-12 bg-red-800"
+                                  >
+                                    Confirm Delete
+                                  </Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ))}
         </div>
       )}
     </div>

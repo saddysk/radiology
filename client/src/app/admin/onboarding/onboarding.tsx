@@ -147,14 +147,14 @@ export function AdminOnboarding() {
           </div>
         )}
         {selectedFlow == "create" && (
-          <div className="flex flex-col items-center justify-center h-full rounded-md bg-zinc-950 border-zinc-600 w-[100%]">
-            <h1 className="text-xl text-center sm:text-2xl opacity-90 flex items-center mb-4">
+          <div className="flex flex-col items-center justify-center py-28 space-y-6 h-full rounded-md bg-zinc-950 border-zinc-600 w-[100%] overflow-y-auto">
+            <h1 className="text-4xl text-center opacity-90 items-center space-x-4 mb-6">
               <span>Create Center</span>
             </h1>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-3 sm:w-1/3 w-full"
+                className="space-y-4 w-1/2 px-4"
               >
                 {/* Name */}
                 <FormField

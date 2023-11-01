@@ -2,11 +2,9 @@
 
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
 import CenteredSpinner from "@/components/ui/centered-spinner";
 import { useState } from "react";
-import { CreateBookingDto } from "@/app/api/data-contracts";
-import { booking, ratelist } from "@/app/api";
+import { ratelist } from "@/app/api";
 import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,7 +12,6 @@ import { Form } from "@/components/ui/form";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -22,16 +19,13 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { useGetRateList } from "@/lib/query-hooks";
 import { ratelistData } from "../data";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -91,32 +85,6 @@ export function AddRateList({ centreId }: { centreId: string }) {
         isSelected: boolean;
       }[];
     }[];
-  }
-
-  function aggregateDoctorData(data = []) {
-    let result = {};
-
-    for (let entry of data) {
-      const doctorId = entry.doctorId;
-      const modality = entry.modality;
-      const amount = entry.amount;
-
-      // If doctor doesn't exist in the result, add them
-      if (!result[doctorId]) {
-        result[doctorId] = {
-          doctor: entry.doctor,
-        };
-      }
-
-      // Convert modality names to proper case for the output format
-      const modalityName = modality.charAt(0).toUpperCase() + modality.slice(1);
-
-      // Add the modality and amount to the doctor entry
-      result[doctorId][modalityName] = amount;
-    }
-
-    // Convert the result to an array format
-    return Object.values(result);
   }
 
   const form = useForm<FormDTO>({
@@ -223,7 +191,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
           title: `Rate List Added`,
           variant: "default",
         });
-        //router.push("/admin/onboarding");
+        router.push(`/admin/centre/${centreId}/ratelist`);
       }
     } catch (error: any) {
       console.log(6);
@@ -251,7 +219,10 @@ export function AddRateList({ centreId }: { centreId: string }) {
         </div>
       ) : dataRateList?.data?.length === 0 ? (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form
+            className="flex flex-col"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
             {ratelistData.map((rateList, i) => (
               <div
                 key={i}
@@ -334,7 +305,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
               type="submit"
               loading={loading}
               variant={"default"}
-              className="w-full sm:w-1/2 border-zinc-600"
+              className="w-full border sm:w-1/2 border-zinc-600 m-auto mt-10"
             >
               Submit
             </Button>

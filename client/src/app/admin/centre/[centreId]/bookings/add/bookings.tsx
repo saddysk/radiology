@@ -3,7 +3,10 @@
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { CreateBookingDto } from "@/app/api/data-contracts";
+import {
+  CreateBookingDto,
+  DoctorCommissionDto,
+} from "@/app/api/data-contracts";
 import { booking } from "@/app/api";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -103,8 +106,14 @@ export function AddBookings({ centreId }: { centreId: string }) {
     centreId,
     enabled: true,
   });
-  function aggregateDoctorData(data = []) {
-    let result = {};
+  function aggregateDoctorData(data: DoctorCommissionDto[] = []) {
+    type Result = {
+      doctorId: string;
+      doctor: {
+        doctorId: string;
+      };
+    };
+    let result: Result | {} = {};
 
     for (let entry of data) {
       const doctorId = entry.doctorId;
@@ -129,7 +138,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
     return Object.values(result);
   }
 
-  const doctors: any = aggregateDoctorData(dataAllDoctorsForCentre?.data);
+  const doctors = aggregateDoctorData(dataAllDoctorsForCentre?.data);
   console.log(doctors, "docs");
   async function addBookingSubmit(data: CreateBookingDto) {
     setLoading(true);

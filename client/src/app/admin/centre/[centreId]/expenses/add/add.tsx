@@ -119,7 +119,7 @@ export function AddExpenses({ centreId }: { centreId: string }) {
                           variant={"outline"}
                           className={cn(
                             "w-[240px] pl-3 text-left font-normal border-zinc-600",
-                            !field.value && "text-muted-foreground",
+                            !field.value && "text-muted-foreground"
                           )}
                         >
                           {field.value ? (
@@ -145,7 +145,7 @@ export function AddExpenses({ centreId }: { centreId: string }) {
                             {
                               shouldValidate: true,
                               shouldDirty: true,
-                            },
+                            }
                           )
                         }
                         // disabled={(date) =>
