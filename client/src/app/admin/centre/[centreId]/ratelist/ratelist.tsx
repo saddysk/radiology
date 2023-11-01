@@ -238,12 +238,6 @@ export function RateList({ centreId }: { centreId: string }) {
                                   size="sm"
                                   variant="outline"
                                   onClick={() => {
-                                    console.log({
-                                      id: rateList.id,
-                                      type: investigation.type,
-                                      amount: investigation.amount,
-                                      filmCount: investigation.filmCount,
-                                    });
                                     setInvestigationUpdates({
                                       id: rateList.id,
                                       type: investigation.type,

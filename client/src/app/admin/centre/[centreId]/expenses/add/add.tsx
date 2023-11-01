@@ -63,15 +63,12 @@ export function AddExpenses({ centreId }: { centreId: string }) {
   });
 
   async function addExpenseSubmit(data: CreateExpenseDto) {
-    console.log(data);
-
     setLoading(true);
     try {
       const response = await centreexpense.expenseControllerCreate({
         ...data,
         centreId,
       });
-      console.log(response);
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {

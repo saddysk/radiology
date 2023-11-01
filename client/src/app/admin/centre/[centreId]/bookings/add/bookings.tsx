@@ -95,7 +95,6 @@ export function AddBookings({ centreId }: { centreId: string }) {
       ],
     },
   });
-  console.log(addBookingForm, addBookingForm.getValues());
 
   const { data: dataRateList, isLoading: IsLoadingRateList } = useGetRateList({
     centreId,
@@ -110,7 +109,6 @@ export function AddBookings({ centreId }: { centreId: string }) {
 
   const doctors = aggregateDoctorData(dataAllDoctorsForCentre?.data);
 
-  console.log(doctors, "docs");
   async function addBookingSubmit(data: CreateBookingDto) {
     setLoading(true);
     try {
@@ -144,13 +142,6 @@ export function AddBookings({ centreId }: { centreId: string }) {
     } finally {
       setLoading(false);
     }
-  }
-  {
-    console.log(
-      addBookingForm.getValues("modality"),
-      "modal",
-      addBookingForm.formState.errors
-    );
   }
   return (
     <div className="flex flex-col items-center w-full h-[85vh] p-8 overflow-y-scroll">
@@ -327,7 +318,6 @@ export function AddBookings({ centreId }: { centreId: string }) {
                   <FormControl>
                     <Select
                       onValueChange={(value) => {
-                        console.log("Selected Value: ", value);
                         field.onChange(value); // This should update the form state
                         setSelectedModality(value);
                       }}

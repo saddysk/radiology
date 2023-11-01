@@ -160,7 +160,6 @@ export function AddRateList({ centreId }: { centreId: string }) {
 
   async function onSubmit(data: FormDTO) {
     // Prepare the data to be sent to the API
-    console.log(1);
     const filteredData = data.rateLists.map((rateList: RateList) => {
       return {
         ...rateList,
@@ -174,19 +173,15 @@ export function AddRateList({ centreId }: { centreId: string }) {
           }),
       };
     });
-    console.log(2);
     setLoading(true);
-    console.log(3);
     try {
       const response = await ratelist.rateListControllerCreate({
         centreId: centreId,
         rateLists: filteredData,
       });
-      console.log(4, response);
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
-        console.log(5);
         toast({
           title: `Rate List Added`,
           variant: "default",
@@ -194,7 +189,6 @@ export function AddRateList({ centreId }: { centreId: string }) {
         router.push(`/admin/centre/${centreId}/ratelist`);
       }
     } catch (error: any) {
-      console.log(6);
       toast({
         title: "Error",
         description: error.message || "Something went wrong",
@@ -205,7 +199,6 @@ export function AddRateList({ centreId }: { centreId: string }) {
     } finally {
       setLoading(false);
     }
-    console.log("Data to be sent:", filteredData);
   }
 
   if (isLoadingRateList || dataRateList == null) {
