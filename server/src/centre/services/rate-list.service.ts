@@ -57,13 +57,13 @@ export class RateListService {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
-        role: In([UserRole.Receptionist, UserRole.Admin]),
+        role: In([UserRole.Receptionist, UserRole.Admin, UserRole.Pr]),
       },
     });
 
     if (user == null) {
       throw new BadRequestException(
-        `Invalid Access! Only admin or receptionist can get the rate list.`,
+        `Invalid Access! Only admin, pr or receptionist can get the rate list.`,
       );
     }
 

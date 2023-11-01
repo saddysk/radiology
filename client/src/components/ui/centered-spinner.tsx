@@ -26,7 +26,7 @@ function CenteredSpinner({
   return (
     <div className="flex flex-col justify-center align-middle w-full">
       <Loader
-        color={color || `#ffffff`}
+        color="#2c3965"
         loading={true}
         cssOverride={override}
         size={size}

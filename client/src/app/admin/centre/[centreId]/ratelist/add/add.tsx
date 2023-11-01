@@ -67,7 +67,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
     amount: 0,
     filmCount: 0,
   });
-  const { data: dataRateList, isLoading: IsLoadingRateList } = useGetRateList({
+  const { data: dataRateList, isLoading: isLoadingRateList } = useGetRateList({
     centreId,
   });
 
@@ -208,16 +208,20 @@ export function AddRateList({ centreId }: { centreId: string }) {
     console.log("Data to be sent:", filteredData);
   }
 
+  if (isLoadingRateList || dataRateList == null) {
+    return (
+      <div className="w-full h-full flex justify-center align-center">
+        <CenteredSpinner />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center w-full h-[85vh] p-8 overflow-y-scroll">
-      <h1 className="text-4xl text-center opacity-90 items-center space-x-4 mb-6">
-        <span>Add RateList Investigations</span>
+      <h1 className="text-3xl text-center opacity-90 items-center space-x-4 mb-6">
+        <span>Add Ratelist</span>
       </h1>
-      {IsLoadingRateList || dataRateList == undefined ? (
-        <div className="w-full h-full flex justify-center align-center">
-          <CenteredSpinner />
-        </div>
-      ) : dataRateList?.data?.length === 0 ? (
+      {dataRateList?.data?.length === 0 ? (
         <Form {...form}>
           <form
             className="flex flex-col"

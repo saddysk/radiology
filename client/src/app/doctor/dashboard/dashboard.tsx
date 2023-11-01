@@ -17,7 +17,7 @@ export function DoctorDashboard() {
   });
 
   return (
-    <Card className="flex flex-col m-4 h-full rounded-md bg-zinc-950 border-zinc-600">
+    <Card className="flex flex-col m-4 h-full rounded-md bg-blue-50 border-blue-200">
       <Nabvbar />
 
       <div className="p-6">
@@ -27,7 +27,7 @@ export function DoctorDashboard() {
             {dataAllConnectedCentres?.data.map((centre, index) => (
               <div
                 key={index}
-                className="flex items-center space-x-2 p-6 border border-white rounded-md"
+                className="flex items-center space-x-2 p-6 border border-blue-200 rounded-md"
                 onClick={() => router.push(`/doctor/centre/${centre.id}`)}
               >
                 {centre.name}

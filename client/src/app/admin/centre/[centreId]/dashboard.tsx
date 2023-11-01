@@ -22,7 +22,7 @@ export function AdminCentre({ centreId }: { centreId: string }) {
     return <CenteredSpinner />;
   }
   if (dataAllConnectedCentres == null) {
-    return <>Centre Not Found!</>;
+    return <div className="m-10">Centre Not Found!</div>;
   }
 
   const centre = dataAllConnectedCentres.data;

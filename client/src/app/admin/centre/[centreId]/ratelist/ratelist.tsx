@@ -46,7 +46,7 @@ type Investigations = {
 export function RateList({ centreId }: { centreId: string }) {
   const [loading, setLoading] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
-  const { data: dataRateList, isLoading: IsLoadingRateList } = useGetRateList({
+  const { data: dataRateList, isLoading: isLoadingRateList } = useGetRateList({
     centreId,
   });
 
@@ -165,20 +165,24 @@ export function RateList({ centreId }: { centreId: string }) {
     }
   };
 
+  if (isLoadingRateList) {
+    return (
+      <div className="w-full h-full flex justify-center align-center">
+        <CenteredSpinner />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
-      <div className="w-full flex">
+      <div className="w-full flex mb-6">
         <Link href={`/admin/centre/${centreId}/ratelist/add`}>
           <Button className="bg-blue-50 text-blue-950 hover:opacity-80 ml-auto border border-blue-200 shadow-none">
             Add New Ratelist
           </Button>
-        </Link>{" "}
+        </Link>
       </div>
-      {IsLoadingRateList || dataRateList == undefined ? (
-        <div className="w-full h-full flex justify-center align-center">
-          <CenteredSpinner />
-        </div>
-      ) : dataRateList?.data?.length === 0 ? (
+      {dataRateList?.data?.length === 0 ? (
         <h3>
           No modality added. <br />
           Add modalities to get started!{" "}
@@ -191,7 +195,7 @@ export function RateList({ centreId }: { centreId: string }) {
         </h3>
       ) : (
         <div className="">
-          {dataRateList.data
+          {dataRateList?.data
             .sort((a, b) => a.modality.localeCompare(b.modality))
             .map((rateList, i) => (
               <div key={i} className="p-6 my-4 rounded-lg   bg-blue-100">
