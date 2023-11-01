@@ -2,24 +2,16 @@
 
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  useAllConnectedCentresData,
-  useGetAllDoctorsForCentreData,
-} from "@/lib/query-hooks";
-import CenteredSpinner from "@/components/ui/centered-spinner";
-import { useState } from "react";
-import { DropdownMenuCheckboxes } from "../bookings/bookings";
+import { useGetAllDoctorsForCentreData } from "@/lib/query-hooks";
+import { aggregateDoctorData } from "@/lib/utils";
 
 export function DoctorsList({ centreId }: { centreId: string }) {
   const { toast } = useToast();
@@ -34,36 +26,12 @@ export function DoctorsList({ centreId }: { centreId: string }) {
   });
   console.log(dataAllDoctorsForCentre, "dataAllDoctorsForCentre");
 
-  function aggregateDoctorData(data = []) {
-    let result = {};
+  const doctors = aggregateDoctorData(dataAllDoctorsForCentre?.data);
+  console.log(doctors, "docs");
 
-    for (let entry of data) {
-      const doctorId = entry.doctorId;
-      const modality = entry.modality;
-      const amount = entry.amount;
-
-      // If doctor doesn't exist in the result, add them
-      if (!result[doctorId]) {
-        result[doctorId] = {
-          doctor: entry.doctor,
-        };
-      }
-
-      // Convert modality names to proper case for the output format
-      const modalityName = modality.charAt(0).toUpperCase() + modality.slice(1);
-
-      // Add the modality and amount to the doctor entry
-      result[doctorId][modalityName] = amount;
-    }
-
-    // Convert the result to an array format
-    return Object.values(result);
-  }
-
-  const doctor = aggregateDoctorData(dataAllDoctorsForCentre?.data);
   return (
     <div className="w-full p-8 overflow-y-scroll">
-      <div className="p-6 my-4 rounded-lg shadow-lg bg-zinc-900">
+      <div className="p-6 my-4 rounded-lg   bg-blue-100">
         {" "}
         <div className="flex justify-between mb-4">
           {" "}
@@ -85,13 +53,13 @@ export function DoctorsList({ centreId }: { centreId: string }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {doctor?.map((doctor, index) => (
-              <TableRow className="border-b-zinc-600">
+            {doctors?.map((doctor: any, index) => (
+              <TableRow className="border-b-blue-200" key={index}>
                 <TableCell className="font-medium">{index + 1}</TableCell>
                 <TableCell>{doctor?.doctor?.name}</TableCell>
-                <TableCell>₹{doctor["Ct-scan"]}</TableCell>
-                <TableCell>₹{doctor["Usg"]}</TableCell>
-                <TableCell>₹{doctor["X-ray"]}</TableCell>{" "}
+                <TableCell>{doctor["Ct-scan"]}</TableCell>
+                <TableCell>{doctor["Usg"]}</TableCell>
+                <TableCell>{doctor["X-ray"]}</TableCell>{" "}
                 {/* <TableCell className="text-right">{item.rate}</TableCell>
               <TableCell className="text-right">{item.film_count}</TableCell> */}
               </TableRow>

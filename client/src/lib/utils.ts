@@ -1,3 +1,4 @@
+import { DoctorCommissionDto } from "@/app/api/data-contracts";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -65,4 +66,35 @@ export function compareSortValues(
   return sortDirection === "asc"
     ? getNestedValue(a, sortField).localeCompare(getNestedValue(b, sortField))
     : getNestedValue(b, sortField).localeCompare(getNestedValue(a, sortField));
+}
+
+
+export function aggregateDoctorData(data: DoctorCommissionDto[] = []) {
+
+  const result: any = {}; // Initialize as an empty object
+
+  for (let entry of data) {
+    const doctorId = entry.doctorId;
+    const modality = entry.modality;
+    const amount = entry.amount;
+
+    // If doctor doesn't exist in the result, add them
+    if (!result[doctorId]) {
+      result[doctorId] = {
+        doctorId: "", // Initialize with an empty string
+        doctor: {
+          doctorId: "", // Initialize with an empty string
+        },
+      };
+    }
+
+    // Convert modality names to proper case for the output format
+    const modalityName = modality.charAt(0).toUpperCase() + modality.slice(1);
+
+    // Add the modality and amount to the doctor entry
+    result[doctorId].doctor[modalityName] = amount;
+  }
+
+  // Convert the result to an array format
+  return Object.values(result);
 }

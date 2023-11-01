@@ -164,11 +164,11 @@ export function PRDashboard() {
     useAllConnectedCentresData({ enabled: selectedFlow == "join" });
 
   return (
-    <Card className="flex flex-col items-center justify-center py-28 space-y-6 m-4 h-full rounded-md bg-zinc-950 border-zinc-600">
+    <Card className="flex flex-col items-center justify-center py-28 space-y-6 m-4 h-full rounded-md bg-blue-50 border-blue-200">
       {selectedFlow == null && (
         <div className="flex gap-8">
           <Card
-            className="flex flex-col items-center justify-center rounded-md p-10 bg-zinc-950 border-zinc-600"
+            className="flex flex-col items-center justify-center rounded-md p-10 bg-blue-50 border-blue-200"
             onClick={() => setSelectedFlow("create")}
           >
             <h1 className="text-xl text-center sm:text-2xl opacity-90 flex items-center space-x-4">
@@ -176,7 +176,7 @@ export function PRDashboard() {
             </h1>
           </Card>
           <Card
-            className="flex flex-col items-center justify-center rounded-md p-10 bg-zinc-950 border-zinc-600"
+            className="flex flex-col items-center justify-center rounded-md p-10 bg-blue-50 border-blue-200"
             onClick={() => setSelectedFlow("join")}
           >
             <h1 className="text-xl text-center sm:text-2xl opacity-90 flex items-center space-x-4">
@@ -186,7 +186,7 @@ export function PRDashboard() {
         </div>
       )}
       {selectedFlow == "create" && (
-        <div className="flex flex-col items-center justify-center py-28 space-y-6 m-4 h-full rounded-md bg-zinc-950 border-zinc-600 w-[100%]">
+        <div className="flex flex-col items-center justify-center py-28 space-y-6 m-4 h-full rounded-md bg-blue-50 border-blue-200 w-[100%]">
           <h1 className="text-xl text-center sm:text-2xl opacity-90 flex items-center space-x-4">
             <span>Create Doctor</span>
           </h1>
@@ -236,7 +236,7 @@ export function PRDashboard() {
                         <Button
                           type="button"
                           variant="outline"
-                          className=" rounded-l-none border-zinc-600 border-l-0"
+                          className=" rounded-l-none border-blue-200 border-l-0"
                           onClick={() => setShowPassword(!showPassword)}
                         >
                           {showPassword ? "Hide" : "Show"}
@@ -255,7 +255,7 @@ export function PRDashboard() {
                   value="submit"
                   loading={loading}
                   variant="outline"
-                  className="w-full sm:w-1/2 border-zinc-600"
+                  className="w-full sm:w-1/2 border-blue-200"
                 >
                   Create
                 </Button>
@@ -266,7 +266,7 @@ export function PRDashboard() {
       )}
 
       {selectedFlow == "join" && (
-        <div className="flex flex-col items-center justify-center py-28 space-y-6 m-4 h-full rounded-md bg-zinc-950 border-zinc-600 w-[100%]">
+        <div className="flex flex-col items-center justify-center py-28 space-y-6 m-4 h-full rounded-md bg-blue-50 border-blue-200 w-[100%]">
           <h1 className="text-4xl text-center opacity-90 flex items-center space-x-4 mb-12">
             <span>Connect Doctor to Centre</span>
           </h1>
@@ -384,7 +384,7 @@ export function PRDashboard() {
                       value="submit"
                       loading={loading}
                       variant="outline"
-                      className="w-full sm:w-1/2 border-zinc-600"
+                      className="w-full sm:w-1/2 border-blue-200"
                     >
                       Connect Doctor to Centre
                     </Button>

@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import { Providers } from "./providers";
+import clsx from "clsx";
 
 const inter = Poppins({ subsets: ["latin"], weight: ["400", "600"] });
 
@@ -18,7 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={clsx(inter.className, "text-blue-950")}>
         <Providers>
           <main className="h-[calc(100vh-2rem)]">{children}</main>
           <Toaster />

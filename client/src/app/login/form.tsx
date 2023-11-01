@@ -118,7 +118,7 @@ export function LoginForm() {
                   <Button
                     type="button"
                     variant="outline"
-                    className=" rounded-l-none border-zinc-600 border-l-0"
+                    className=" rounded-l-none border-blue-200 border-l-0"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? "Hide" : "Show"}
@@ -137,7 +137,7 @@ export function LoginForm() {
             value="submit"
             loading={loading}
             variant="outline"
-            className="w-full sm:w-1/2  border-zinc-600"
+            className="w-full sm:w-1/2  border-blue-200"
           >
             Login
           </Button>

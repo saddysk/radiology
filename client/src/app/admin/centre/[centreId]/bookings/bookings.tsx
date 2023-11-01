@@ -104,27 +104,27 @@ export function Bookings({ centreId }: { centreId: string }) {
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
       <div className="w-full flex">
         <Link href={`/admin/centre/${centreId}/bookings/add`}>
-          <Button className="bg-white text-black hover:opacity-80 ml-auto">
+          <Button className="bg-blue-50 text-blue-950 hover:opacity-80 ml-auto border border-blue-200 shadow-none">
             Add New Booking
           </Button>
         </Link>
       </div>
-      <div className="p-6 my-4 rounded-lg shadow-lg bg-zinc-900">
+      <div className="p-6 my-4 rounded-lg   bg-blue-100">
         <div className="flex justify-between mb-4">
           <h3 className="text-xl font-bold">All bookings</h3>
           <Input
             type="text"
-            className="w-[300px] border border-zinc-600"
+            className="w-[300px] border border-blue-200"
             placeholder="Search by patient name"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <div className="flex items-center gap-3">
             <Select defaultValue={sortField} onValueChange={setSortField}>
-              <SelectTrigger className="w-[180px] border-zinc-600">
+              <SelectTrigger className="w-[180px] border-blue-200">
                 <SelectValue placeholder="Sort By" />
               </SelectTrigger>
-              <SelectContent className="bg-zinc-900 border-zinc-600">
+              <SelectContent className="bg-blue-100 border-blue-200">
                 <SelectItem value="patient.name">Sort by Name</SelectItem>
                 <SelectItem value="createdAt">Sort by Created At</SelectItem>
                 {/* Add other fields if you want */}
@@ -133,7 +133,7 @@ export function Bookings({ centreId }: { centreId: string }) {
             <Button
               size="icon"
               variant="ghost"
-              className="border border-zinc-600"
+              className="border border-blue-200"
               onClick={() =>
                 setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"))
               }
