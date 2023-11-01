@@ -1,11 +1,11 @@
 "use client";
 
-import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { useAllConnectedCentresData } from "@/lib/query-hooks";
 import CenteredSpinner from "@/components/ui/centered-spinner";
+import Nabvbar from "@/components/navbar";
 
 export function DoctorDashboard() {
   const router = useRouter();
@@ -18,13 +18,7 @@ export function DoctorDashboard() {
 
   return (
     <Card className="flex flex-col m-4 h-full rounded-md bg-zinc-950 border-zinc-600">
-      <nav className="flex items-center justify-between gap-4 p-6 border-b border-b-zinc-600">
-        <h1 className="text-xl text-white">Admin Dashboard</h1>
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-      </nav>
+      <Nabvbar />
 
       <div className="p-6">
         <h1>All centers connected</h1>
@@ -34,7 +28,7 @@ export function DoctorDashboard() {
               <div
                 key={index}
                 className="flex items-center space-x-2 p-6 border border-white rounded-md"
-                onClick={() => router.push(`/admin/centre/${centre.id}`)}
+                onClick={() => router.push(`/doctor/centre/${centre.id}`)}
               >
                 {centre.name}
               </div>

@@ -2,9 +2,7 @@
 
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAllConnectedCentresData, useCentreData } from "@/lib/query-hooks";
+import { useCentreData } from "@/lib/query-hooks";
 import CenteredSpinner from "@/components/ui/centered-spinner";
 import { CopyIcon } from "lucide-react";
 

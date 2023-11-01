@@ -122,8 +122,6 @@ export class AuthService {
       isFirstLogin: user.isFirstLogin,
     });
 
-    console.log(user);
-
     const token = await this.createAuthToken(user);
 
     return { token, user };
