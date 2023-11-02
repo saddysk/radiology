@@ -49,8 +49,12 @@ const bookingSchema = z.object({
   submittedBy: z.string(),
   consultant: z.string(),
 
-  modality: z.string(),
-  investigation: z.string(),
+  modality: z.string({
+    required_error: "Please select an email to display.",
+  }),
+  investigation: z.string({
+    required_error: "Please select an email to display.",
+  }),
 
   amount: z.number(),
   discount: z.number(),
@@ -65,7 +69,8 @@ export function AddBookings({ centreId }: { centreId: string }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [selectedModality, setSelectedModality] = useState("");
-
+  const [cost, setCost] = useState<number | undefined>(0);
+  const [discount, setDiscount] = useState<number | undefined>(0);
   const addBookingForm = useForm<CreateBookingDto>({
     //resolver: zodResolver(bookingSchema),
     defaultValues: {
@@ -96,6 +101,29 @@ export function AddBookings({ centreId }: { centreId: string }) {
     },
   });
 
+  const updateCost = () => {
+    const doctor = doctors?.find(
+      (e) => e.doctorId == addBookingForm.getValues("consultant")
+    );
+    const modality = dataRateList?.data.find(
+      (e) => e.id == addBookingForm.getValues("modality")
+    );
+
+    const investigation = dataRateList?.data
+      .find((e) => e.id == addBookingForm.getValues("modality"))
+      ?.investigation.find(
+        (e) => e.id == addBookingForm.getValues("investigation")
+      );
+    const initialCost = Number(investigation?.amount) || 0;
+    const discount = doctor.letGo
+      ? Math.round((doctor[modality?.modality!] / 100) * initialCost) || 0
+      : 0;
+
+    setDiscount(discount);
+    const extraCharge =
+      Number(addBookingForm.getValues("payment.extraCharge")) || 0;
+    setCost(Number(initialCost) - Number(discount) + Number(extraCharge));
+  };
   const { fields, append, remove } = useFieldArray({
     control: addBookingForm.control,
     name: "payment.payments",
@@ -118,11 +146,27 @@ export function AddBookings({ centreId }: { centreId: string }) {
 
   async function addBookingSubmit(data: CreateBookingDto) {
     setLoading(true);
+    let partialCosts = 0;
+    data.payment.payments.map((e) => {
+      partialCosts = (e.amount || 0) + (partialCosts || 0);
+    });
+    if (cost !== partialCosts) {
+      console.log("wwwwww");
+      toast({
+        title: `Total cost breakdown doesn't match payable cost`,
+        variant: "default",
+      });
+      setLoading(false);
+      return;
+    }
     try {
       const response = await booking.bookingControllerCreate({
         ...data,
         modality: dataRateList?.data.find((e) => e.id == data.modality)
           ?.modality!,
+        investigation: dataRateList?.data
+          .find((e) => e.id == data.modality)
+          ?.investigation.find((e) => e.id == data.investigation)?.type!,
         centreId,
       });
 
@@ -141,7 +185,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
         description:
           error.response.data.statuCode === 400
             ? error.response.data.message
-            : "Something went wrong",
+            : "Error in validation",
         variant: "destructive",
       });
 
@@ -212,7 +256,28 @@ export function AddBookings({ centreId }: { centreId: string }) {
                 <FormItem>
                   <FormLabel>Gender</FormLabel>
                   <FormControl>
-                    <Input placeholder="Gender" {...field} />
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value); // This should update the form state
+                        setSelectedModality(value);
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger className="w-full border border-blue-200 bg-blue-50 shadow-none">
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                      <SelectContent className=" border-blue-200 bg-blue-50">
+                        <SelectItem value={"Male"} className="capitalize">
+                          Male
+                        </SelectItem>
+                        <SelectItem value={"Female"} className="capitalize">
+                          Female
+                        </SelectItem>
+                        <SelectItem value={"Null"} className="capitalize">
+                          Prefer not to say
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -294,21 +359,22 @@ export function AddBookings({ centreId }: { centreId: string }) {
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value); // This should update the form state
-                        setSelectedModality("");
+                        setSelectedModality(value);
+                        updateCost();
                       }}
                       defaultValue={field.value}
                     >
-                      <SelectTrigger className="w-full border border-blue-200 shadow-none">
+                      <SelectTrigger className="w-full border border-blue-200 bg-blue-50 shadow-none">
                         <SelectValue placeholder="Select a consultant" />
                       </SelectTrigger>
-                      <SelectContent className="bg-blue-100 border-blue-200">
+                      <SelectContent className=" border-blue-200 bg-blue-50">
                         {doctors?.map((doctor: any, i: number) => (
                           <SelectItem
-                            value={doctor?.id}
+                            value={doctor?.doctorId}
                             key={i}
                             className="capitalize"
                           >
-                            {doctor.name}
+                            {doctor?.doctorName}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -330,14 +396,15 @@ export function AddBookings({ centreId }: { centreId: string }) {
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value); // This should update the form state
+                        updateCost();
                         setSelectedModality(value);
                       }}
                       defaultValue={field.value}
                     >
-                      <SelectTrigger className="w-full border border-blue-200 shadow-none">
+                      <SelectTrigger className="w-full border border-blue-200 bg-blue-50 shadow-none">
                         <SelectValue placeholder="Select a Modality" />
                       </SelectTrigger>
-                      <SelectContent className="bg-blue-100 border-blue-200">
+                      <SelectContent className=" border-blue-200 bg-blue-50">
                         {dataRateList?.data
                           .filter(
                             (ratelist) => ratelist.investigation.length !== 0
@@ -364,12 +431,52 @@ export function AddBookings({ centreId }: { centreId: string }) {
                 <FormItem>
                   <FormLabel>Investigation</FormLabel>
                   <FormControl>
-                    <Input placeholder="Investigation" {...field} />
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value); // This should update the form state
+                        updateCost();
+                        setSelectedModality(value);
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger className="w-full border border-blue-200 bg-blue-50 shadow-none">
+                        <SelectValue placeholder="Select a Modality" />
+                      </SelectTrigger>
+                      <SelectContent className=" border-blue-200 bg-blue-50">
+                        {dataRateList?.data
+                          .filter(
+                            (ratelist) => ratelist.investigation.length !== 0
+                          )
+                          .find(
+                            (e) => e.id == addBookingForm.getValues("modality")
+                          )
+                          ?.investigation.map((investigation, i) => {
+                            return (
+                              <SelectItem
+                                value={investigation.id!}
+                                key={investigation.id}
+                              >
+                                {investigation.type.toUpperCase()}
+                              </SelectItem>
+                            );
+                          })}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <div>
+              {" "}
+              <FormLabel>Total amount payable</FormLabel>{" "}
+              <Input
+                value={cost}
+                disabled
+                className="border-blue-200 cursor-not-allowed"
+                placeholder="Total amount payable"
+              />
+            </div>
 
             <FormField
               control={addBookingForm.control}
@@ -402,15 +509,8 @@ export function AddBookings({ centreId }: { centreId: string }) {
                   <FormControl>
                     <Input
                       placeholder="Discount"
-                      {...field}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        // Use a regular expression to check if the input value is numeric
-                        if (/^\d*\.?\d*$/.test(value)) {
-                          const numberValue = Number(value);
-                          field.onChange(numberValue);
-                        }
-                      }}
+                      value={discount}
+                      disabled
                       type="number"
                     />
                   </FormControl>
@@ -435,6 +535,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
                         if (/^\d*\.?\d*$/.test(value)) {
                           const numberValue = Number(value);
                           field.onChange(numberValue);
+                          updateCost();
                         }
                       }}
                     />
@@ -451,12 +552,13 @@ export function AddBookings({ centreId }: { centreId: string }) {
               >
                 <div className="flex flex-col gap-2">
                   <button
-                    onClick={() =>
+                    onClick={(e) => {
+                      e.preventDefault();
                       append({
                         amount: 0,
                         paymentType: "",
-                      })
-                    }
+                      });
+                    }}
                   >
                     <PlusSquareIcon />
                   </button>

@@ -1,6 +1,6 @@
 export const ratelistData = [
   {
-    modality: "X_RAY",
+    modality: "X-RAY",
     investigation: [
       {
         type: "Abdomen",
@@ -155,7 +155,7 @@ export const ratelistData = [
     ],
   },
   {
-    modality: "CT_SCAN",
+    modality: "CT-SCAN",
     investigation: [
       {
         type: "BRAIN PLAIN",
@@ -447,54 +447,6 @@ export const ratelistData = [
         amount: 1500,
         filmCount: 0,
       },
-      {
-        type: "USG GUIDED PIG TAIL INSERTION",
-        amount: 10000,
-        filmCount: 0,
-      },
-      {
-        type: "EMERGENCY CHARGES",
-        amount: 1000,
-        filmCount: 0,
-      },
-    ],
-  },
-];
-
-const ratelistss = [
-  {
-    modality: "X_RAY",
-    investigation: [
-      {
-        type: "Abdomen",
-        amount: 500,
-        filmCount: 1,
-      },
-      {
-        type: "ARM AP/LAT",
-        amount: 800,
-        filmCount: 1,
-      },
-    ],
-  },
-  {
-    modality: "CT_SCAN",
-    investigation: [
-      {
-        type: "CT GUIDED BIOPSY OF LUNGS MASS",
-        amount: 8000,
-        filmCount: 0,
-      },
-      {
-        type: "CT GUIDED BIOPSY OF ABDOMEN MASS",
-        amount: 8000,
-        filmCount: 0,
-      },
-    ],
-  },
-  {
-    modality: "USG",
-    investigation: [
       {
         type: "USG GUIDED PIG TAIL INSERTION",
         amount: 10000,

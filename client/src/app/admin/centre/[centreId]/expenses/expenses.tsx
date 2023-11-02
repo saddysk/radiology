@@ -61,6 +61,7 @@ export function Expenses({ centreId }: { centreId: string }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState<ExpenseDto[]>([]);
   const [expensesUpdates, setExpensesUpdates] = useState({
+    expenseId: "",
     expenseType: "",
     paymentMethod: "",
     amount: 0,
@@ -105,7 +106,7 @@ export function Expenses({ centreId }: { centreId: string }) {
     setFilteredData(result);
   }, [dataCentreExpenses, searchQuery, sortOrder, sortField]);
 
-  const deleteExpense = async ({ expenseId }: { expenseId: string }) => {
+  const deleteExpense = async () => {
     try {
       if (!dataCentreExpenses?.data) {
         throw new Error("No data found");
@@ -113,7 +114,9 @@ export function Expenses({ centreId }: { centreId: string }) {
 
       setLoading(true);
 
-      const response = await centreexpense.expenseControllerDelete(expenseId);
+      const response = await centreexpense.expenseControllerDelete(
+        expensesUpdates.expenseId
+      );
 
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
@@ -136,13 +139,7 @@ export function Expenses({ centreId }: { centreId: string }) {
       setLoading(false);
     }
   };
-  const updateExpenses = async ({
-    expenseId,
-    e,
-  }: {
-    expenseId: any;
-    e: any;
-  }) => {
+  const updateExpenses = async ({ e }: { e: any }) => {
     e.preventDefault();
     try {
       if (!dataCentreExpenses?.data) {
@@ -152,9 +149,11 @@ export function Expenses({ centreId }: { centreId: string }) {
       setLoading(true);
 
       const response = await centreexpense.expenseControllerUpdate({
-        id: expenseId,
+        id: expensesUpdates.expenseId,
         centreId,
-        ...expensesUpdates,
+        expenseType: expensesUpdates.expenseType,
+        paymentMethod: expensesUpdates.paymentMethod,
+        amount: expensesUpdates.amount,
       });
 
       if (response?.status !== 200) {
@@ -341,6 +340,7 @@ export function Expenses({ centreId }: { centreId: string }) {
                         variant="outline"
                         onClick={() => {
                           setExpensesUpdates({
+                            expenseId: expense.id,
                             expenseType: expense.expenseType,
                             paymentMethod: expense.paymentMethod,
                             amount: expense.amount,
@@ -410,7 +410,6 @@ export function Expenses({ centreId }: { centreId: string }) {
                             loading={loading}
                             onClick={(e) => {
                               updateExpenses({
-                                expenseId: expense.id,
                                 e,
                               });
                             }}
@@ -441,9 +440,7 @@ export function Expenses({ centreId }: { centreId: string }) {
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() =>
-                            deleteExpense({ expenseId: expense.id })
-                          }
+                          onClick={() => deleteExpense()}
                           className="bg-red-100"
                         >
                           Continue

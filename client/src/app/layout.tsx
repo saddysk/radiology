@@ -21,8 +21,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={clsx(inter.className, "text-blue-950")}>
         <Providers>
-          <main className="h-[calc(100vh-2rem)]">{children}</main>
-          <Toaster />
+          <main className="h-[calc(100vh-2rem)]">
+            {children} <Toaster />
+          </main>
         </Providers>
       </body>
     </html>

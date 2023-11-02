@@ -68,18 +68,51 @@ export function compareSortValues(
     : getNestedValue(b, sortField).localeCompare(getNestedValue(a, sortField));
 }
 
-export function aggregateDoctorData(data: DoctorCommissionDto[]) {
-  const result = []; // Initialize as an empty object
+// export function aggregateDoctorData(data: DoctorCommissionDto[]) {
+//   const result = []; // Initialize as an empty object
 
-  for (let entry of data) {
-    result.push({
-      id: entry.doctorId,
-      name: entry.doctor?.name,
-      modality: entry.modality,
-      amount: entry.amount,
-      letGo: entry.letGo,
-    });
-  }
+//   for (let entry of data) {
 
-  return result;
+//     result.push({
+//       id: entry.doctorId,
+//       name: entry.doctor?.name,
+//       modality: entry.modality,
+//       amount: entry.amount,
+//       letGo: entry.letGo,
+//     });
+//   }
+
+//   return result;
+// }
+
+export function aggregateDoctorData(data: DoctorCommissionDto[] = []) {
+
+  const result = {};
+
+  // Iterate through the data array
+  data.forEach(item => {
+    const { doctorId, letGo, doctor: { name }, modality, amount } = item;
+
+    // Check if the doctorId is already in the result object
+    if (!result[doctorId]) {
+      // If not, initialize a new object for the doctor
+      result[doctorId] = {
+        doctorName: name,
+      };
+    }
+
+    // Add the modality and amount to the doctor's data
+    result[doctorId][modality] = amount;
+    result[doctorId].letGo = letGo
+  });
+
+  // Convert the result object into an array of objects
+  const finalResult = Object.keys(result).map(doctorId => ({
+    doctorId,
+
+    doctorName: result[doctorId].doctorName,
+    ...result[doctorId],
+  }));
+
+  return finalResult
 }

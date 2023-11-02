@@ -18,6 +18,7 @@ import {
   centre,
   centreexpense,
   drcommission,
+  edit,
   ratelist,
 } from "@/app/api";
 import { CommissionDto, UpdateRateListDto } from "@/app/api/data-contracts";
@@ -160,6 +161,13 @@ export const useCentreExpenses = ({ centreId }: { centreId: string }) => {
   return useQuery({
     queryKey: ["expenses", centreId],
     queryFn: () => centreexpense.expenseControllerGetAll(centreId),
+  });
+};
+
+export const useEditRequest = ({ centreId }: { centreId: string }) => {
+  return useQuery({
+    queryKey: ["edit", centreId],
+    queryFn: () => edit.updateRequestControllerGet(centreId),
   });
 };
 
