@@ -27,9 +27,9 @@ export function AdminDashboard() {
           <h1>All centers connected</h1>
           <Link
             href="/admin/centre/join"
-            className="flex items-center gap-3 text-xs opacity-80 bg-blue-300 border border-blue-500 rounded px-3 py-1.5"
+            className="flex items-center gap-3 text-sm opacity-80 bg-blue-300 border border-blue-500 rounded px-3 py-1.5"
           >
-            Join centre
+            Join new centre
           </Link>
         </div>
         {!isLoadingAllConnectedCentres ? (

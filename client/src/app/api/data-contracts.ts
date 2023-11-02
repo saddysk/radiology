@@ -163,6 +163,11 @@ export interface ExpenseDto {
 export type Expense = object;
 
 export interface InvestigationDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
   type: string;
   /** @example 1 */
   amount: number;
@@ -239,6 +244,7 @@ export interface DoctorCommissionDto {
   startDate?: string;
   /** @format date-time */
   endDate?: string;
+  letGo?: boolean;
   doctor?: UserDto;
   centre?: CentreDto;
 }
@@ -251,6 +257,7 @@ export interface CommissionDto {
   startDate?: string;
   /** @format date-time */
   endDate?: string;
+  letGo?: boolean;
 }
 
 export interface CreateDoctorCommissionDto {
@@ -292,13 +299,17 @@ export interface CreatePatientDto {
   abhaId?: string;
 }
 
-export interface CreatePaymentDto {
+export interface BookingPaymentsDto {
   /** @example 1 */
   amount: number;
+  paymentType: string;
+}
+
+export interface BookingPaymentDto {
   /** @example 1 */
   discount?: number;
   extraCharge?: string;
-  paymentType: string;
+  payments: BookingPaymentsDto[];
 }
 
 export interface CreateBookingDto {
@@ -321,7 +332,7 @@ export interface CreateBookingDto {
    */
   patientId?: string;
   patient?: CreatePatientDto;
-  payment: CreatePaymentDto[];
+  payment: BookingPaymentDto;
 }
 
 export interface BookingRecordDto {

@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { CreateExpenseDto, ErrorDto, Expense, ExpenseDto } from "./data-contracts";
+import { CreateExpenseDto, ErrorDto, Expense, ExpenseDto, SuccessDto } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class CentreExpense<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -70,6 +70,20 @@ export class CentreExpense<SecurityDataType = unknown> extends HttpClient<Securi
     this.request<ExpenseDto, ErrorDto>({
       path: `/api/centre/expense/${centreId}/${id}`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Centre Expense
+   * @name ExpenseControllerDelete
+   * @request DELETE:/api/centre/expense/{id}
+   */
+  expenseControllerDelete = (id: string, params: RequestParams = {}) =>
+    this.request<SuccessDto, ErrorDto>({
+      path: `/api/centre/expense/${id}`,
+      method: "DELETE",
       format: "json",
       ...params,
     });

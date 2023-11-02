@@ -18,6 +18,17 @@ import { Input } from "@/components/ui/input";
 import { CentreExpense } from "@/app/api/CentreExpense";
 import { ExpenseDto } from "@/app/api/data-contracts";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -102,9 +113,7 @@ export function Expenses({ centreId }: { centreId: string }) {
 
       setLoading(true);
 
-      const response = await centreexpense.expenseControllerUpdate({
-        id: expenseId,
-      });
+      const response = await centreexpense.expenseControllerDelete(expenseId);
 
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
@@ -144,7 +153,7 @@ export function Expenses({ centreId }: { centreId: string }) {
 
       const response = await centreexpense.expenseControllerUpdate({
         id: expenseId,
-        data: {},
+        data: expensesUpdates,
       });
 
       if (response?.status !== 200) {
@@ -169,7 +178,6 @@ export function Expenses({ centreId }: { centreId: string }) {
     }
   };
 
-  console.log(dataCentreExpenses, "here");
   return (
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
       <div className="w-full flex">
@@ -199,6 +207,18 @@ export function Expenses({ centreId }: { centreId: string }) {
         </div>
 
         <Table>
+          {dataCentreExpenses?.data.length == 0 && (
+            <TableCaption className="py-6">
+              No expenses added. <br />
+              Add an expense to get started!{" "}
+              <Link
+                className="underline"
+                href={`/admin/centre/${centreId}/expenses/add`}
+              >
+                Here{" "}
+              </Link>
+            </TableCaption>
+          )}
           <TableHeader>
             <TableRow>
               {visibleColumns.expenseId && (
@@ -393,7 +413,7 @@ export function Expenses({ centreId }: { centreId: string }) {
                                 e,
                               });
                             }}
-                            className="border border-blue-200"
+                            className="bg-blue-50 border border-blue-200"
                           >
                             Save changes
                           </Button>
@@ -401,35 +421,35 @@ export function Expenses({ centreId }: { centreId: string }) {
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                  <Dialog open={openDel} onOpenChange={setOpenDel}>
-                    <DialogTrigger asChild>
-                      <Button size="sm" variant="outline">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button size={"sm"} variant="outline">
                         Delete
                       </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-blue-100 p-8">
-                      <DialogHeader>
-                        <DialogTitle>Delete Expense</DialogTitle>
-                        <DialogDescription>
-                          Expense once deleted will be gone forever.
-                        </DialogDescription>
-                      </DialogHeader>
-
-                      <DialogFooter>
-                        <Button
-                          loading={loading}
-                          onClick={(e) => {
-                            deleteExpense({
-                              expenseId: expense.id,
-                            });
-                          }}
-                          className="border border-red-950 mt-12 bg-red-800"
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete your expense and all data for it.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() =>
+                            deleteExpense({ expenseId: expense.id })
+                          }
+                          className="bg-red-100"
                         >
-                          Confirm Delete
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </TableCell>
               </TableRow>
             ))}

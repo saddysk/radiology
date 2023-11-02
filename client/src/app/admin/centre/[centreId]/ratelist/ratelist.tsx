@@ -68,6 +68,7 @@ export function RateList({ centreId }: { centreId: string }) {
 
   const [investigationUpdates, setInvestigationUpdates] = useState({
     id: "",
+    investigationId: "",
     type: "",
     amount: 0,
     filmCount: 0,
@@ -103,15 +104,7 @@ export function RateList({ centreId }: { centreId: string }) {
       setLoading(false);
     }
   };
-  const deleteRateList = async ({
-    ratelistId,
-    investigation: id,
-    e,
-  }: {
-    ratelistId: string;
-    investigation: string;
-    e: any;
-  }) => {
+  const deleteRateList = async ({ e }: { e: any }) => {
     e.preventDefault();
     try {
       if (!dataRateList?.data) {
@@ -124,10 +117,11 @@ export function RateList({ centreId }: { centreId: string }) {
           .find((rateList) => rateList.id === investigationUpdates.id)
           ?.investigation?.filter((investigation) => {
             // Keep the investigation only if its type is NOT equal to the given id
-            return investigation.type !== id;
+            return investigation.id !== investigationUpdates.investigationId;
           }) || []; // Fallback to empty array if undefined
+
       const response = await ratelist.rateListControllerUpdate({
-        id: ratelistId,
+        id: investigationUpdates.id,
         investigation: updatedInvestigations,
       });
 
@@ -152,13 +146,7 @@ export function RateList({ centreId }: { centreId: string }) {
       setLoading(false);
     }
   };
-  const updateRateList = async ({
-    ratelistId,
-    e,
-  }: {
-    ratelistId: any;
-    e: any;
-  }) => {
+  const updateRateList = async ({ e }: { e: any }) => {
     e.preventDefault();
     try {
       if (!dataRateList?.data) {
@@ -170,7 +158,7 @@ export function RateList({ centreId }: { centreId: string }) {
         dataRateList.data
           .find((rateList) => rateList.id === investigationUpdates.id)
           ?.investigation?.map((investigation) => {
-            if (investigation.type === investigationUpdates.type) {
+            if (investigation.id === investigationUpdates.investigationId) {
               return {
                 ...investigation,
                 amount: investigationUpdates.amount,
@@ -219,7 +207,7 @@ export function RateList({ centreId }: { centreId: string }) {
   return (
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
       <div className="w-full flex mb-6 gap-4">
-        <Link href={`/admin/centre/${centreId}/ratelist/add`}>
+        <Link href={`/admin/centre/${centreId}/ratelist/modality/add`}>
           <Button className="bg-blue-50 text-blue-950 hover:opacity-80 ml-auto border border-blue-200 shadow-none">
             Add New Modality
           </Button>
@@ -254,7 +242,11 @@ export function RateList({ centreId }: { centreId: string }) {
                   </h3>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button size={"sm"} variant="outline">
+                      <Button
+                        size={"sm"}
+                        variant="outline"
+                        className="bg-blue-200"
+                      >
                         Delete Modality
                       </Button>
                     </AlertDialogTrigger>
@@ -320,6 +312,7 @@ export function RateList({ centreId }: { centreId: string }) {
                                   onClick={() => {
                                     setInvestigationUpdates({
                                       id: rateList.id,
+                                      investigationId: investigation.id,
                                       type: investigation.type,
                                       amount: investigation.amount,
                                       filmCount: investigation.filmCount,
@@ -384,11 +377,10 @@ export function RateList({ centreId }: { centreId: string }) {
                                       loading={loading}
                                       onClick={(e) => {
                                         updateRateList({
-                                          ratelistId: rateList.id,
                                           e,
                                         });
                                       }}
-                                      className="border border-blue-200"
+                                      className="bg-blue-50 border border-blue-200"
                                     >
                                       Save changes
                                     </Button>
@@ -404,6 +396,7 @@ export function RateList({ centreId }: { centreId: string }) {
                                   onClick={() => {
                                     setInvestigationUpdates({
                                       id: rateList.id,
+                                      investigationId: investigation.id,
                                       type: investigation.type,
                                       amount: investigation.amount,
                                       filmCount: investigation.filmCount,
@@ -429,12 +422,10 @@ export function RateList({ centreId }: { centreId: string }) {
                                     loading={loading}
                                     onClick={(e) => {
                                       deleteRateList({
-                                        ratelistId: rateList.id,
-                                        investigation: investigation.type,
                                         e,
                                       });
                                     }}
-                                    className="border border-red-950 mt-12 bg-red-800"
+                                    className="border mt-12 bg-red-100"
                                   >
                                     Confirm Delete
                                   </Button>

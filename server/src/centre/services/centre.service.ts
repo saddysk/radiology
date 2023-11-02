@@ -23,7 +23,7 @@ export class CentreService {
     private readonly centreAdminRepository: CentreAdminRepository,
     private readonly centrePrRepository: CentrePrRepository,
     private readonly doctorCommissionRepository: DoctorCommissionRepository,
-  ) {}
+  ) { }
 
   async create(userId: string, data: CreateCentreDto): Promise<Centre> {
     const user = await this.userRepository.findOne({
@@ -125,7 +125,7 @@ export class CentreService {
           centreId,
         },
       });
-      return centreAdmin.centre;
+      return centreAdmin.centre
     } else if (user.role === UserRole.Pr) {
       const centrePr = await this.centrePrRepository.findOne({
         where: {

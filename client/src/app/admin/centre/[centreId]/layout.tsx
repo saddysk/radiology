@@ -2,6 +2,14 @@
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import clsx from "clsx";
+import {
+  ClipboardList,
+  LayoutDashboard,
+  ListTodo,
+  Receipt,
+  Stethoscope,
+  Users,
+} from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function CentreLayout({
@@ -18,17 +26,24 @@ export default function CentreLayout({
     {
       title: "Dashboard",
       path: `/admin/centre/${params.centreId}`, // Adjust the path for Dashboard
-      icon: "",
+      icon: <LayoutDashboard />,
+    },
+    {
+      title: "Add Users",
+      path: `/admin/centre/${params.centreId}/users`,
+      icon: <Users />,
     },
     {
       title: "Ratelist",
       path: `/admin/centre/${params.centreId}/ratelist`,
+      icon: <ListTodo />,
     },
     {
-      title: "Affiliated Doctors",
+      title: "Connected Doctors",
       path: `/admin/centre/${params.centreId}/doctors`,
-      icon: "",
+      icon: <Stethoscope />,
     },
+
     // {
     //   title: "Receptionists",
     //   path: `/admin/centre/${params.centreId}/orders`,
@@ -37,12 +52,12 @@ export default function CentreLayout({
     {
       title: "Bookings",
       path: `/admin/centre/${params.centreId}/bookings`,
-      icon: "",
+      icon: <ClipboardList />,
     },
     {
       title: "Expenses",
       path: `/admin/centre/${params.centreId}/expenses`,
-      icon: "",
+      icon: <Receipt />,
     },
   ];
 
@@ -76,12 +91,13 @@ export default function CentreLayout({
               <div
                 key={index}
                 className={clsx(
-                  "px-6 py-2 hover:bg-blue-100 text-blue-950 cursor-pointer",
+                  "px-6 py-2 hover:bg-blue-100 text-blue-950 cursor-pointer flex gap-2",
                   pathname == tab.path && "bg-blue-200"
                 )}
                 onClick={() => route.push(tab.path)}
               >
-                {tab.title}
+                {tab.icon}
+                <p className="whitespace-nowrap">{tab.title}</p>
               </div>
             );
           })}
