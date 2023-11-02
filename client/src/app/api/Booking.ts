@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { BookingDto, CreateBookingDto, ErrorDto } from "./data-contracts";
+import { BookingDto, CreateBookingDto, ErrorDto, UpdateBookingDto } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Booking<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -36,7 +36,7 @@ export class Booking<SecurityDataType = unknown> extends HttpClient<SecurityData
    * @name BookingControllerUpdate
    * @request PUT:/api/booking
    */
-  bookingControllerUpdate = (data: Booking, params: RequestParams = {}) =>
+  bookingControllerUpdate = (data: UpdateBookingDto, params: RequestParams = {}) =>
     this.request<BookingDto, ErrorDto>({
       path: `/api/booking`,
       method: "PUT",

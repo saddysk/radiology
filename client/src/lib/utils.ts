@@ -68,33 +68,18 @@ export function compareSortValues(
     : getNestedValue(b, sortField).localeCompare(getNestedValue(a, sortField));
 }
 
-
-export function aggregateDoctorData(data: DoctorCommissionDto[] = []) {
-
-  const result: any = {}; // Initialize as an empty object
+export function aggregateDoctorData(data: DoctorCommissionDto[]) {
+  const result = []; // Initialize as an empty object
 
   for (let entry of data) {
-    const doctorId = entry.doctorId;
-    const modality = entry.modality;
-    const amount = entry.amount;
-
-    // If doctor doesn't exist in the result, add them
-    if (!result[doctorId]) {
-      result[doctorId] = {
-        doctorId: "", // Initialize with an empty string
-        doctor: {
-          doctorId: "", // Initialize with an empty string
-        },
-      };
-    }
-
-    // Convert modality names to proper case for the output format
-    const modalityName = modality.charAt(0).toUpperCase() + modality.slice(1);
-
-    // Add the modality and amount to the doctor entry
-    result[doctorId].doctor[modalityName] = amount;
+    result.push({
+      id: entry.doctorId,
+      name: entry.doctor?.name,
+      modality: entry.modality,
+      amount: entry.amount,
+      letGo: entry.letGo,
+    });
   }
 
-  // Convert the result to an array format
-  return Object.values(result);
+  return result;
 }

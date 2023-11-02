@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { Booking } from 'src/database/entities/booking.entity';
-import { CreateBookingDto } from '../dto/booking.dto';
+import { CreateBookingDto, UpdateBookingDto } from '../dto/booking.dto';
 import { BookingRepository } from '../repositories/booking.repository';
 import { PatientService } from 'src/patient/services/patient.service';
 import { Patient } from 'src/database/entities/patient.entity';
@@ -71,7 +71,10 @@ export class BookingService {
     return this.bookingRepository.findBy({ centreId });
   }
 
-  async update(userId: string, bookingData: Booking): Promise<Booking> {
+  async update(
+    userId: string,
+    bookingData: UpdateBookingDto,
+  ): Promise<Booking> {
     const centreAdmin = await this.centreAdminRepository.findOne({
       where: {
         userId,
@@ -95,9 +98,9 @@ export class BookingService {
       );
     }
 
-    await this.bookingRepository.save(bookingData);
+    const updatedBooking = await this.bookingRepository.save(bookingData);
 
-    return bookingData;
+    return updatedBooking;
   }
 
   private async getOrCreatePatient(

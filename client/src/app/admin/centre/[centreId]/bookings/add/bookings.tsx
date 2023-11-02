@@ -3,13 +3,10 @@
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  CreateBookingDto,
-  DoctorCommissionDto,
-} from "@/app/api/data-contracts";
+import { CreateBookingDto } from "@/app/api/data-contracts";
 import { booking } from "@/app/api";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -33,6 +30,7 @@ import {
   useGetRateList,
 } from "@/lib/query-hooks";
 import { aggregateDoctorData } from "@/lib/utils";
+import { MinusSquareIcon, PlusSquareIcon } from "lucide-react";
 
 const bookingSchema = z.object({
   //user
@@ -78,25 +76,32 @@ export function AddBookings({ centreId }: { centreId: string }) {
       remark: "",
       patient: {
         name: "",
-        age: 0,
+        age: undefined,
         gender: "",
         phone: "",
         email: "",
         address: "",
         abhaId: "",
       },
-      payment: [
-        {
-          amount: 0,
-          discount: 0,
-          extraCharge: "",
-          paymentType: "",
-        },
-      ],
+      payment: {
+        discount: undefined,
+        extraCharge: "",
+        payments: [
+          {
+            amount: undefined,
+            paymentType: "",
+          },
+        ],
+      },
     },
   });
 
-  const { data: dataRateList, isLoading: IsLoadingRateList } = useGetRateList({
+  const { fields, append, remove } = useFieldArray({
+    control: addBookingForm.control,
+    name: "payment.payments",
+  });
+
+  const { data: dataRateList, isLoading: isLoadingRateList } = useGetRateList({
     centreId,
   });
   const {
@@ -107,7 +112,9 @@ export function AddBookings({ centreId }: { centreId: string }) {
     enabled: true,
   });
 
-  const doctors = aggregateDoctorData(dataAllDoctorsForCentre?.data);
+  const doctors =
+    dataAllDoctorsForCentre?.data &&
+    aggregateDoctorData(dataAllDoctorsForCentre.data);
 
   async function addBookingSubmit(data: CreateBookingDto) {
     setLoading(true);
@@ -143,11 +150,13 @@ export function AddBookings({ centreId }: { centreId: string }) {
       setLoading(false);
     }
   }
+
   return (
     <div className="flex flex-col items-center w-full h-[85vh] p-8 overflow-y-scroll">
       <h1 className="text-4xl text-center opacity-90 items-center space-x-4 mb-6">
         <span>Add Bookings</span>
       </h1>
+
       <Form {...addBookingForm}>
         <form
           onSubmit={addBookingForm.handleSubmit(addBookingSubmit)}
@@ -159,7 +168,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
             <FormField
               control={addBookingForm.control}
               name="patient.name"
-              rules={{ required: true }}
+              // rules={{ required: true }}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Name</FormLabel>
@@ -293,13 +302,15 @@ export function AddBookings({ centreId }: { centreId: string }) {
                         <SelectValue placeholder="Select a consultant" />
                       </SelectTrigger>
                       <SelectContent className="bg-blue-100 border-blue-200">
-                        {doctors.map((doctor: any, i: number) => {
-                          return (
-                            <SelectItem value={doctor?.doctor?.id} key={i}>
-                              {doctor?.doctor?.name.toUpperCase()}
-                            </SelectItem>
-                          );
-                        })}
+                        {doctors?.map((doctor: any, i: number) => (
+                          <SelectItem
+                            value={doctor?.id}
+                            key={i}
+                            className="capitalize"
+                          >
+                            {doctor.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -377,35 +388,14 @@ export function AddBookings({ centreId }: { centreId: string }) {
                 </FormItem>
               )}
             />
+          </div>
+          <div className="flex flex-col gap-8 bg-blue-100 p-4 py-8 rounded-md justify-center">
+            {/* Payment */}
+            <h2 className="text-xl">Booking Details</h2>
 
             <FormField
               control={addBookingForm.control}
-              name={`payment.${0}.amount`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Amount</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Amount"
-                      {...field}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        // Use a regular expression to check if the input value is numeric
-                        if (/^\d*\.?\d*$/.test(value)) {
-                          const numberValue = Number(value);
-                          field.onChange(numberValue);
-                        }
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={addBookingForm.control}
-              name={`payment.${0}.discount`}
+              name={`payment.discount`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Discount</FormLabel>
@@ -431,25 +421,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
 
             <FormField
               control={addBookingForm.control}
-              name="remark"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Remarks</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      className="border-blue-200"
-                      placeholder="Remarks"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={addBookingForm.control}
-              name={`payment.${0}.extraCharge`}
+              name={`payment.extraCharge`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Extra Charge</FormLabel>
@@ -472,20 +444,73 @@ export function AddBookings({ centreId }: { centreId: string }) {
               )}
             />
 
-            <FormField
-              control={addBookingForm.control}
-              name={`payment.${0}.paymentType`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Payment Type</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Payment Type" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {fields.map((_, index) => (
+              <div
+                key={index}
+                className="flex flex-row-reverse gap-2 items-start justify-between"
+              >
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() =>
+                      append({
+                        amount: 0,
+                        paymentType: "",
+                      })
+                    }
+                  >
+                    <PlusSquareIcon />
+                  </button>
+                  {fields.length > 1 && (
+                    <button onClick={() => remove(index)}>
+                      <MinusSquareIcon />
+                    </button>
+                  )}
+                </div>
+
+                <div className="w-full flex flex-col gap-2 border border-blue-200 rounded-md p-4">
+                  <FormField
+                    control={addBookingForm.control}
+                    name={`payment.payments.${index}.amount`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Amount</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Amount"
+                            {...field}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              // Use a regular expression to check if the input value is numeric
+                              if (/^\d*\.?\d*$/.test(value)) {
+                                const numberValue = Number(value);
+                                field.onChange(numberValue);
+                              }
+                            }}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={addBookingForm.control}
+                    name={`payment.payments.${index}.paymentType`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Payment Type</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Payment Type" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
+
           <div className="flex flex-col items-center justify-between space-y-6">
             <Button
               type="submit"

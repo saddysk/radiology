@@ -133,4 +133,5 @@ export class CreateBookingDto extends PickType(BookingDto, [
 export class UpdateBookingDto extends OmitType(BookingDto, [
   'patient',
   'payment',
+  'consultantName',
 ]) {}

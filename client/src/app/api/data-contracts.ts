@@ -160,9 +160,32 @@ export interface ExpenseDto {
   remark?: string;
 }
 
-export type Expense = object;
+export interface UpdateExpenseDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  centreId: string;
+  /** @format date-time */
+  date: string;
+  /** @example 1 */
+  amount: number;
+  expenseType: string;
+  paymentMethod: string;
+  remark?: string;
+}
 
 export interface InvestigationDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
   type: string;
   /** @example 1 */
   amount: number;
@@ -239,6 +262,7 @@ export interface DoctorCommissionDto {
   startDate?: string;
   /** @format date-time */
   endDate?: string;
+  letGo?: boolean;
   doctor?: UserDto;
   centre?: CentreDto;
 }
@@ -251,6 +275,7 @@ export interface CommissionDto {
   startDate?: string;
   /** @format date-time */
   endDate?: string;
+  letGo?: boolean;
 }
 
 export interface CreateDoctorCommissionDto {
@@ -292,13 +317,17 @@ export interface CreatePatientDto {
   abhaId?: string;
 }
 
-export interface CreatePaymentDto {
+export interface BookingPaymentsDto {
   /** @example 1 */
   amount: number;
+  paymentType: string;
+}
+
+export interface BookingPaymentDto {
   /** @example 1 */
   discount?: number;
   extraCharge?: string;
-  paymentType: string;
+  payments: BookingPaymentsDto[];
 }
 
 export interface CreateBookingDto {
@@ -321,7 +350,7 @@ export interface CreateBookingDto {
    */
   patientId?: string;
   patient?: CreatePatientDto;
-  payment: CreatePaymentDto[];
+  payment: BookingPaymentDto;
 }
 
 export interface BookingRecordDto {
@@ -409,19 +438,6 @@ export interface BookingDto {
   patient?: PatientDto;
 }
 
-export type Booking = object;
-
-export enum RequestType {
-  Expense = "expense",
-  Booking = "booking",
-}
-
-export enum RequestStatus {
-  Pending = "pending",
-  Accepted = "accepted",
-  Rejected = "rejected",
-}
-
 export interface UpdateBookingDto {
   /**
    * @format uuid
@@ -452,11 +468,21 @@ export interface UpdateBookingDto {
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   consultant: string;
-  consultantName: string;
   modality: string;
   investigation: string;
   remark?: string;
   record?: BookingRecordDto;
+}
+
+export enum RequestType {
+  Expense = "expense",
+  Booking = "booking",
+}
+
+export enum RequestStatus {
+  Pending = "pending",
+  Accepted = "accepted",
+  Rejected = "rejected",
 }
 
 export interface CreateUpdateRequestDto {

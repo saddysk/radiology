@@ -25,7 +25,9 @@ export function DoctorsList({ centreId }: { centreId: string }) {
     enabled: true,
   });
 
-  const doctors = aggregateDoctorData(dataAllDoctorsForCentre?.data);
+  const doctors =
+    dataAllDoctorsForCentre?.data &&
+    aggregateDoctorData(dataAllDoctorsForCentre.data);
 
   return (
     <div className="w-full p-8 overflow-y-scroll">

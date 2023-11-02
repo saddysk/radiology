@@ -7,9 +7,12 @@ import {
   PostRoute,
   PutRoute,
 } from 'libs/decorators/route.decorators';
-import { CreateExpenseDto, ExpenseDto } from './dto/expense.dto';
+import {
+  CreateExpenseDto,
+  ExpenseDto,
+  UpdateExpenseDto,
+} from './dto/expense.dto';
 import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
-import { Expense } from 'src/database/entities/expense.entity';
 import { SuccessDto } from 'libs/dtos';
 
 @Controller('api/centre/expense')
@@ -70,7 +73,7 @@ export class ExpenseController {
   @UseAuthGuard(AuthGuardOption.BEARER)
   async update(
     @Req() request: any,
-    @Body() data: Expense,
+    @Body() data: UpdateExpenseDto,
   ): Promise<ExpenseDto> {
     const expense = await this.expenseService.update(
       request.user.user.id,

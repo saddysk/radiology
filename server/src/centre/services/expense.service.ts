@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateExpenseDto } from '../dto/expense.dto';
+import { CreateExpenseDto, UpdateExpenseDto } from '../dto/expense.dto';
 import { Expense } from 'src/database/entities/expense.entity';
 import { ExpenseRepository } from '../repositories/expense.repository';
 import { CentreRepository } from 'src/centre/repositories/centre.repository';
@@ -70,7 +70,10 @@ export class ExpenseService {
     return expense;
   }
 
-  async update(userId: string, expenseData: Expense): Promise<Expense> {
+  async update(
+    userId: string,
+    expenseData: UpdateExpenseDto,
+  ): Promise<Expense> {
     const centreAdmin = await this.centreAdminRepository.findOne({
       where: {
         userId,
@@ -94,9 +97,9 @@ export class ExpenseService {
       );
     }
 
-    await this.expenseRepository.save(expenseData);
+    const updatedExpense = await this.expenseRepository.save(expenseData);
 
-    return expenseData;
+    return updatedExpense;
   }
 
   async delete(userId: string, id: string) {
