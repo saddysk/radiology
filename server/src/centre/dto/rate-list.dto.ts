@@ -5,13 +5,14 @@ import {
   ObjectField,
   StringField,
   UUIDField,
+  UUIDFieldOptional,
 } from 'libs/decorators';
 import { RateList } from 'src/database/entities/rate-list.entity';
 import { IInvestigation } from 'src/database/interfaces/rate-list.interface';
 
 export class InvestigationDto {
-  @UUIDField()
-  id: string;
+  @UUIDFieldOptional()
+  id?: string;
 
   @StringField()
   type: string;

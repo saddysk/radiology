@@ -2,40 +2,23 @@
 
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
-import CenteredSpinner from "@/components/ui/centered-spinner";
 import { useState } from "react";
-import {
-  CreateDoctorCommissionDto,
-  CreateExpenseDto,
-} from "@/app/api/data-contracts";
-import { centre, centreexpense, drcommission } from "@/app/api";
+import { CreateExpenseDto } from "@/app/api/data-contracts";
+import { centreexpense } from "@/app/api";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { RadioGroup } from "@radix-ui/react-radio-group";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { DatePickerDemo } from "@/components/ui/date";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
+import { useQueryClient } from "@tanstack/react-query";
 
 const expensesSchema = z.object({
   date: z.string().refine((value) => !isNaN(Date.parse(value)), {
@@ -49,6 +32,8 @@ const expensesSchema = z.object({
 
 export function AddExpenses({ centreId }: { centreId: string }) {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -72,6 +57,7 @@ export function AddExpenses({ centreId }: { centreId: string }) {
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
+        queryClient.invalidateQueries(["expenses", centreId]);
         toast({
           title: `Expense added to centre`,
           variant: "default",
@@ -79,9 +65,10 @@ export function AddExpenses({ centreId }: { centreId: string }) {
         router.push(`/admin/centre/${centreId}/expenses`);
       }
     } catch (error: any) {
+      console.log(error);
       toast({
         title: "Error",
-        description: error.message || "Something went wrong",
+        description: "Error adding expense",
         variant: "destructive",
       });
       //localStorage.removeItem("x-session-token");
@@ -125,6 +112,7 @@ export function AddExpenses({ centreId }: { centreId: string }) {
                       }}
                     />
                   </FormControl>
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -141,6 +129,7 @@ export function AddExpenses({ centreId }: { centreId: string }) {
                   <FormControl>
                     <Input placeholder="eg. Rent" {...field} />
                   </FormControl>
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -157,6 +146,7 @@ export function AddExpenses({ centreId }: { centreId: string }) {
                   <FormControl>
                     <Input placeholder="eg. UPI" {...field} />
                   </FormControl>
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -177,6 +167,7 @@ export function AddExpenses({ centreId }: { centreId: string }) {
                       {...field}
                     />
                   </FormControl>
+
                   <FormMessage />
                 </FormItem>
               )}

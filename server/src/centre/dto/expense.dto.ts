@@ -69,7 +69,6 @@ export class CreateExpenseDto extends PickType(ExpenseDto, [
 export class UpdateExpenseDto extends PickType(ExpenseDto, [
   'id',
   'centreId',
-  'date',
   'amount',
   'expenseType',
   'paymentMethod',

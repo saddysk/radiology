@@ -1,5 +1,5 @@
 export interface IInvestigation {
-  id: string;
+  id?: string;
   type: string;
   amount: number;
   filmCount: number;

@@ -171,8 +171,6 @@ export interface UpdateExpenseDto {
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   centreId: string;
-  /** @format date-time */
-  date: string;
   /** @example 1 */
   amount: number;
   expenseType: string;
@@ -185,7 +183,7 @@ export interface InvestigationDto {
    * @format uuid
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
-  id: string;
+  id?: string;
   type: string;
   /** @example 1 */
   amount: number;

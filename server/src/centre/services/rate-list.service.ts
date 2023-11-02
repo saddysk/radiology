@@ -145,7 +145,6 @@ export class RateListService {
     rateList.centreId = centreId;
     rateList.modality = data.modality;
 
-    rateList.investigation = data.investigation;
     data.investigation.forEach((_, index) => {
       rateList.investigation[index].id = uuid();
     });

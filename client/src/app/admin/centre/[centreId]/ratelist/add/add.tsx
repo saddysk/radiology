@@ -9,6 +9,8 @@ import { z } from "zod";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
+import { uuid } from "uuidv4";
+
 import {
   Table,
   TableBody,
@@ -29,6 +31,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RateListDto } from "@/app/api/data-contracts";
+import { randomUUID } from "crypto";
 
 const rateListsSchema = z.object({
   rateLists: z.array(
@@ -143,6 +147,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
           title: "Ratelist Updated",
           variant: "default",
         });
+        router.push(`/admin/centre/${centreId}/ratelist`);
         setInvestigationUpdates({
           id: "",
           type: "",
@@ -173,7 +178,11 @@ export function AddRateList({ centreId }: { centreId: string }) {
               selectedRows[`${rateList.modality}-${index}`]
           )
           .map((i) => {
-            return { type: i.type, amount: i.amount, filmCount: i.filmCount };
+            return {
+              type: i.type,
+              amount: i.amount,
+              filmCount: i.filmCount,
+            };
           }),
       };
     });
@@ -183,6 +192,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
         centreId: centreId,
         rateLists: filteredData,
       });
+
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
@@ -190,6 +200,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
           title: `Rate List Added`,
           variant: "default",
         });
+        queryClient.cancelQueries(["ratelist", centreId]);
         router.push(`/admin/centre/${centreId}/ratelist`);
       }
     } catch (error: any) {

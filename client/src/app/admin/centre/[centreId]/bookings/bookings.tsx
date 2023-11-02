@@ -5,6 +5,7 @@ import { useState } from "react";
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -151,6 +152,18 @@ export function Bookings({ centreId }: { centreId: string }) {
           />
         </div>
         <Table>
+          {dataCentreBookings?.data.length == 0 && (
+            <TableCaption className="py-6">
+              No bookings added. <br />
+              Add a booking to get started!{" "}
+              <Link
+                className="underline"
+                href={`/admin/centre/${centreId}/bookings/add`}
+              >
+                Here{" "}
+              </Link>
+            </TableCaption>
+          )}
           <TableHeader>
             {visibleColumns.bookingId && <TableHead>Booking Id</TableHead>}
             {visibleColumns.patientId && <TableHead>Patient Id</TableHead>}
