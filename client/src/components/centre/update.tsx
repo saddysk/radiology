@@ -1,5 +1,5 @@
 import { CentreDto } from "@/app/api/data-contracts";
-import { FC } from "react";
+import { FC, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,8 +16,10 @@ interface UpdateCentreDialogProps {
 }
 
 const UpdateCentreDialog: FC<UpdateCentreDialogProps> = ({ centre }) => {
+  const [openEdit, setOpenEdit] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={openEdit} onOpenChange={setOpenEdit}>
       <DialogTrigger>
         <Button size="sm" variant="outline">
           Edit
@@ -31,7 +33,10 @@ const UpdateCentreDialog: FC<UpdateCentreDialogProps> = ({ centre }) => {
           </DialogDescription>
         </DialogHeader>
 
-        <CentreCreateUpdateForm centreDetails={centre} />
+        <CentreCreateUpdateForm
+          centreDetails={centre}
+          onUpdated={setOpenEdit}
+        />
       </DialogContent>
     </Dialog>
   );

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect } from "react";
 import { CentreDto, CreateCentreDto } from "@/app/api/data-contracts";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +20,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface CentreCreateUpdateFormProps {
   centreDetails?: CentreDto;
+  onUpdated?: (value: boolean) => void;
 }
 
 const createCentreSchema = z.object({
@@ -45,6 +46,7 @@ const createCentreSchema = z.object({
 
 const CentreCreateUpdateForm: FC<CentreCreateUpdateFormProps> = ({
   centreDetails,
+  onUpdated,
 }) => {
   const router = useRouter();
   const { toast } = useToast();
@@ -101,6 +103,7 @@ const CentreCreateUpdateForm: FC<CentreCreateUpdateFormProps> = ({
           description: "Centre details updated",
           variant: "default",
         });
+        onUpdated?.(false);
       } else {
         redirectOnSuccess("Centre Created");
       }

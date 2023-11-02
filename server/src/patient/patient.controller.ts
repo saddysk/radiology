@@ -1,0 +1,47 @@
+import { Body, Controller, Param, Query, Req } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { PatientService } from './services/patient.service';
+import { GetRoute, PutRoute } from 'libs/decorators/route.decorators';
+import { PatientDto, UpdatePatientDto } from './dto/patient.dto';
+import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
+
+@Controller('api/patient')
+@ApiTags('Patient')
+export class PatientController {
+  constructor(private readonly patientService: PatientService) {}
+
+  @GetRoute('', {
+    Ok: PatientDto,
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async get(@Query('centreId') centreId: string): Promise<PatientDto[]> {
+    const patients = this.patientService.get(centreId);
+    return Promise.all(
+      (await patients).map((patient) => new PatientDto(patient)),
+    );
+  }
+
+  @GetRoute(':id', {
+    Ok: PatientDto,
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async getById(@Param(':id') id: string): Promise<PatientDto> {
+    const patient = await this.patientService.getById(id);
+    return new PatientDto(patient);
+  }
+
+  @PutRoute('', {
+    Ok: PatientDto,
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async update(
+    @Req() request: any,
+    @Body() data: UpdatePatientDto,
+  ): Promise<PatientDto> {
+    const patient = await this.patientService.update(
+      request.user.user.id,
+      data,
+    );
+    return new PatientDto(patient);
+  }
+}
