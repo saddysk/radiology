@@ -33,7 +33,7 @@ export function DoctorsList({ centreId }: { centreId: string }) {
         {" "}
         <div className="flex justify-between mb-4">
           {" "}
-          <h3 className="text-xl font-bold  uppercase">Expenses Table</h3>
+          <h3 className="text-xl font-bold  uppercase">Affiliated Doctors</h3>
         </div>
         <Table>
           <TableHeader>

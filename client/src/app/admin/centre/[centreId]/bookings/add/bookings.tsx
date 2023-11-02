@@ -380,6 +380,28 @@ export function AddBookings({ centreId }: { centreId: string }) {
 
             <FormField
               control={addBookingForm.control}
+              name="remark"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Remarks</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      className="border-blue-200"
+                      placeholder="Remarks"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex flex-col gap-8 bg-blue-100 p-4 py-8 rounded-md justify-center">
+            {/* Booking Details */}
+            <h2 className="text-xl">Payment Details</h2>
+
+            <FormField
+              control={addBookingForm.control}
               name={`payment.${0}.amount`}
               render={({ field }) => (
                 <FormItem>
@@ -422,24 +444,6 @@ export function AddBookings({ centreId }: { centreId: string }) {
                         }
                       }}
                       type="number"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={addBookingForm.control}
-              name="remark"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Remarks</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      className="border-blue-200"
-                      placeholder="Remarks"
-                      {...field}
                     />
                   </FormControl>
                   <FormMessage />

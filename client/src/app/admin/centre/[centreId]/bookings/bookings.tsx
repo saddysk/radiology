@@ -51,7 +51,7 @@ export function Bookings({ centreId }: { centreId: string }) {
     });
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortField, setSortField] = useState("createdAt");
+  const [sortField, setSortField] = useState < "createdAt";
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   const doesBookingMatchTerm = (booking: BookingDto, term: string) => {

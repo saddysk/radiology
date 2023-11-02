@@ -15,7 +15,21 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DropdownMenuCheckboxes } from "@/components/ui/dropdown-checkbox-custom";
 import { Input } from "@/components/ui/input";
+import { CentreExpense } from "@/app/api/CentreExpense";
 import { ExpenseDto } from "@/app/api/data-contracts";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { centreexpense } from "@/app/api";
+import { useToast } from "@/components/ui/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 export function Expenses({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState({
@@ -23,14 +37,23 @@ export function Expenses({ centreId }: { centreId: string }) {
     expenseType: true,
     paymentMethod: true,
     amount: true,
+    createdAt: false,
+    date: true,
   });
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
-
+  const [openEdit, setOpenEdit] = useState(false);
+  const [openDel, setOpenDel] = useState(false);
   const [sortOrder, setSortOrder] = useState("asc"); // or 'desc'
   const [sortField, setSortField] = useState("expenseId");
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
-
+  const [filteredData, setFilteredData] = useState<ExpenseDto[]>([]);
+  const [expensesUpdates, setExpensesUpdates] = useState({
+    expenseType: "",
+    paymentMethod: "",
+    amount: 0,
+  });
   const { data: dataCentreExpenses, isLoading: IsLoadingCentreExpenses } =
     useCentreExpenses({
       centreId,
@@ -49,18 +72,104 @@ export function Expenses({ centreId }: { centreId: string }) {
     }
 
     // Sort
-    result.sort((a: any, b: any) => {
-      const valA = a[sortField];
-      const valB = b[sortField];
-      let comparison = 0;
-      if (valA > valB) comparison = 1;
-      if (valA < valB) comparison = -1;
-      return sortOrder === "desc" ? comparison * -1 : comparison;
+    // Sort
+    result.sort((a, b) => {
+      if (sortField === "createdAt" || sortField === "date") {
+        const dateA = new Date(a[sortField]);
+        const dateB = new Date(b[sortField]);
+        return sortOrder === "desc"
+          ? dateB.getTime() - dateA.getTime()
+          : dateA.getTime() - dateB.getTime();
+      } else if (sortField === "amount") {
+        return sortOrder === "desc" ? b.amount - a.amount : a.amount - b.amount;
+      } else {
+        const fieldA = a[sortField as keyof ExpenseDto] as string;
+        const fieldB = b[sortField as keyof ExpenseDto] as string;
+        return sortOrder === "desc"
+          ? fieldB?.localeCompare(fieldA)
+          : fieldA?.localeCompare(fieldB);
+      }
     });
 
-    setFilteredData(result as any);
+    setFilteredData(result);
   }, [dataCentreExpenses, searchQuery, sortOrder, sortField]);
 
+  const deleteExpense = async ({ expenseId }: { expenseId: string }) => {
+    try {
+      if (!dataCentreExpenses?.data) {
+        throw new Error("No data found");
+      }
+
+      setLoading(true);
+
+      const response = await centreexpense.expenseControllerUpdate({
+        id: expenseId,
+      });
+
+      if (response?.status !== 200) {
+        throw new Error(response?.statusText);
+      } else {
+        queryClient.invalidateQueries(["expenses", centreId]);
+        toast({
+          title: "Expense Deleted",
+          variant: "default",
+        });
+        setLoading(false);
+        setOpenDel(false);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+      //localStorage.removeItem("x-session-token");
+      setLoading(false);
+    }
+  };
+  const updateExpenses = async ({
+    expenseId,
+    e,
+  }: {
+    expenseId: any;
+    e: any;
+  }) => {
+    e.preventDefault();
+    try {
+      if (!dataCentreExpenses?.data) {
+        throw new Error("No data found");
+      }
+
+      setLoading(true);
+
+      const response = await centreexpense.expenseControllerUpdate({
+        id: expenseId,
+        data: {},
+      });
+
+      if (response?.status !== 200) {
+        throw new Error(response?.statusText);
+      } else {
+        queryClient.invalidateQueries(["expenses", centreId]);
+        toast({
+          title: "Expense Updated",
+          variant: "default",
+        });
+        setLoading(false);
+        setOpenEdit(false);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+      //localStorage.removeItem("x-session-token");
+      setLoading(false);
+    }
+  };
+
+  console.log(dataCentreExpenses, "here");
   return (
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
       <div className="w-full flex">
@@ -71,13 +180,13 @@ export function Expenses({ centreId }: { centreId: string }) {
         </Link>{" "}
       </div>
       <div className="p-6 my-4 rounded-lg   bg-blue-100">
-        <div className="flex justify-between mb-4">
+        <div className="flex justify-between mb-4 items-center">
           {" "}
-          <h3 className="text-xl font-bold  uppercase">Expenses Table</h3>
-          <div className="mb-4">
+          <h3 className="text-xl font-bold uppercase">Expenses</h3>
+          <div className="w-[40vw]">
             <Input
               type="text"
-              placeholder="Search expenses..."
+              placeholder="Search expenses by expense type, payment method or amount"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="p-2 w-full border rounded"
@@ -92,39 +201,94 @@ export function Expenses({ centreId }: { centreId: string }) {
         <Table>
           <TableHeader>
             <TableRow>
-              {/* Add onClick handlers to table headers for sorting */}
               {visibleColumns.expenseId && (
-                <TableHead onClick={() => setSortField("expenseId")}>
+                <TableHead
+                  onClick={() => {
+                    setSortField("expenseId");
+                    sortOrder === "asc"
+                      ? setSortOrder("desc")
+                      : setSortOrder("asc");
+                  }}
+                >
                   Expense Id{" "}
                   {sortField === "expenseId" &&
                     (sortOrder === "asc" ? "↑" : "↓")}
                 </TableHead>
               )}
               {visibleColumns.expenseType && (
-                <TableHead onClick={() => setSortField("expenseType")}>
+                <TableHead
+                  onClick={() => {
+                    setSortField("expenseType");
+                    sortOrder === "asc"
+                      ? setSortOrder("desc")
+                      : setSortOrder("asc");
+                  }}
+                >
                   Expense Type{" "}
                   {sortField === "expenseType" &&
                     (sortOrder === "asc" ? "↑" : "↓")}
                 </TableHead>
               )}
               {visibleColumns.paymentMethod && (
-                <TableHead onClick={() => setSortField("paymentMethod")}>
+                <TableHead
+                  onClick={() => {
+                    setSortField("paymentMethod");
+                    sortOrder === "asc"
+                      ? setSortOrder("desc")
+                      : setSortOrder("asc");
+                  }}
+                >
                   Payment Method{" "}
                   {sortField === "paymentMethod" &&
                     (sortOrder === "asc" ? "↑" : "↓")}
                 </TableHead>
               )}
               {visibleColumns.amount && (
-                <TableHead onClick={() => setSortField("amount")}>
+                <TableHead
+                  onClick={() => {
+                    setSortField("amount");
+                    sortOrder === "asc"
+                      ? setSortOrder("desc")
+                      : setSortOrder("asc");
+                  }}
+                >
                   Amount (in Rs.){" "}
                   {sortField === "amount" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableHead>
               )}
+              {visibleColumns.createdAt && (
+                <TableHead
+                  onClick={() => {
+                    setSortField("createdAt");
+                    sortOrder === "asc"
+                      ? setSortOrder("desc")
+                      : setSortOrder("asc");
+                  }}
+                >
+                  Created At{" "}
+                  {sortField === "createdAt" &&
+                    (sortOrder === "asc" ? "↑" : "↓")}
+                </TableHead>
+              )}
+              {visibleColumns.date && (
+                <TableHead
+                  onClick={() => {
+                    setSortField("date");
+                    sortOrder === "asc"
+                      ? setSortOrder("desc")
+                      : setSortOrder("asc");
+                  }}
+                >
+                  Date{" "}
+                  {sortField === "date" && (sortOrder === "asc" ? "↑" : "↓")}
+                </TableHead>
+              )}
+
               <TableHead className="text-right">Options</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {dataCentreExpenses?.data.map((expense, index) => (
+            {filteredData?.map((expense, index) => (
               <TableRow key={index}>
                 {visibleColumns.expenseId && (
                   <TableCell>{expense.id}</TableCell>
@@ -138,13 +302,134 @@ export function Expenses({ centreId }: { centreId: string }) {
                 {visibleColumns.amount && (
                   <TableCell>{expense.amount}</TableCell>
                 )}
+                {visibleColumns.createdAt && (
+                  <TableCell>
+                    {new Date(expense.createdAt).toLocaleString()}
+                  </TableCell>
+                )}
+                {visibleColumns.date && (
+                  <TableCell>
+                    {new Date(expense.date).toLocaleDateString()}
+                  </TableCell>
+                )}
                 <TableCell className="space-x-4 text-right">
-                  <Button size="sm" variant="outline">
-                    Edit
-                  </Button>
-                  <Button size="sm" variant="outline">
-                    Delete
-                  </Button>
+                  <Dialog open={openEdit} onOpenChange={setOpenEdit}>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setExpensesUpdates({
+                            expenseType: expense.expenseType,
+                            paymentMethod: expense.paymentMethod,
+                            amount: expense.amount,
+                          });
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-blue-100 p-8">
+                      <DialogHeader>
+                        <DialogTitle>Edit expense</DialogTitle>
+                        <DialogDescription>
+                          Make changes to your expense here. Click save when
+                          you&apos;re done.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="name">Expense Type</label>
+                          <Input
+                            id="name"
+                            value={expensesUpdates.expenseType}
+                            onChange={(e) => {
+                              setExpensesUpdates({
+                                ...expensesUpdates,
+                                expenseType: e.target.value,
+                              });
+                            }}
+                            className="col-span-3"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="amount">Amount</label>
+                          <Input
+                            id="amount"
+                            type="number"
+                            value={expensesUpdates.amount}
+                            onChange={(e) =>
+                              setExpensesUpdates({
+                                ...expensesUpdates,
+                                amount: Number(e.target.value),
+                              })
+                            }
+                            className="col-span-3"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="paymentMethod">Payment Method</label>
+                          <Input
+                            id="paymentMethod"
+                            value={expensesUpdates.paymentMethod}
+                            onChange={(e) =>
+                              setExpensesUpdates({
+                                ...expensesUpdates,
+                                paymentMethod: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <DialogClose>
+                          <Button
+                            type="button"
+                            loading={loading}
+                            onClick={(e) => {
+                              updateExpenses({
+                                expenseId: expense.id,
+                                e,
+                              });
+                            }}
+                            className="border border-blue-200"
+                          >
+                            Save changes
+                          </Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                  <Dialog open={openDel} onOpenChange={setOpenDel}>
+                    <DialogTrigger asChild>
+                      <Button size="sm" variant="outline">
+                        Delete
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-blue-100 p-8">
+                      <DialogHeader>
+                        <DialogTitle>Delete Expense</DialogTitle>
+                        <DialogDescription>
+                          Expense once deleted will be gone forever.
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <DialogFooter>
+                        <Button
+                          loading={loading}
+                          onClick={(e) => {
+                            deleteExpense({
+                              expenseId: expense.id,
+                            });
+                          }}
+                          className="border border-red-950 mt-12 bg-red-800"
+                        >
+                          Confirm Delete
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </TableCell>
               </TableRow>
             ))}

@@ -183,6 +183,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
         centreId: centreId,
         rateLists: filteredData,
       });
+
       if (response?.status !== 200) {
         throw new Error(response?.statusText);
       } else {
@@ -190,6 +191,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
           title: `Rate List Added`,
           variant: "default",
         });
+        queryClient.cancelQueries(["ratelist", centreId]);
         router.push(`/admin/centre/${centreId}/ratelist`);
       }
     } catch (error: any) {
