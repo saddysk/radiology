@@ -40,14 +40,6 @@ export class AuthController {
     return new UserDto(user);
   }
 
-  @GetRoute(':id', {
-    Ok: UserDto,
-  })
-  async getById(@Param('id') id: string): Promise<UserDto> {
-    const user = await this.authService.get(id);
-    return new UserDto(user);
-  }
-
   @GetRoute('all-doctors', {
     Ok: { dtoType: 'ArrayDto', type: UserDto },
   })
@@ -55,6 +47,14 @@ export class AuthController {
   async getDoctors(): Promise<UserDto[]> {
     const doctors = await this.authService.getDoctors();
     return doctors.map((doctor) => new UserDto(doctor));
+  }
+
+  @GetRoute(':id', {
+    Ok: UserDto,
+  })
+  async getById(@Param('id') id: string): Promise<UserDto> {
+    const user = await this.authService.get(id);
+    return new UserDto(user);
   }
 
   @PostRoute('login', {
