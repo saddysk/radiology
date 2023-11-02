@@ -160,6 +160,8 @@ export function PRDashboard() {
 
   const { data: dataAllDoctors, isLoading: isLoadingAllDoctors } =
     useAllDoctorsData({ enabled: selectedFlow == "join" });
+
+  console.log(dataAllDoctors, "hereee");
   const { data: dataAllCentres, isLoading: isLoadingAllCentres } =
     useAllConnectedCentresData({ enabled: selectedFlow == "join" });
 

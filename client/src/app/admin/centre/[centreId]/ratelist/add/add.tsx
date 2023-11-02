@@ -31,8 +31,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RateListDto } from "@/app/api/data-contracts";
-import { randomUUID } from "crypto";
 
 const rateListsSchema = z.object({
   rateLists: z.array(
@@ -129,10 +127,16 @@ export function AddRateList({ centreId }: { centreId: string }) {
       const rateListToUpdate = dataRateList?.data?.find(
         (rateList) => rateList.id === investigationUpdates.id
       );
+      const filteredData = {
+        id: uuid(),
+        type: investigationUpdates.type,
+        amount: investigationUpdates.amount,
+        filmCount: investigationUpdates.filmCount,
+      };
 
       const updatedInvestigations = rateListToUpdate
-        ? [...rateListToUpdate.investigation, investigationUpdates]
-        : [investigationUpdates];
+        ? [...rateListToUpdate.investigation, filteredData]
+        : [filteredData];
 
       const response = await ratelist.rateListControllerUpdate({
         id: investigationUpdates.id,
