@@ -86,12 +86,12 @@ export class Auth<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * No description
    *
    * @tags Auth
-   * @name AuthControllerGetById
-   * @request GET:/api/auth/{id}
+   * @name AuthControllerGetDoctors
+   * @request GET:/api/auth/all-doctors
    */
-  authControllerGetById = (id: string, params: RequestParams = {}) =>
-    this.request<UserDto, ErrorDto>({
-      path: `/api/auth/${id}`,
+  authControllerGetDoctors = (params: RequestParams = {}) =>
+    this.request<UserDto[], ErrorDto>({
+      path: `/api/auth/all-doctors`,
       method: "GET",
       format: "json",
       ...params,
@@ -100,12 +100,12 @@ export class Auth<SecurityDataType = unknown> extends HttpClient<SecurityDataTyp
    * No description
    *
    * @tags Auth
-   * @name AuthControllerGetDoctors
-   * @request GET:/api/auth/all-doctors
+   * @name AuthControllerGetById
+   * @request GET:/api/auth/{id}
    */
-  authControllerGetDoctors = (params: RequestParams = {}) =>
-    this.request<UserDto[], ErrorDto>({
-      path: `/api/auth/all-doctors`,
+  authControllerGetById = (id: string, params: RequestParams = {}) =>
+    this.request<UserDto, ErrorDto>({
+      path: `/api/auth/${id}`,
       method: "GET",
       format: "json",
       ...params,

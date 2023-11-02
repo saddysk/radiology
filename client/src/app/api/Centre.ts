@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { CentreDto, CreateCentreDto, ErrorDto, SuccessDto } from "./data-contracts";
+import { CentreDto, CreateCentreDto, ErrorDto, SuccessDto, UpdateCentreDto } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Centre<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -40,6 +40,22 @@ export class Centre<SecurityDataType = unknown> extends HttpClient<SecurityDataT
     this.request<CentreDto[], ErrorDto>({
       path: `/api/centre`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Centre
+   * @name CentreControllerUpdate
+   * @request PUT:/api/centre
+   */
+  centreControllerUpdate = (data: UpdateCentreDto, params: RequestParams = {}) =>
+    this.request<UpdateCentreDto, ErrorDto>({
+      path: `/api/centre`,
+      method: "PUT",
+      body: data,
+      type: ContentType.Json,
       format: "json",
       ...params,
     });

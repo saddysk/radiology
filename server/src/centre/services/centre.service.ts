@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { CentreRepository } from '../repositories/centre.repository';
 import { Centre } from 'src/database/entities/centre.entity';
-import { CreateCentreDto } from '../dto/centre.dto';
+import { CreateCentreDto, UpdateCentreDto } from '../dto/centre.dto';
 import { UserRepository } from 'src/auth/repositories/user.repository';
 import { CentreAdminRepository } from '../repositories/centre-admin.repository';
 import { CentreAdmin } from 'src/database/entities/centre-admin.entity';
@@ -23,7 +23,7 @@ export class CentreService {
     private readonly centreAdminRepository: CentreAdminRepository,
     private readonly centrePrRepository: CentrePrRepository,
     private readonly doctorCommissionRepository: DoctorCommissionRepository,
-  ) { }
+  ) {}
 
   async create(userId: string, data: CreateCentreDto): Promise<Centre> {
     const user = await this.userRepository.findOne({
@@ -125,7 +125,7 @@ export class CentreService {
           centreId,
         },
       });
-      return centreAdmin.centre
+      return centreAdmin.centre;
     } else if (user.role === UserRole.Pr) {
       const centrePr = await this.centrePrRepository.findOne({
         where: {
@@ -179,7 +179,37 @@ export class CentreService {
     }
   }
 
-  // getCentres(): Promise<Centre[]> {
-  //   return this.centreRepository.find();
-  // }
+  async update(userId: string, data: UpdateCentreDto): Promise<Centre> {
+    const centreAdmin = await this.centreAdminRepository.findOne({
+      where: {
+        userId,
+        centreId: data.id,
+      },
+    });
+
+    if (centreAdmin == null) {
+      throw new BadRequestException(
+        `Centre not found to update for centre id: ${data.id}, user id: ${userId}`,
+      );
+    }
+
+    const centre = await centreAdmin.centre;
+
+    if (data.name) {
+      centre.name = data.name;
+    }
+    if (data.email) {
+      centre.email = data.email;
+    }
+    if (data.phone) {
+      centre.phone = data.phone;
+    }
+    if (data.address) {
+      centre.address = data.address;
+    }
+
+    await this.centreRepository.update(data.id, centre);
+
+    return centre;
+  }
 }

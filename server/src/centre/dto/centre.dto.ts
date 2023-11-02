@@ -2,9 +2,12 @@ import { PickType } from '@nestjs/swagger';
 import {
   DateField,
   EmailField,
+  EmailFieldOptional,
   NumberField,
   ObjectField,
+  ObjectFieldOptional,
   PhoneField,
+  PhoneFieldOptional,
   StringField,
   StringFieldOptional,
   UUIDField,
@@ -88,4 +91,16 @@ export class CreateCentreDto extends PickType(CentreDto, [
   'address',
 ]) {}
 
-export class UpdateCentreDto extends CreateCentreDto {}
+export class UpdateCentreDto extends PickType(CentreDto, ['id']) {
+  @StringFieldOptional()
+  name?: string;
+
+  @EmailFieldOptional()
+  email?: string;
+
+  @PhoneFieldOptional()
+  phone?: string;
+
+  @ObjectFieldOptional(() => AddressDto)
+  address?: AddressDto;
+}

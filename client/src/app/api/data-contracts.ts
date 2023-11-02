@@ -116,6 +116,18 @@ export interface CentreDto {
   address: AddressDto;
 }
 
+export interface UpdateCentreDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  address?: AddressDto;
+}
+
 export interface CreateExpenseDto {
   /**
    * @format uuid

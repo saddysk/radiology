@@ -37,7 +37,7 @@ export function AdminDashboard() {
             {dataAllConnectedCentres?.data.map((centre, index) => (
               <div
                 key={index}
-                className="flex items-center space-x-2 p-6 border border-blue-200 rounded-md"
+                className="flex items-center space-x-2 p-6 border border-blue-200 rounded-md cursor-pointer"
                 onClick={() => router.push(`/admin/centre/${centre.id}`)}
               >
                 {centre.name}
