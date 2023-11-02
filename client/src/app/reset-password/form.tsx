@@ -69,7 +69,7 @@ const ResetPasswordForm: FC<ResetPasswordFormProps> = ({ userId }) => {
       onSuccess: (response) => {
         localStorage.setItem("x-session-token", response.data.token);
         toast({
-          title: "Admin Registered",
+          title: `${response.data.user.role} Registered`,
           variant: "default",
         });
         if (response.data.user.role === UserRole.Admin) {
@@ -134,7 +134,7 @@ const ResetPasswordForm: FC<ResetPasswordFormProps> = ({ userId }) => {
                   <Button
                     type="button"
                     variant="outline"
-                    className=" rounded-l-none border-zinc-600 border-l-0"
+                    className=" rounded-l-none bg-blue-200 border-blue-300 border-l-0"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? "Hide" : "Show"}
@@ -162,7 +162,7 @@ const ResetPasswordForm: FC<ResetPasswordFormProps> = ({ userId }) => {
                   <Button
                     type="button"
                     variant="outline"
-                    className=" rounded-l-none border-zinc-600 border-l-0"
+                    className=" rounded-l-none bg-blue-200 border-blue-300 border-l-0"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   >
                     {showConfirmPassword ? "Hide" : "Show"}
@@ -180,7 +180,7 @@ const ResetPasswordForm: FC<ResetPasswordFormProps> = ({ userId }) => {
             type="submit"
             loading={loading}
             variant="outline"
-            className="w-full sm:w-1/2  border-zinc-600"
+            className="w-full sm:w-1/2  bg-blue-200 border-blue-300"
           >
             Submit
           </Button>
