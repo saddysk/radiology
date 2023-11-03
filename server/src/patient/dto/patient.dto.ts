@@ -6,10 +6,8 @@ import {
   DateField,
   EmailFieldOptional,
   StringFieldOptional,
-  ObjectFieldOptional,
   NumberFieldOptional,
 } from 'libs/decorators';
-import { BookingDto } from 'src/booking/dto/booking.dto';
 import { Patient } from 'src/database/entities/patient.entity';
 
 export class PatientDto {
