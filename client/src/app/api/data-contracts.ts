@@ -395,6 +395,11 @@ export interface PatientDto {
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   id: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  centreId: string;
   patientNumber: string;
   /** @format date-time */
   createdAt: string;
