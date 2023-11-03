@@ -1,4 +1,4 @@
-import { PickType } from '@nestjs/swagger';
+import { OmitType, PickType } from '@nestjs/swagger';
 import {
   UUIDField,
   StringField,
@@ -130,4 +130,8 @@ export class CreateBookingDto extends PickType(BookingDto, [
   payment: BookingPaymentDto;
 }
 
-export class UpdateBookingDto extends PickType(BookingDto, ['remark']) {}
+export class UpdateBookingDto extends OmitType(BookingDto, [
+  'patient',
+  'payment',
+  'consultantName',
+]) {}
