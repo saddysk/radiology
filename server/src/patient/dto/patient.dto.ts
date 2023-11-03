@@ -7,6 +7,7 @@ import {
   EmailFieldOptional,
   StringFieldOptional,
   ObjectFieldOptional,
+  NumberFieldOptional,
 } from 'libs/decorators';
 import { BookingDto } from 'src/booking/dto/booking.dto';
 import { Patient } from 'src/database/entities/patient.entity';
@@ -14,6 +15,9 @@ import { Patient } from 'src/database/entities/patient.entity';
 export class PatientDto {
   @UUIDField()
   id: string;
+
+  @UUIDField()
+  centreId: string;
 
   @StringField()
   patientNumber: string;
@@ -53,6 +57,7 @@ export class PatientDto {
     }
 
     this.id = patient.id;
+    this.centreId = patient.centreId;
     this.patientNumber = patient.patientNumber;
     this.createdAt = patient.createdAt;
     this.name = patient.name;
@@ -84,10 +89,22 @@ export class CreatePatientDto extends PickType(PatientDto, [
   'abhaId',
 ]) {}
 
-export class UpdatePatientDto extends PickType(CreatePatientDto, [
-  'age',
-  'gender',
+export class UpdatePatientDto extends PickType(PatientDto, [
+  'id',
+  'centreId',
   'email',
   'address',
   'abhaId',
-]) {}
+]) {
+  @StringFieldOptional()
+  name?: string;
+
+  @NumberFieldOptional()
+  age?: number;
+
+  @StringFieldOptional()
+  gender?: string;
+
+  @StringFieldOptional()
+  phone?: string;
+}

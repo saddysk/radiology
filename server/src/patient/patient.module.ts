@@ -4,13 +4,19 @@ import { PatientRepository } from './repositories/patient.repository';
 import { PatientService } from './services/patient.service';
 import { UserRepository } from 'src/auth/repositories/user.repository';
 import { CentreModule } from 'src/centre/centre.module';
+import { PatientController } from './patient.controller';
+import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repository';
 
 @Module({
   imports: [
-    DatabaseModule.forRepository([PatientRepository, UserRepository]),
+    DatabaseModule.forRepository([
+      PatientRepository,
+      UserRepository,
+      CentreAdminRepository,
+    ]),
     CentreModule,
   ],
-  controllers: [],
+  controllers: [PatientController],
   providers: [PatientService],
   exports: [PatientService],
 })

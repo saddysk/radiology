@@ -5,6 +5,9 @@ import { Booking } from './booking.entity';
 
 @Entity()
 export class Patient extends AbstractEntity {
+  @Column({ type: 'uuid' })
+  centreId: string;
+
   @Column({
     nullable: true,
     unique: true,

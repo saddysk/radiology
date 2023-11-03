@@ -37,7 +37,7 @@ export class BookingService {
 
     booking.patientId = await this.getOrCreatePatient(
       userId,
-      data.centreId,
+      centre.id,
       data.patientId,
       data.patient,
     );
