@@ -3,7 +3,6 @@ import {
   DateField,
   EmailField,
   EmailFieldOptional,
-  NumberField,
   ObjectField,
   ObjectFieldOptional,
   PhoneField,
@@ -24,8 +23,8 @@ export class AddressDto {
   @StringField()
   city: string;
 
-  @NumberField()
-  postalCode: number;
+  @StringField()
+  postalCode: string;
 
   @StringField()
   state: string;

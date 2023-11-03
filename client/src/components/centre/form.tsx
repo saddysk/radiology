@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useEffect } from "react";
+import { FC, useEffect } from "react";
 import { CentreDto, CreateCentreDto } from "@/app/api/data-contracts";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,7 +34,7 @@ const createCentreSchema = z.object({
     line2: z.string().nullable(),
     city: z.string(),
     postalCode: z
-      .number()
+      .string()
       .refine(
         (value: any) => /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/.test(value),
         "Postal code format is invalid."
@@ -62,7 +62,7 @@ const CentreCreateUpdateForm: FC<CentreCreateUpdateFormProps> = ({
         line1: "",
         line2: "",
         city: "",
-        postalCode: undefined,
+        postalCode: "",
         state: "",
       },
     },
@@ -228,11 +228,7 @@ const CentreCreateUpdateForm: FC<CentreCreateUpdateFormProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input
-                  placeholder="Enter Postal Code"
-                  {...field}
-                  type="number"
-                />
+                <Input placeholder="Enter Postal Code" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -62,7 +62,11 @@ export function AdminCentre({ centreId }: { centreId: string }) {
 
       <div className="flex items-center">
         <p className="w-40 font-semibold">Address :</p>
-        <p className="mt-2">{Object.values(centre.address).join(", ")}</p>
+        <p className="mt-2 capitalize">
+          {Object.values(centre.address)
+            .filter((value) => value)
+            .join(", ")}
+        </p>
       </div>
     </div>
   );

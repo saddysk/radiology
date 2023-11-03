@@ -28,27 +28,27 @@ export default function CentreLayout({
     {
       title: "Dashboard",
       path: `/admin/centre/${params.centreId}`, // Adjust the path for Dashboard
-      icon: <LayoutDashboard />,
+      icon: <LayoutDashboard size={20} />,
     },
     {
       title: "Add Users",
       path: `/admin/centre/${params.centreId}/users`,
-      icon: <Users />,
+      icon: <Users size={20} />,
     },
     {
       title: "Ratelist",
       path: `/admin/centre/${params.centreId}/ratelist`,
-      icon: <ListTodo />,
+      icon: <ListTodo size={20} />,
     },
     {
       title: "Connected Doctors",
       path: `/admin/centre/${params.centreId}/doctors`,
-      icon: <Stethoscope />,
+      icon: <Stethoscope size={20} />,
     },
     {
       title: "Edit Requests",
       path: `/admin/centre/${params.centreId}/edit`,
-      icon: <Edit />,
+      icon: <Edit size={20} />,
     },
 
     // {
@@ -59,24 +59,24 @@ export default function CentreLayout({
     {
       title: "Bookings",
       path: `/admin/centre/${params.centreId}/bookings`,
-      icon: <ClipboardList />,
+      icon: <ClipboardList size={20} />,
     },
     {
       title: "Patients",
       path: `/admin/centre/${params.centreId}/patients`,
-      icon: <Contact2 />,
+      icon: <Contact2 size={20} />,
     },
     {
       title: "Expenses",
       path: `/admin/centre/${params.centreId}/expenses`,
-      icon: <Receipt />,
+      icon: <Receipt size={20} />,
     },
   ];
 
   return (
     <Card className="flex flex-col m-4 h-full rounded-md bg-blue-50 border-blue-200">
       <nav className="flex items-center justify-between gap-4 p-6 border-b border-b-blue-200">
-        <h1 className="text-xl  text-blue-950">Admin Dashboard</h1>
+        <h1 className="text-xl  text-blue-950">Dashboard</h1>
         <Avatar>
           <AvatarImage
             className="w-[30px] rounded-xl"
@@ -103,7 +103,7 @@ export default function CentreLayout({
               <div
                 key={index}
                 className={clsx(
-                  "px-6 py-2 hover:bg-blue-100 text-blue-950 cursor-pointer flex gap-2",
+                  "px-6 py-2 hover:bg-blue-100 text-blue-950 cursor-pointer flex items-center gap-2",
                   pathname == tab.path && "bg-blue-200"
                 )}
                 onClick={() => route.push(tab.path)}

@@ -9,7 +9,6 @@ import {
 import { UserRepository } from 'src/auth/repositories/user.repository';
 import { In } from 'typeorm';
 import { UserRole } from 'src/database/entities/user.entity';
-import { uuid } from 'libs/helpers/generator.helper';
 
 @Injectable()
 export class RateListService {
@@ -144,10 +143,6 @@ export class RateListService {
     const rateList = new RateList();
     rateList.centreId = centreId;
     rateList.modality = data.modality;
-
-    data.investigation.forEach((_, index) => {
-      rateList.investigation[index].id = uuid();
-    });
 
     return this.rateListRepository.save(rateList, { reload: true });
   }

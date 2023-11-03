@@ -88,8 +88,7 @@ export interface AddressDto {
   line1: string;
   line2?: string;
   city: string;
-  /** @example 1 */
-  postalCode: number;
+  postalCode: string;
   state: string;
   country?: string;
 }

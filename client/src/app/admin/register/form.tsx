@@ -77,7 +77,7 @@ export function RegisterForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 sm:w-1/2 px-4"
+        className="space-y-8 sm:w-1/3 px-4"
       >
         <FormField
           control={form.control}
@@ -140,10 +140,10 @@ export function RegisterForm() {
             variant="outline"
             className="w-full sm:w-1/2  border-blue-200"
           >
-            Register as Admin
+            Submit
           </Button>
           <p>
-            Already registered?{" "}
+            Already registered?
             <Button
               onClick={() => router.push("/login")}
               className="underline"
