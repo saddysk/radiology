@@ -46,10 +46,10 @@ export class PatientDto {
   @StringFieldOptional()
   abhaId?: string;
 
-  @ObjectFieldOptional(() => BookingDto, {
-    isArray: true,
-  })
-  booking?: BookingDto[];
+  // @ObjectFieldOptional(() => BookingDto, {
+  //   isArray: true,
+  // })
+  // booking?: BookingDto[];
 
   constructor(patient?: Patient) {
     if (patient == null) {
@@ -69,14 +69,14 @@ export class PatientDto {
     this.abhaId = patient.abhaId;
   }
 
-  static async toDto(patient: Patient) {
-    const dto = new PatientDto(patient);
+  // static async toDto(patient: Patient) {
+  //   const dto = new PatientDto(patient);
 
-    const bookings = await patient.booking;
-    dto.booking = bookings?.map((booking) => new BookingDto(booking));
+  //   const bookings = await patient.booking;
+  //   dto.booking = bookings?.map((booking) => new BookingDto(booking));
 
-    return dto;
-  }
+  //   return dto;
+  // }
 }
 
 export class CreatePatientDto extends PickType(PatientDto, [
