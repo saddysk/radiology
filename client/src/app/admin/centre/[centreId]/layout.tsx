@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import clsx from "clsx";
 import {
   ClipboardList,
+  Contact2,
   Edit,
   LayoutDashboard,
   ListTodo,
@@ -59,6 +60,11 @@ export default function CentreLayout({
       title: "Bookings",
       path: `/admin/centre/${params.centreId}/bookings`,
       icon: <ClipboardList />,
+    },
+    {
+      title: "Patients",
+      path: `/admin/centre/${params.centreId}/patients`,
+      icon: <Contact2 />,
     },
     {
       title: "Expenses",
