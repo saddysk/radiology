@@ -29,14 +29,18 @@ import {
   useGetAllDoctorsForCentreData,
   useGetRateList,
 } from "@/lib/query-hooks";
-import { aggregateDoctorData } from "@/lib/utils";
+import {
+  IAgeInYears,
+  aggregateDoctorData,
+  convertAgeFromYearsToMonths,
+} from "@/lib/utils";
 import { MinusSquareIcon, PlusSquareIcon } from "lucide-react";
 
 const bookingSchema = z.object({
   //user
   name: z.string(),
   email: z.string().email(),
-  age: z.number(), // in years and months
+  // age: z.number(), // in years and months
   gender: z.string(),
   phone: z
     .string()
@@ -64,6 +68,8 @@ const bookingSchema = z.object({
   paymentType: z.string(),
 });
 
+type BokingDtoType = CreateBookingDto & { ageInYears: IAgeInYears };
+
 export function AddBookingsComponent({
   centreId,
   onSuccess,
@@ -71,13 +77,12 @@ export function AddBookingsComponent({
   centreId: string;
   onSuccess: any;
 }) {
-  const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [cost, setCost] = useState(0);
   const [discount, setDiscount] = useState(0);
 
-  const addBookingForm = useForm<CreateBookingDto>({
+  const addBookingForm = useForm<BokingDtoType>({
     //resolver: zodResolver(bookingSchema),
     defaultValues: {
       centreId: centreId,
@@ -103,6 +108,10 @@ export function AddBookingsComponent({
             paymentType: "",
           },
         ],
+      },
+      ageInYears: {
+        years: 1,
+        months: 0,
       },
     },
   });
@@ -157,9 +166,16 @@ export function AddBookingsComponent({
     setCost(initialCost - discountAmount + extraCharge);
   };
 
-  async function addBookingSubmit(data: CreateBookingDto) {
+  async function addBookingSubmit(bookingData: BokingDtoType) {
     try {
       setLoading(true);
+
+      const { ageInYears, ...data } = bookingData;
+
+      if (data.patient) {
+        data.patient.age = convertAgeFromYearsToMonths(ageInYears);
+      }
+
       let partialCosts = 0;
       data.payment.payments.map((e) => {
         partialCosts = (e.amount || 0) + (partialCosts || 0);
@@ -171,6 +187,7 @@ export function AddBookingsComponent({
         });
         return;
       }
+
       const response = await booking.bookingControllerCreate({
         ...data,
         modality: dataRateList?.data.find((e) => e.id == data.modality)
@@ -223,30 +240,69 @@ export function AddBookingsComponent({
             )}
           />
 
-          <FormField
-            control={addBookingForm.control}
-            name="patient.age"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Age</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Age"
-                    {...field}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      // Use a regular expression to check if the input value is numeric
-                      if (/^\d*\.?\d*$/.test(value)) {
-                        const numberValue = Number(value);
-                        field.onChange(numberValue);
-                      }
-                    }}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="w-full flex items-end gap-10">
+            <FormField
+              control={addBookingForm.control}
+              name="ageInYears.years"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormLabel>Age</FormLabel>
+                  <div className="flex items-center gap-3">
+                    <FormControl>
+                      <Input
+                        placeholder="Age"
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          // Use a regular expression to check if the input value is numeric
+                          if (/^\d*\.?\d*$/.test(value)) {
+                            const numberValue = Number(value);
+                            field.onChange(numberValue);
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <p className="text-sm font-medium">
+                      {addBookingForm.watch("ageInYears.years") === 1
+                        ? "year"
+                        : "years"}
+                    </p>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={addBookingForm.control}
+              name="ageInYears.months"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <div className="flex items-center gap-3">
+                    <FormControl>
+                      <Input
+                        placeholder="Age"
+                        {...field}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          // Use a regular expression to check if the input value is numeric
+                          if (/^\d*\.?\d*$/.test(value)) {
+                            const numberValue = Number(value);
+                            field.onChange(numberValue);
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <p className="text-sm font-medium">
+                      {addBookingForm.watch("ageInYears.months") === 1
+                        ? "month"
+                        : "months"}
+                    </p>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <FormField
             control={addBookingForm.control}

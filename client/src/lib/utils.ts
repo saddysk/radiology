@@ -2,6 +2,11 @@ import { DoctorCommissionDto } from "@/app/api/data-contracts";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+export interface IAgeInYears {
+  years: number;
+  months: number;
+}
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -86,12 +91,17 @@ export function compareSortValues(
 // }
 
 export function aggregateDoctorData(data: DoctorCommissionDto[] = []) {
-
   const result = {};
 
   // Iterate through the data array
-  data.forEach(item => {
-    const { doctorId, letGo, doctor: { name }, modality, amount } = item;
+  data.forEach((item) => {
+    const {
+      doctorId,
+      letGo,
+      doctor: { name },
+      modality,
+      amount,
+    } = item;
 
     // Check if the doctorId is already in the result object
     if (!result[doctorId]) {
@@ -103,16 +113,28 @@ export function aggregateDoctorData(data: DoctorCommissionDto[] = []) {
 
     // Add the modality and amount to the doctor's data
     result[doctorId][modality] = amount;
-    result[doctorId].letGo = letGo
+    result[doctorId].letGo = letGo;
   });
 
   // Convert the result object into an array of objects
-  const finalResult = Object.keys(result).map(doctorId => ({
+  const finalResult = Object.keys(result).map((doctorId) => ({
     doctorId,
 
     doctorName: result[doctorId].doctorName,
     ...result[doctorId],
   }));
 
-  return finalResult
+  return finalResult;
+}
+
+export function convertAgeFromYearsToMonths(ageInYears: IAgeInYears): number {
+  const { years, months } = ageInYears;
+  const totalMonths = years * 12 + months;
+  return totalMonths;
+}
+
+export function convertAgeFromMonthsToYears(ageInMonths: number): IAgeInYears {
+  const years = Math.floor(ageInMonths / 12);
+  const months = ageInMonths % 12;
+  return { years, months };
 }

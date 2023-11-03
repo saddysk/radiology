@@ -56,9 +56,9 @@ export function DoctorsList({ centreId }: { centreId: string }) {
               <TableHead className="w-[100px]">Sr.No</TableHead>
               <TableHead>Doctor Id</TableHead>
               <TableHead>Doctor Name</TableHead>
-              <TableHead>XRAY (in %)</TableHead>
-              <TableHead>USG (in %)</TableHead>
-              <TableHead>CT-SCAN (in %)</TableHead>
+              <TableHead>XRAY (%)</TableHead>
+              <TableHead>USG (%)</TableHead>
+              <TableHead>CT-SCAN (%)</TableHead>
               <TableHead>Let Go on Commision</TableHead>
 
               {/* <TableHead className="text-right">XRAY</TableHead>
