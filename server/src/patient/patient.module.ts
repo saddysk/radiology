@@ -5,6 +5,7 @@ import { PatientService } from './services/patient.service';
 import { UserRepository } from 'src/auth/repositories/user.repository';
 import { CentreModule } from 'src/centre/centre.module';
 import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repository';
+import { PatientController } from './patient.controller';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repo
     ]),
     CentreModule,
   ],
-  controllers: [],
+  controllers: [PatientController],
   providers: [PatientService],
   exports: [PatientService],
 })

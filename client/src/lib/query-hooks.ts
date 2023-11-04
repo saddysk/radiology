@@ -19,6 +19,7 @@ import {
   centreexpense,
   drcommission,
   edit,
+  patient,
   ratelist,
 } from "@/app/api";
 import { CommissionDto, UpdateRateListDto } from "@/app/api/data-contracts";
@@ -58,18 +59,8 @@ export const useCentreData = ({
   );
 };
 
-export const useUserData = ({
-
-  centreId,
-}: {
-
-  centreId: string;
-}) => {
-  return useQuery(
-    ["user", centreId],
-    () => auth.authControllerGet(),
-
-  );
+export const useUserData = ({ centreId }: { centreId: string }) => {
+  return useQuery(["user", centreId], () => auth.authControllerGet());
 };
 
 export const useAllConnectedCentresData = ({
@@ -191,6 +182,14 @@ export const useCentreBookings = ({ centreId }: { centreId: string }) => {
     queryFn: () => booking.bookingControllerGet(centreId),
   });
 };
+
+export const useGetPatients = ({ centreId }: { centreId: string }) => {
+  return useQuery({
+    queryKey: ["patients", centreId],
+    queryFn: () => patient.patientControllerGet({ centreId }),
+  });
+};
+
 // // hooks/useThreadsData.js
 // export const useThreadsData = ({ enabled, funcArgs }) => {
 // 	return useQuery({

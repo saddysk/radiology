@@ -299,7 +299,6 @@ export interface CreateDoctorCommissionDto {
    */
   centreId: string;
   commissions: CommissionDto[];
-  letGo?: boolean;
 }
 
 export interface UpdateDoctorCommissionDto {
@@ -314,6 +313,51 @@ export interface UpdateDoctorCommissionDto {
   startDate?: string;
   /** @format date-time */
   endDate?: string;
+}
+
+export interface PatientDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  centreId: string;
+  patientNumber: string;
+  /** @format date-time */
+  createdAt: string;
+  name: string;
+  /** @example 1 */
+  age: number;
+  gender: string;
+  phone: string;
+  email?: string;
+  address?: string;
+  abhaId?: string;
+}
+
+export interface UpdatePatientDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  centreId: string;
+  email?: string;
+  address?: string;
+  abhaId?: string;
+  name?: string;
+  /** @example 1 */
+  age?: number;
+  gender?: string;
+  phone?: string;
 }
 
 export interface CreatePatientDto {
@@ -388,31 +432,6 @@ export interface PaymentDto {
   discount?: number;
   extraCharge?: string;
   paymentType: string;
-}
-
-export interface PatientDto {
-  /**
-   * @format uuid
-   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
-   */
-  id: string;
-  /**
-   * @format uuid
-   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
-   */
-  centreId: string;
-  patientNumber: string;
-  /** @format date-time */
-  createdAt: string;
-  name: string;
-  /** @example 1 */
-  age: number;
-  gender: string;
-  phone: string;
-  email?: string;
-  address?: string;
-  abhaId?: string;
-  booking?: any[][];
 }
 
 export interface BookingDto {

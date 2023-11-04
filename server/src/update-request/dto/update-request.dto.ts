@@ -55,9 +55,7 @@ export class UpdateRequestDto {
 }
 
 export class CreateUpdateRequestDto extends PickType(UpdateRequestDto, [
-  'requestedBy',
   'type',
-  'status',
   'expenseData',
   'bookingData',
 ]) {}

@@ -39,7 +39,6 @@ export class UpdateRequestService {
     const updateRequest = new UpdateRequest();
     updateRequest.requestedBy = userId;
     updateRequest.type = data.type;
-    updateRequest.status = data.status;
 
     if (data.expenseData) {
       updateRequest.expenseData = data.expenseData;

@@ -242,6 +242,7 @@ export function Expenses({ centreId }: { centreId: string }) {
             <TableRow>
               {visibleColumns.expenseId && (
                 <TableHead
+                  className="cursor-pointer"
                   onClick={() => {
                     setSortField("expenseId");
                     sortOrder === "asc"
@@ -256,6 +257,7 @@ export function Expenses({ centreId }: { centreId: string }) {
               )}
               {visibleColumns.expenseType && (
                 <TableHead
+                  className="cursor-pointer"
                   onClick={() => {
                     setSortField("expenseType");
                     sortOrder === "asc"
@@ -270,6 +272,7 @@ export function Expenses({ centreId }: { centreId: string }) {
               )}
               {visibleColumns.paymentMethod && (
                 <TableHead
+                  className="cursor-pointer"
                   onClick={() => {
                     setSortField("paymentMethod");
                     sortOrder === "asc"
@@ -284,6 +287,7 @@ export function Expenses({ centreId }: { centreId: string }) {
               )}
               {visibleColumns.amount && (
                 <TableHead
+                  className="cursor-pointer"
                   onClick={() => {
                     setSortField("amount");
                     sortOrder === "asc"
@@ -297,6 +301,7 @@ export function Expenses({ centreId }: { centreId: string }) {
               )}
               {visibleColumns.createdAt && (
                 <TableHead
+                  className="cursor-pointer"
                   onClick={() => {
                     setSortField("createdAt");
                     sortOrder === "asc"
@@ -311,6 +316,7 @@ export function Expenses({ centreId }: { centreId: string }) {
               )}
               {visibleColumns.date && (
                 <TableHead
+                  className="cursor-pointer"
                   onClick={() => {
                     setSortField("date");
                     sortOrder === "asc"

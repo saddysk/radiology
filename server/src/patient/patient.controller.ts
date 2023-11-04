@@ -11,14 +11,12 @@ export class PatientController {
   constructor(private readonly patientService: PatientService) {}
 
   @GetRoute('', {
-    Ok: PatientDto,
+    Ok: { dtoType: 'ArrayDto', type: PatientDto },
   })
   @UseAuthGuard(AuthGuardOption.BEARER)
   async get(@Query('centreId') centreId: string): Promise<PatientDto[]> {
-    const patients = this.patientService.get(centreId);
-    return Promise.all(
-      (await patients).map((patient) => new PatientDto(patient)),
-    );
+    const patients = await this.patientService.get(centreId);
+    return Promise.all(patients.map((patient) => new PatientDto(patient)));
   }
 
   @GetRoute(':id', {

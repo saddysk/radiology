@@ -6,10 +6,8 @@ import {
   DateField,
   EmailFieldOptional,
   StringFieldOptional,
-  ObjectFieldOptional,
   NumberFieldOptional,
 } from 'libs/decorators';
-import { BookingDto } from 'src/booking/dto/booking.dto';
 import { Patient } from 'src/database/entities/patient.entity';
 
 export class PatientDto {
@@ -46,10 +44,10 @@ export class PatientDto {
   @StringFieldOptional()
   abhaId?: string;
 
-  @ObjectFieldOptional(() => BookingDto, {
-    isArray: true,
-  })
-  booking?: BookingDto[];
+  // @ObjectFieldOptional(() => BookingDto, {
+  //   isArray: true,
+  // })
+  // booking?: BookingDto[];
 
   constructor(patient?: Patient) {
     if (patient == null) {
@@ -72,8 +70,8 @@ export class PatientDto {
   static async toDto(patient: Patient) {
     const dto = new PatientDto(patient);
 
-    const bookings = await patient.booking;
-    dto.booking = bookings?.map((booking) => new BookingDto(booking));
+    // const bookings = await patient.booking;
+    // dto.booking = bookings?.map((booking) => new BookingDto(booking));
 
     return dto;
   }
