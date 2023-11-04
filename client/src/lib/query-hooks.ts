@@ -169,6 +169,15 @@ export const useCentreExpenses = ({ centreId }: { centreId: string }) => {
   });
 };
 
+export const useCentreExpense = ({ id, centreId, enabled }: { id: string, centreId: string, enabled: boolean }) => {
+  return useQuery({
+    queryKey: ["expenses", centreId],
+    queryFn: () => centreexpense.expenseControllerGet(id, centreId),
+    enabled
+  });
+};
+
+
 export const useEditRequest = ({ centreId }: { centreId: string }) => {
   return useQuery({
     queryKey: ["edit", centreId],

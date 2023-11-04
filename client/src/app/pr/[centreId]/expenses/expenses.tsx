@@ -183,7 +183,7 @@ export function Expenses({ centreId }: { centreId: string }) {
       } else {
         queryClient.invalidateQueries(["expenses", centreId]);
         toast({
-          title: "Expense Updated",
+          title: "Expense Update Requested",
           variant: "default",
         });
         setLoading(false);
