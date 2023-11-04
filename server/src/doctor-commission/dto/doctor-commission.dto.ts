@@ -88,12 +88,12 @@ export class CommissionDto extends PickType(DoctorCommissionDto, [
   'amount',
   'startDate',
   'endDate',
-  'letGo',
 ]) {}
 
 export class CreateDoctorCommissionDto extends PickType(DoctorCommissionDto, [
   'centreId',
   'doctorId',
+  'letGo',
 ]) {
   @ObjectField(() => CommissionDto, { isArray: true })
   commissions: CommissionDto[];

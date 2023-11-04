@@ -133,94 +133,87 @@ export function Patient({ centreId }: { centreId: string }) {
                   {sortField === "abhaId" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableHead>
               )}
-              {visibleColumns.patientNumber && (
+              {visibleColumns.name && (
                 <TableHead
                   className="cursor-pointer"
                   onClick={() => {
-                    setSortField("patientNumber");
+                    setSortField("name");
                     sortOrder === "asc"
                       ? setSortOrder("desc")
                       : setSortOrder("asc");
                   }}
                 >
-                  Patient Id{" "}
-                  {sortField === "patientNumber" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  Name{" "}
+                  {sortField === "name" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableHead>
               )}
-              {visibleColumns.patientNumber && (
+              {visibleColumns.age && (
                 <TableHead
                   className="cursor-pointer"
                   onClick={() => {
-                    setSortField("patientNumber");
+                    setSortField("age");
                     sortOrder === "asc"
                       ? setSortOrder("desc")
                       : setSortOrder("asc");
                   }}
                 >
-                  Patient Id{" "}
-                  {sortField === "patientNumber" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  Age {sortField === "age" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableHead>
               )}
-              {visibleColumns.patientNumber && (
+              {visibleColumns.gender && (
                 <TableHead
                   className="cursor-pointer"
                   onClick={() => {
-                    setSortField("patientNumber");
+                    setSortField("gender");
                     sortOrder === "asc"
                       ? setSortOrder("desc")
                       : setSortOrder("asc");
                   }}
                 >
-                  Patient Id{" "}
-                  {sortField === "patientNumber" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  Gender{" "}
+                  {sortField === "gender" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableHead>
               )}
-              {visibleColumns.patientNumber && (
+              {visibleColumns.phone && (
                 <TableHead
                   className="cursor-pointer"
                   onClick={() => {
-                    setSortField("patientNumber");
+                    setSortField("phone");
                     sortOrder === "asc"
                       ? setSortOrder("desc")
                       : setSortOrder("asc");
                   }}
                 >
-                  Patient Id{" "}
-                  {sortField === "patientNumber" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  Phone{" "}
+                  {sortField === "phone" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableHead>
               )}
-              {visibleColumns.patientNumber && (
+              {visibleColumns.email && (
                 <TableHead
                   className="cursor-pointer"
                   onClick={() => {
-                    setSortField("patientNumber");
+                    setSortField("email");
                     sortOrder === "asc"
                       ? setSortOrder("desc")
                       : setSortOrder("asc");
                   }}
                 >
-                  Patient Id{" "}
-                  {sortField === "patientNumber" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  Email{" "}
+                  {sortField === "email" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableHead>
               )}
-              {visibleColumns.patientNumber && (
+              {visibleColumns.address && (
                 <TableHead
                   className="cursor-pointer"
                   onClick={() => {
-                    setSortField("patientNumber");
+                    setSortField("address");
                     sortOrder === "asc"
                       ? setSortOrder("desc")
                       : setSortOrder("asc");
                   }}
                 >
-                  Patient Id{" "}
-                  {sortField === "patientNumber" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
+                  Address{" "}
+                  {sortField === "address" && (sortOrder === "asc" ? "↑" : "↓")}
                 </TableHead>
               )}
 

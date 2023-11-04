@@ -59,7 +59,7 @@ export class DoctorCommissionService {
 
     const commissions = await Promise.all(
       data.commissions.map((commission) =>
-        this.addCommissions(doctor.id, centre.id, commission),
+        this.addCommissions(doctor.id, centre.id, commission, data.letGo),
       ),
     );
 
@@ -163,6 +163,7 @@ export class DoctorCommissionService {
     doctorId: string,
     centreId: string,
     commission: CommissionDto,
+    letGo?: boolean,
   ): Promise<DoctorCommission> {
     const doctorCommission = new DoctorCommission();
     doctorCommission.doctorId = doctorId;
@@ -176,8 +177,8 @@ export class DoctorCommissionService {
     if (commission.endDate) {
       doctorCommission.endDate = commission.endDate;
     }
-    if (commission.letGo) {
-      doctorCommission.letGo = commission.letGo;
+    if (letGo) {
+      doctorCommission.letGo = letGo;
     }
 
     return this.doctorCommissionRepository.save(doctorCommission, {
