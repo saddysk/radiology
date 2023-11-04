@@ -143,6 +143,7 @@ export class RateListService {
     const rateList = new RateList();
     rateList.centreId = centreId;
     rateList.modality = data.modality;
+    rateList.investigation = data.investigation;
 
     return this.rateListRepository.save(rateList, { reload: true });
   }

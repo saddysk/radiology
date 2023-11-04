@@ -1,7 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { AbstractEntity } from './abstract.entity';
 import { Patient } from './patient.entity';
-import { IBookingRecord } from '../interfaces/booking.interface';
 import { Payment } from './payment.entity';
 
 @Entity()
@@ -28,7 +27,7 @@ export class Booking extends AbstractEntity {
   remark?: string;
 
   @Column({ type: 'json', nullable: true })
-  record?: IBookingRecord;
+  records?: IBookingRecord[];
 
   @OneToMany(() => Payment, (p) => p.booking)
   payment?: Promise<Payment[]>;
@@ -39,4 +38,8 @@ export class Booking extends AbstractEntity {
     onDelete: 'CASCADE',
   })
   patient?: Promise<Patient>;
+}
+
+export interface IBookingRecord {
+  url: string;
 }

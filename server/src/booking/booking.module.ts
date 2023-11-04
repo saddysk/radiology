@@ -8,6 +8,7 @@ import { PaymentRepository } from './repositories/payment.repository';
 import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repository';
 import { CentreModule } from 'src/centre/centre.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { StorageService } from 'src/storage/services/storage.service';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { AuthModule } from 'src/auth/auth.module';
     AuthModule,
   ],
   controllers: [BookingController],
-  providers: [BookingService],
+  providers: [BookingService, StorageService],
   exports: [BookingService],
 })
 export class BookingModule {}

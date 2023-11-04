@@ -360,10 +360,11 @@ export interface CreateBookingDto {
   patientId?: string;
   patient?: CreatePatientDto;
   payment: BookingPaymentDto;
+  /** @format binary */
+  recordFile?: File;
 }
 
 export interface BookingRecordDto {
-  type: string;
   url: string;
 }
 
@@ -447,7 +448,7 @@ export interface BookingDto {
   modality: string;
   investigation: string;
   remark?: string;
-  record?: BookingRecordDto;
+  records?: BookingRecordDto[];
   payment?: PaymentDto[];
   patient?: PatientDto;
 }
@@ -485,7 +486,7 @@ export interface UpdateBookingDto {
   modality: string;
   investigation: string;
   remark?: string;
-  record?: BookingRecordDto;
+  records?: BookingRecordDto[];
 }
 
 export enum RequestType {

@@ -35,6 +35,7 @@ import {
   convertAgeFromYearsToMonths,
 } from "@/lib/utils";
 import { MinusSquareIcon, PlusSquareIcon } from "lucide-react";
+import InputFile from "./input-file";
 
 const bookingSchema = z.object({
   //user
@@ -68,7 +69,10 @@ const bookingSchema = z.object({
   paymentType: z.string(),
 });
 
-type BokingDtoType = CreateBookingDto & { ageInYears: IAgeInYears };
+type BokingDtoType = CreateBookingDto & {
+  /** @format binary */
+  recordFile?: File;
+} & { ageInYears: IAgeInYears };
 
 export function AddBookingsComponent({
   centreId,
@@ -90,6 +94,7 @@ export function AddBookingsComponent({
       modality: "",
       investigation: "",
       remark: "",
+      recordFile: undefined,
       patient: {
         name: "",
         age: undefined,
@@ -488,7 +493,7 @@ export function AddBookingsComponent({
                     defaultValue={field.value}
                   >
                     <SelectTrigger className="w-full border border-blue-200 bg-blue-50 shadow-none">
-                      <SelectValue placeholder="Select a Modality" />
+                      <SelectValue placeholder="Select an Investigation" />
                     </SelectTrigger>
                     <SelectContent className=" border-blue-200 bg-blue-50">
                       {dataRateList?.data
@@ -515,7 +520,16 @@ export function AddBookingsComponent({
               </FormItem>
             )}
           />
-          <div>
+
+          <InputFile
+            id="prescription"
+            name="recordFile"
+            onFileUpload={(file: any) => {
+              addBookingForm.setValue("recordFile", file);
+            }}
+          />
+
+          <FormItem>
             <FormLabel>Total amount payable</FormLabel>
             <Input
               value={cost}
@@ -523,7 +537,7 @@ export function AddBookingsComponent({
               className="border-blue-200 cursor-not-allowed"
               placeholder="Total amount payable"
             />
-          </div>
+          </FormItem>
 
           <FormField
             control={addBookingForm.control}
@@ -545,7 +559,7 @@ export function AddBookingsComponent({
         </div>
         <div className="flex flex-col gap-8 bg-blue-100 p-4 py-8 rounded-md justify-center">
           {/* Payment */}
-          <h2 className="text-xl">Booking Details</h2>
+          <h2 className="text-xl">Payment Details</h2>
 
           <FormField
             control={addBookingForm.control}

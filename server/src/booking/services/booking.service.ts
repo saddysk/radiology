@@ -8,6 +8,10 @@ import { CreatePatientDto } from 'src/patient/dto/patient.dto';
 import { PaymentRepository } from '../repositories/payment.repository';
 import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repository';
 import { CentreService } from 'src/centre/services/centre.service';
+import {
+  StorageFileTypes,
+  StorageService,
+} from 'src/storage/services/storage.service';
 
 @Injectable()
 export class BookingService {
@@ -17,9 +21,14 @@ export class BookingService {
     private readonly patientService: PatientService,
     private readonly paymentRepository: PaymentRepository,
     private readonly centreAdminRepository: CentreAdminRepository,
+    private readonly storageService: StorageService,
   ) {}
 
-  async create(userId: string, data: CreateBookingDto): Promise<Booking> {
+  async create(
+    userId: string,
+    data: CreateBookingDto,
+    recordFile?: Express.Multer.File,
+  ): Promise<Booking> {
     const centre = await this.centreService.get(userId, data.centreId);
 
     if (centre == null) {
@@ -33,7 +42,6 @@ export class BookingService {
     booking.modality = data.modality;
     booking.investigation = data.investigation;
     booking.remark = data.remark;
-    // booking.payment = data.payment;
 
     booking.patientId = await this.getOrCreatePatient(
       userId,
@@ -41,6 +49,15 @@ export class BookingService {
       data.patientId,
       data.patient,
     );
+
+    if (recordFile) {
+      const recordUrl = await this.storageService.store(
+        StorageFileTypes.PRESCRIPTOIN,
+        'filename',
+        recordFile.buffer,
+      );
+      booking.records = [{ url: recordUrl }];
+    }
 
     await this.bookingRepository.save(booking);
 

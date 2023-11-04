@@ -30,7 +30,6 @@ export function DoctorsList({ centreId }: { centreId: string }) {
   const doctors =
     dataAllDoctorsForCentre?.data &&
     aggregateDoctorData(dataAllDoctorsForCentre.data);
-  console.log(doctors, "here");
 
   const filteredDocs = doctors
     ? doctors.filter((doc) => doc.doctorName.toLowerCase().includes(searchTerm))

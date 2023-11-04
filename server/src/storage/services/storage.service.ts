@@ -4,6 +4,7 @@ import s3 from 'src/config/aws.config';
 import { AppConfig } from 'src/config/config';
 
 export enum StorageFileTypes {
+  PRESCRIPTOIN = 'prescription',
   REPORT = 'report',
 }
 

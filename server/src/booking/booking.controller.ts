@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Req } from '@nestjs/common';
+import { Body, Controller, Param, Req, UploadedFile } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { BookingService } from './services/booking.service';
 import {
@@ -13,6 +13,7 @@ import {
 } from 'libs/decorators/route.decorators';
 import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
 import { AuthService } from 'src/auth/services/auth.service';
+import { ApiFile } from 'libs/decorators/swagger.schema';
 
 @Controller('api/booking')
 @ApiTags('Booking')
@@ -26,13 +27,16 @@ export class BookingController {
     Ok: BookingDto,
   })
   @UseAuthGuard(AuthGuardOption.BEARER)
+  @ApiFile([{ name: 'recordFile' }])
   async create(
     @Req() request: any,
     @Body() data: CreateBookingDto,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<BookingDto> {
     const booking = await this.bookingService.create(
       request.user.user.id,
       data,
+      file,
     );
     return BookingDto.toDto(booking, this.authService);
   }

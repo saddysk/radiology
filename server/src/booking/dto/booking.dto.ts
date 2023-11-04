@@ -7,17 +7,14 @@ import {
   DateField,
   UUIDFieldOptional,
   ObjectField,
+  FileFieldOptional,
 } from 'libs/decorators';
-import { Booking } from 'src/database/entities/booking.entity';
-import { IBookingRecord } from 'src/database/interfaces/booking.interface';
+import { Booking, IBookingRecord } from 'src/database/entities/booking.entity';
 import { CreatePatientDto, PatientDto } from 'src/patient/dto/patient.dto';
 import { BookingPaymentDto, PaymentDto } from './payment.dto';
 import { AuthService } from 'src/auth/services/auth.service';
 
 export class BookingRecordDto {
-  @StringField()
-  type: string;
-
   @StringField()
   url: string;
 
@@ -26,7 +23,6 @@ export class BookingRecordDto {
       return;
     }
 
-    this.type = record.type;
     this.url = record.url;
   }
 }
@@ -65,8 +61,10 @@ export class BookingDto {
   @StringFieldOptional()
   remark?: string;
 
-  @ObjectFieldOptional(() => BookingRecordDto)
-  record?: BookingRecordDto;
+  @ObjectFieldOptional(() => BookingRecordDto, {
+    isArray: true,
+  })
+  records?: BookingRecordDto[];
 
   @ObjectFieldOptional(() => PaymentDto, {
     isArray: true,
@@ -91,7 +89,9 @@ export class BookingDto {
     this.modality = booking.modality;
     this.investigation = booking.investigation;
     this.remark = booking.remark;
-    this.record = new BookingRecordDto(booking.record);
+    this.records = booking.records.map(
+      (record) => new BookingRecordDto(record),
+    );
   }
 
   static async toDto(booking: Booking, authService?: AuthService) {
@@ -128,6 +128,9 @@ export class CreateBookingDto extends PickType(BookingDto, [
 
   @ObjectField(() => BookingPaymentDto)
   payment: BookingPaymentDto;
+
+  @FileFieldOptional()
+  recordFile?: Express.Multer.File;
 }
 
 export class UpdateBookingDto extends OmitType(BookingDto, [
