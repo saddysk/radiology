@@ -1,6 +1,6 @@
 "use client";
 
-import { useEditRequest } from "@/lib/query-hooks";
+import { useCentreExpense, useEditRequest } from "@/lib/query-hooks";
 import { useState } from "react";
 import {
   Table,
@@ -13,7 +13,12 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
-import { ExpenseDto, UpdateRequestDto } from "@/app/api/data-contracts";
+import {
+  ExpenseDto,
+  RequestStatus,
+  RequestType,
+  UpdateRequestDto,
+} from "@/app/api/data-contracts";
 import ReactDiffViewer from "react-diff-viewer";
 import {
   Dialog,
@@ -26,6 +31,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { edit } from "@/app/api";
 
 export function EditReq({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState({
@@ -40,29 +46,66 @@ export function EditReq({ centreId }: { centreId: string }) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedRequest, setSelectedRequest] =
+    useState<UpdateRequestDto | null>(null);
+  const [openModal, setOpenModal] = useState(false);
 
   const { data: dataEdit, isLoading: isLoadingDataEdit } = useEditRequest({
     centreId,
   });
-  const [selectedRequest, setSelectedRequest] =
-    useState<UpdateRequestDto | null>(null);
-  const [openModal, setOpenModal] = useState(false);
-  const oldCode = `
-  const a = 10
-  const b = 10
-  const c = () => console.log('foo')
-  
-  if(a > 10) {
-    console.log('bar')
+  const { data: expense } = useCentreExpense({
+    id: selectedRequest?.expenseData?.id!,
+    centreId,
+    enabled: selectedRequest?.expenseData?.id ? true : false,
+  });
+
+  let newCode = "";
+  if (selectedRequest?.type === RequestType.Expense) {
+    newCode = JSON.stringify(
+      {
+        amount: expense?.data.amount,
+        expenseType: expense?.data.expenseType,
+        paymentMethod: expense?.data.paymentMethod,
+      },
+      null,
+      4
+    );
   }
-  
-  console.log('done')
-  `;
-  const newCode = `{
-    "amount": 40,
-    "expenseType": "Renttt",
-    "paymentMethod": "UPI"
-}`;
+
+  const updateRequest = async ({
+    id,
+    selection,
+  }: {
+    id: string;
+    selection: boolean;
+  }) => {
+    try {
+      setLoading(true);
+
+      const response = await edit.updateRequestControllerUpdate(id, {
+        status: selection ? RequestStatus.Accepted : RequestStatus.Rejected,
+      });
+
+      if (response?.status !== 200) {
+        throw new Error(response?.statusText);
+      } else {
+        queryClient.invalidateQueries(["edit", centreId]);
+        toast({
+          title: "Edit Request Updated Successfully",
+          variant: "default",
+        });
+        setLoading(false);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+      //localStorage.removeItem("x-session-token");
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
@@ -108,11 +151,12 @@ export function EditReq({ centreId }: { centreId: string }) {
                         size="sm"
                         variant="outline"
                         className="bg-blue-50 border border-blue-300"
+                        onClick={() => setSelectedRequest(request)}
                       >
                         View Changes
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="sm:max-w-[600px] bg-blue-50">
+                    <DialogContent className="sm:max-w-[80vw] bg-blue-50">
                       <DialogHeader>
                         <DialogTitle>View Changes</DialogTitle>
                         <DialogDescription>
@@ -132,25 +176,38 @@ export function EditReq({ centreId }: { centreId: string }) {
                             4
                           )}
                           newValue={newCode}
-                          splitView={false}
+                          splitView={true}
+                          disableWordDiff={true}
                         />
                       </div>
-                      <DialogFooter>
-                        <Button
-                          variant="outline"
-                          className="bg-blue-100 border border-blue-300"
-                          //onClick={() => handleApprove(request.id)}
-                        >
-                          Approve
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="bg-blue-100 border border-blue-300"
-                          //onClick={() => handleReject(request.id)}
-                        >
-                          Reject
-                        </Button>
-                      </DialogFooter>
+                      {request.status == RequestStatus.Pending && (
+                        <DialogFooter>
+                          <Button
+                            variant="outline"
+                            className="bg-blue-100 border border-blue-300"
+                            onClick={() =>
+                              updateRequest({
+                                id: request.id,
+                                selection: true,
+                              })
+                            }
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="bg-blue-100 border border-blue-300"
+                            onClick={() =>
+                              updateRequest({
+                                id: request.id,
+                                selection: false,
+                              })
+                            }
+                          >
+                            Reject
+                          </Button>
+                        </DialogFooter>
+                      )}
                     </DialogContent>
                   </Dialog>
                 </TableCell>

@@ -514,22 +514,16 @@ export enum RequestType {
   Booking = "booking",
 }
 
+export interface CreateUpdateRequestDto {
+  type: RequestType;
+  expenseData?: ExpenseDto;
+  bookingData?: UpdateBookingDto;
+}
+
 export enum RequestStatus {
   Pending = "pending",
   Accepted = "accepted",
   Rejected = "rejected",
-}
-
-export interface CreateUpdateRequestDto {
-  /**
-   * @format uuid
-   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
-   */
-  requestedBy: string;
-  type: RequestType;
-  status: RequestStatus;
-  expenseData?: ExpenseDto;
-  bookingData?: UpdateBookingDto;
 }
 
 export interface UpdateRequestDto {

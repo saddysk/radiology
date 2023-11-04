@@ -163,8 +163,6 @@ export function Expenses({ centreId }: { centreId: string }) {
 
       const response = await edit.updateRequestControllerSave({
         type: RequestType.Expense,
-        status: RequestStatus.Pending,
-        requestedBy: dataUser?.data?.id!,
         expenseData: {
           id: expensesUpdates.expenseId,
           centreId,
@@ -183,7 +181,7 @@ export function Expenses({ centreId }: { centreId: string }) {
       } else {
         queryClient.invalidateQueries(["expenses", centreId]);
         toast({
-          title: "Expense Updated",
+          title: "Expense Update Requested",
           variant: "default",
         });
         setLoading(false);
