@@ -284,7 +284,6 @@ export interface CommissionDto {
   startDate?: string;
   /** @format date-time */
   endDate?: string;
-  letGo?: boolean;
 }
 
 export interface CreateDoctorCommissionDto {
@@ -298,6 +297,7 @@ export interface CreateDoctorCommissionDto {
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   centreId: string;
+  letGo?: boolean;
   commissions: CommissionDto[];
 }
 
