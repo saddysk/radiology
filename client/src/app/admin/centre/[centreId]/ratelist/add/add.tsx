@@ -127,6 +127,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
       const rateListToUpdate = dataRateList?.data?.find(
         (rateList) => rateList.id === investigationUpdates.id
       );
+
       const filteredData = {
         id: uuid(),
         type: investigationUpdates.type,
@@ -183,6 +184,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
           )
           .map((i) => {
             return {
+              id: uuid(),
               type: i.type,
               amount: i.amount,
               filmCount: i.filmCount,

@@ -299,6 +299,7 @@ export interface CreateDoctorCommissionDto {
    */
   centreId: string;
   commissions: CommissionDto[];
+  letGo?: boolean;
 }
 
 export interface UpdateDoctorCommissionDto {

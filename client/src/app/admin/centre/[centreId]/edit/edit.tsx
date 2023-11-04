@@ -123,9 +123,10 @@ export function EditReq({ centreId }: { centreId: string }) {
                         <ReactDiffViewer
                           oldValue={JSON.stringify(
                             {
-                              amount: request.expenseData.amount,
-                              expenseType: request.expenseData.expenseType,
-                              paymentMethod: request.expenseData?.paymentMethod,
+                              amount: request?.expenseData?.amount,
+                              expenseType: request?.expenseData?.expenseType,
+                              paymentMethod:
+                                request?.expenseData?.paymentMethod,
                             },
                             null,
                             4
@@ -138,14 +139,14 @@ export function EditReq({ centreId }: { centreId: string }) {
                         <Button
                           variant="outline"
                           className="bg-blue-100 border border-blue-300"
-                          onClick={() => handleApprove(request.id)}
+                          //onClick={() => handleApprove(request.id)}
                         >
                           Approve
                         </Button>
                         <Button
                           variant="outline"
                           className="bg-blue-100 border border-blue-300"
-                          onClick={() => handleReject(request.id)}
+                          //onClick={() => handleReject(request.id)}
                         >
                           Reject
                         </Button>

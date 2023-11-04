@@ -1,6 +1,6 @@
 "use client";
 
-import { useCentreExpenses } from "@/lib/query-hooks";
+import { useCentreExpenses, useUserData } from "@/lib/query-hooks";
 import { useEffect, useState } from "react";
 import {
   Table,
@@ -16,7 +16,11 @@ import Link from "next/link";
 import { DropdownMenuCheckboxes } from "@/components/ui/dropdown-checkbox-custom";
 import { Input } from "@/components/ui/input";
 import { CentreExpense } from "@/app/api/CentreExpense";
-import { ExpenseDto } from "@/app/api/data-contracts";
+import {
+  ExpenseDto,
+  RequestStatus,
+  RequestType,
+} from "@/app/api/data-contracts";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,7 +42,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { centreexpense } from "@/app/api";
+import { centreexpense, edit } from "@/app/api";
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -66,10 +70,14 @@ export function Expenses({ centreId }: { centreId: string }) {
     paymentMethod: "",
     amount: 0,
   });
-  const { data: dataCentreExpenses, isLoading: IsLoadingCentreExpenses } =
+  const { data: dataCentreExpenses, isLoading: isLoadingCentreExpenses } =
     useCentreExpenses({
       centreId,
     });
+
+  const { data: dataUser, isLoading: isLoadingAllUser } = useUserData({
+    centreId,
+  });
 
   useEffect(() => {
     let result = [...(dataCentreExpenses?.data || [])];
@@ -141,6 +149,7 @@ export function Expenses({ centreId }: { centreId: string }) {
   };
   const updateExpenses = async ({ e }: { e: any }) => {
     e.preventDefault();
+
     try {
       if (!dataCentreExpenses?.data) {
         throw new Error("No data found");
@@ -148,12 +157,25 @@ export function Expenses({ centreId }: { centreId: string }) {
 
       setLoading(true);
 
-      const response = await centreexpense.expenseControllerUpdate({
-        id: expensesUpdates.expenseId,
-        centreId,
-        expenseType: expensesUpdates.expenseType,
-        paymentMethod: expensesUpdates.paymentMethod,
-        amount: expensesUpdates.amount,
+      const currentExpense = dataCentreExpenses.data.find(
+        (e) => e.id === expensesUpdates.expenseId
+      );
+
+      const response = await edit.updateRequestControllerSave({
+        type: RequestType.Expense,
+        status: RequestStatus.Pending,
+        requestedBy: dataUser?.data?.id!,
+        expenseData: {
+          id: expensesUpdates.expenseId,
+          centreId,
+          expenseType: expensesUpdates.expenseType,
+          paymentMethod: expensesUpdates.paymentMethod,
+          amount: expensesUpdates.amount,
+          createdAt: currentExpense?.createdAt!,
+          updatedAt: currentExpense?.updatedAt!,
+          createdBy: currentExpense?.createdBy!,
+          date: currentExpense?.date!,
+        },
       });
 
       if (response?.status !== 200) {
@@ -418,7 +440,7 @@ export function Expenses({ centreId }: { centreId: string }) {
                       </DialogFooter>
                     </DialogContent>
                   </Dialog>
-                  <AlertDialog>
+                  {/* <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button size={"sm"} variant="outline">
                         Delete
@@ -444,7 +466,7 @@ export function Expenses({ centreId }: { centreId: string }) {
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
-                  </AlertDialog>
+                  </AlertDialog> */}
                 </TableCell>
               </TableRow>
             ))}

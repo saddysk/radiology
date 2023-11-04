@@ -14,7 +14,10 @@ export function AdminOnboarding() {
   return (
     <Card className="m-4 h-full rounded-md bg-blue-50 border-blue-200">
       {selectedFlow != null && (
-        <button onClick={() => setSelectedFlow(null)} className="ml-4 mt-4">
+        <button
+          onClick={() => setSelectedFlow(null)}
+          className="ml-4 mt-4 absolute top-5 left-5 z-10"
+        >
           <ArrowLeftIcon />
         </button>
       )}

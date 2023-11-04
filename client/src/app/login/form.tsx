@@ -51,14 +51,17 @@ export function LoginForm() {
       } else {
         localStorage.setItem("x-session-token", response.data.token);
         toast({
-          title: "Admin Registered",
+          title: `${response.data.user.role.toLocaleUpperCase()} Logged in`,
           variant: "default",
         });
         if (response.data.user.role === UserRole.Admin) {
           router.push(`/admin/onboarding`);
         }
         if (response.data.user.role === UserRole.Pr) {
-          router.push(`/pr/dashboard`);
+          router.push(`/pr/${response.data.user.centreId}/dashboard`);
+        }
+        if (response.data.user.role === UserRole.Receptionist) {
+          router.push(`/receptionist/${response.data.user.centreId}/dashboard`);
         }
         if (response.data.user.role === UserRole.Doctor) {
           router.push(`/doctor/dashboard`);

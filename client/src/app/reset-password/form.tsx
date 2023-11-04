@@ -76,7 +76,10 @@ const ResetPasswordForm: FC<ResetPasswordFormProps> = ({ userId }) => {
           router.push(`/admin/onboarding`);
         }
         if (response.data.user.role === UserRole.Pr) {
-          router.push(`/pr/dashboard`);
+          router.push(`/pr/${response.data.user.centreId}/dashboard`);
+        }
+        if (response.data.user.role === UserRole.Receptionist) {
+          router.push(`/receptionist/${response.data.user.centreId}/dashboard`);
         }
         if (response.data.user.role === UserRole.Doctor) {
           router.push(`/doctor/dashboard`);

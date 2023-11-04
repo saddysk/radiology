@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/components/ui/use-toast";
@@ -30,6 +32,8 @@ import {
 } from "@/lib/query-hooks";
 import CenteredSpinner from "@/components/ui/centered-spinner";
 import { copyText } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ArrowLeftIcon } from "lucide-react";
 
 const createCentreSchema = z.object({
   name: z.string().min(4, "Name needs to be atleast 4 characters long!"),
@@ -49,9 +53,10 @@ const addDoctorToCentreSchema = z.object({
   doctorId: z.string().uuid(),
   centreId: z.string().uuid(),
   commissions: z.array(CommissionSchema),
+  letGo: z.boolean(),
 });
 
-export function PRDashboard() {
+export function PRDashboard({ centreId }: { centreId: string }) {
   const createCentreForm = useForm<CreateUserDto>({
     resolver: zodResolver(createCentreSchema),
     defaultValues: {
@@ -81,6 +86,7 @@ export function PRDashboard() {
           amount: 0,
         },
       ],
+      letGo: false,
     },
   });
 
@@ -133,7 +139,7 @@ export function PRDashboard() {
           title: `Doctor added to centre`,
           variant: "default",
         });
-        router.push("/pr/dashboard");
+        setSelectedFlow(null);
       }
     } catch (error: any) {
       toast({
@@ -166,9 +172,17 @@ export function PRDashboard() {
     useAllConnectedCentresData({ enabled: selectedFlow == "join" });
 
   return (
-    <Card className="flex flex-col items-center justify-center py-28 space-y-6 m-4 h-full rounded-md bg-blue-50 border-blue-200">
+    <div className="w-full h-full max-h-[calc(100vh-112px)]  relative">
+      {selectedFlow != null && (
+        <button
+          onClick={() => setSelectedFlow(null)}
+          className="ml-4 mt-4 absolute top-5 left-5 z-10"
+        >
+          <ArrowLeftIcon />
+        </button>
+      )}
       {selectedFlow == null && (
-        <div className="flex gap-8">
+        <div className="flex h-full items-center gap-8 p-8 justify-center">
           <Card
             className="flex flex-col items-center justify-center rounded-md p-10 bg-blue-50 border-blue-200"
             onClick={() => setSelectedFlow("create")}
@@ -268,8 +282,8 @@ export function PRDashboard() {
       )}
 
       {selectedFlow == "join" && (
-        <div className="flex flex-col items-center justify-center py-28 space-y-6 m-4 h-full rounded-md bg-blue-50 border-blue-200 w-[100%]">
-          <h1 className="text-4xl text-center opacity-90 flex items-center space-x-4 mb-12">
+        <div className="flex flex-col items-center space-y-6 rounded-md bg-blue-50 overflow-auto h-full border-blue-200 w-[100%]">
+          <h1 className="text-4xl text-center opacity-90 flex items-center space-x-4 my-12">
             <span>Connect Doctor to Centre</span>
           </h1>
           <Form {...addDoctorToCentreForm}>
@@ -287,6 +301,7 @@ export function PRDashboard() {
                     rules={{ required: true }}
                     render={({ field }) => (
                       <FormItem>
+                        <FormLabel className="text-lg">Centre</FormLabel>
                         <FormControl>
                           <RadioGroup
                             {...field}
@@ -296,7 +311,7 @@ export function PRDashboard() {
                             {dataAllCentres?.data?.map((centre, index) => (
                               <div
                                 key={index}
-                                className="flex items-center space-x-2 p-6 border border-white rounded-md"
+                                className="flex items-center space-x-2 p-6 border border-blue-200 rounded-md"
                               >
                                 <RadioGroupItem
                                   value={centre.id}
@@ -319,6 +334,7 @@ export function PRDashboard() {
                     rules={{ required: true }}
                     render={({ field }) => (
                       <FormItem>
+                        <FormLabel className="text-lg">Doctor</FormLabel>
                         <FormControl>
                           <RadioGroup
                             {...field}
@@ -328,7 +344,7 @@ export function PRDashboard() {
                             {dataAllDoctors?.data?.map((doctor, index) => (
                               <div
                                 key={index}
-                                className="flex items-center space-x-2 p-6 border border-white rounded-md"
+                                className="flex items-center space-x-2 p-6 border border-blue-200 rounded-md"
                               >
                                 <RadioGroupItem
                                   value={doctor.id}
@@ -380,13 +396,34 @@ export function PRDashboard() {
                         />
                       ))}
                   </div>
+
+                  <FormField
+                    control={addDoctorToCentreForm.control}
+                    name={`commissions.${0}.letGo`}
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-blue-200 p-4">
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                        <div className="space-y-1 leading-none">
+                          <FormLabel>
+                            Let go of commissions for this doctor and discount
+                            the patients
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
                   <div className="flex flex-col items-center justify-between space-y-6">
                     <Button
                       type="submit"
                       value="submit"
                       loading={loading}
                       variant="outline"
-                      className="w-full sm:w-1/2 border-blue-200"
+                      className="w-full sm:w-1/2 border-blue-200 mb-8"
                     >
                       Connect Doctor to Centre
                     </Button>
@@ -399,6 +436,6 @@ export function PRDashboard() {
           </Form>
         </div>
       )}
-    </Card>
+    </div>
   );
 }

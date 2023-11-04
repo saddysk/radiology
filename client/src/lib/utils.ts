@@ -91,18 +91,13 @@ export function compareSortValues(
 // }
 
 export function aggregateDoctorData(data: DoctorCommissionDto[] = []) {
-  const result = {};
+
+  const result: any = {};
 
   // Iterate through the data array
-  data.forEach((item) => {
-    const {
-      doctorId,
-      letGo,
-      doctor: { name },
-      modality,
-      amount,
-    } = item;
-
+  data.forEach(item => {
+    const { doctorId, letGo, doctor, modality, amount } = item;
+    const name = doctor?.name
     // Check if the doctorId is already in the result object
     if (!result[doctorId]) {
       // If not, initialize a new object for the doctor

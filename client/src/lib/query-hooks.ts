@@ -58,6 +58,20 @@ export const useCentreData = ({
   );
 };
 
+export const useUserData = ({
+
+  centreId,
+}: {
+
+  centreId: string;
+}) => {
+  return useQuery(
+    ["user", centreId],
+    () => auth.authControllerGet(),
+
+  );
+};
+
 export const useAllConnectedCentresData = ({
   enabled,
 }: {

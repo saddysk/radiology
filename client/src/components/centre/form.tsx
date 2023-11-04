@@ -57,7 +57,7 @@ const CentreCreateUpdateForm: FC<CentreCreateUpdateFormProps> = ({
     defaultValues: {
       name: "",
       email: "",
-      phone: "",
+      phone: undefined,
       address: {
         line1: "",
         line2: "",
@@ -164,7 +164,17 @@ const CentreCreateUpdateForm: FC<CentreCreateUpdateFormProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Enter your phone" {...field} />
+                <Input
+                  placeholder="Enter your phone"
+                  {...field}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Use a regular expression to check if the input value is numeric
+                    if (/^\d*\.?\d*$/.test(value)) {
+                      field.onChange(value);
+                    }
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -228,7 +238,18 @@ const CentreCreateUpdateForm: FC<CentreCreateUpdateFormProps> = ({
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Input placeholder="Enter Postal Code" {...field} />
+                <Input
+                  placeholder="Enter Postal Code"
+                  {...field}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Use a regular expression to check if the input value is numeric
+                    if (/^\d*\.?\d*$/.test(value)) {
+                      const numberValue = Number(value);
+                      field.onChange(numberValue);
+                    }
+                  }}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
