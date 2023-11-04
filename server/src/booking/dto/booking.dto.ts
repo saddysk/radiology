@@ -89,9 +89,12 @@ export class BookingDto {
     this.modality = booking.modality;
     this.investigation = booking.investigation;
     this.remark = booking.remark;
-    this.records = booking.records.map(
-      (record) => new BookingRecordDto(record),
-    );
+
+    if (booking.records) {
+      this.records = booking.records.map(
+        (record) => new BookingRecordDto(record),
+      );
+    }
   }
 
   static async toDto(booking: Booking, authService?: AuthService) {
