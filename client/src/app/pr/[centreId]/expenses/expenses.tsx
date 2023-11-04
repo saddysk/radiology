@@ -163,8 +163,6 @@ export function Expenses({ centreId }: { centreId: string }) {
 
       const response = await edit.updateRequestControllerSave({
         type: RequestType.Expense,
-        status: RequestStatus.Pending,
-        requestedBy: dataUser?.data?.id!,
         expenseData: {
           id: expensesUpdates.expenseId,
           centreId,
