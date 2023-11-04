@@ -43,9 +43,11 @@ export class UpdateRequestService {
 
     if (data.expenseData) {
       updateRequest.expenseData = data.expenseData;
+      updateRequest.centreId = data.expenseData.centreId;
     }
     if (data.bookingData) {
       updateRequest.bookingData = data.bookingData;
+      updateRequest.centreId = data.bookingData.centreId;
     }
 
     await this.updateRequestRepository.save(updateRequest, { reload: true });
