@@ -29,8 +29,8 @@ export class Booking extends AbstractEntity {
   @Column({ type: 'json', nullable: true })
   records?: IBookingRecord[];
 
-  @Column()
-  totalAmount: number;
+  @Column({ nullable: true })
+  totalAmount?: number;
 
   @OneToMany(() => Payment, (p) => p.booking)
   payment?: Promise<Payment[]>;
