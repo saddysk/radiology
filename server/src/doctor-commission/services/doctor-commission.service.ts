@@ -147,16 +147,20 @@ export class DoctorCommissionService {
     });
   }
 
-  getAllCentresForDoctor(doctorId: string): Promise<DoctorCommission[]> {
+  async getAllCentresForDoctor(doctorId: string): Promise<DoctorCommission[]> {
     const currentDate = new Date();
 
-    return this.doctorCommissionRepository.find({
-      where: {
+    const doctorCommissions = await this.doctorCommissionRepository
+      .createQueryBuilder('commission')
+      .where({
         doctorId,
         startDate: LessThanOrEqual(currentDate),
         endDate: MoreThanOrEqual(currentDate),
-      },
-    });
+      })
+      .distinct()
+      .getMany();
+
+    return doctorCommissions;
   }
 
   private addCommissions(

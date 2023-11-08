@@ -97,7 +97,7 @@ export function Users({ centreId }: { centreId: string }) {
   return (
     <div className="flex flex-col items-center w-full h-[85vh] p-8 overflow-y-scroll">
       <h1 className="text-3xl text-center opacity-90 items-center space-x-4 mb-6">
-        <span>Add User</span>
+        Add User
       </h1>
 
       <Form {...createCentreForm}>
@@ -111,17 +111,14 @@ export function Users({ centreId }: { centreId: string }) {
             name="role"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>User Type</FormLabel>
+                <FormLabel>Role</FormLabel>
                 <FormControl>
                   <Select
                     value={field.value}
-                    onValueChange={(val) => {
-                      field.onChange(val); // This should update the form state
-                      //setSelectedModality("");}
-                    }}
+                    onValueChange={(val) => field.onChange(val)}
                   >
                     <SelectTrigger className="w-full border border-blue-200 shadow-none bg-blue-50">
-                      <SelectValue placeholder="Select a Modality" />
+                      <SelectValue placeholder="Select Role" />
                     </SelectTrigger>
                     <SelectContent className="bg-blue-50 border-blue-200">
                       {userRole.map((user, i) => {

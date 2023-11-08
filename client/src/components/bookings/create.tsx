@@ -1,7 +1,6 @@
 "use client";
 
 import { useToast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CreateBookingDto } from "@/app/api/data-contracts";
 import { booking } from "@/app/api";
@@ -142,15 +141,12 @@ export function AddBookingsComponent({
     : [];
 
   const updateCost = () => {
-    // Using optional chaining and nullish coalescing operator to get values safely
-    const doctorId = addBookingForm.getValues("consultant");
     const modalityId = addBookingForm.getValues("modality");
     const investigationId = addBookingForm.getValues("investigation");
     const extraCharge =
       Number(addBookingForm.getValues("payment.extraCharge")) || 0;
+    const discount = Number(addBookingForm.getValues("payment.discount")) || 0;
 
-    // Finding the selected doctor, modality, and investigation
-    const selectedDoctor = doctors?.find((doc) => doc.doctorId === doctorId);
     const selectedModality = dataRateList?.data.find(
       (mod) => mod.id === modalityId
     );
@@ -160,17 +156,7 @@ export function AddBookingsComponent({
 
     // Calculating initial cost and discount
     const initialCost = Number(selectedInvestigation?.amount) || 0;
-    // const discountPercentage = selectedDoctor?.letGo
-    //   ? selectedDoctor[selectedModality?.modality!] || 0
-    //   : 0;
-    // const discountAmount =
-    //   Math.round((discountPercentage / 100) * initialCost) || 0;
-
-    // // Setting the discount and total cost
-    // setDiscount(discountAmount);
-    setCost(
-      initialCost - addBookingForm.watch("payment.discount")! + extraCharge
-    );
+    setCost(initialCost - discount + extraCharge);
   };
 
   async function addBookingSubmit(bookingData: BokingDtoType) {
@@ -415,11 +401,7 @@ export function AddBookingsComponent({
                 <FormLabel>Consultant</FormLabel>
                 <FormControl>
                   <Select
-                    onValueChange={(value) => {
-                      field.onChange(value); // This should update the form state
-
-                      updateCost();
-                    }}
+                    onValueChange={(value) => field.onChange(value)}
                     defaultValue={field.value}
                   >
                     <SelectTrigger className="w-full border border-blue-200 bg-blue-50 shadow-none">
@@ -602,6 +584,15 @@ export function AddBookingsComponent({
                     type="number"
                     min={0}
                     {...field}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      // Use a regular expression to check if the input value is numeric
+                      if (/^\d*\.?\d*$/.test(value)) {
+                        const numberValue = Number(value);
+                        field.onChange(numberValue);
+                        updateCost();
+                      }
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
