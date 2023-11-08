@@ -104,7 +104,7 @@ export function Bookings({ centreId }: { centreId: string }) {
   return (
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
       <div className="w-full flex">
-        <Link href={`/admin/centre/${centreId}/bookings/add`}>
+        <Link href={`/receptionist/${centreId}/bookings/add`}>
           <Button className="bg-blue-50 text-blue-950 hover:opacity-80 ml-auto border border-blue-200 shadow-none">
             Add New Booking
           </Button>
@@ -158,7 +158,7 @@ export function Bookings({ centreId }: { centreId: string }) {
               Add a booking to get started!{" "}
               <Link
                 className="underline"
-                href={`/admin/centre/${centreId}/bookings/add`}
+                href={`/receptionist/${centreId}/bookings/add`}
               >
                 Here{" "}
               </Link>

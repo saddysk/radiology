@@ -19,7 +19,7 @@ export function AddBookings({ centreId }: { centreId: string }) {
             title: `Booking successful`,
             variant: "default",
           });
-          router.push(`/receptionist/${centreId}/bookings`);
+          router.push(`/pr/${centreId}/bookings`);
         }}
       />
     </div>
