@@ -42,11 +42,11 @@ export default function ReceptionistLayout({
       path: `/receptionist/${params.centreId}/patients`,
       icon: <Contact2 size={20} />,
     },
-    {
-      title: "Expenses",
-      path: `/receptionist/${params.centreId}/expenses`,
-      icon: <Receipt size={20} />,
-    },
+    // {
+    //   title: "Expenses",
+    //   path: `/receptionist/${params.centreId}/expenses`,
+    //   icon: <Receipt />,
+    // },
   ];
 
   return (

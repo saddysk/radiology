@@ -180,7 +180,7 @@ export function Bookings({ centreId }: { centreId: string }) {
             {visibleColumns.remark && <TableHead>Remark</TableHead>}
             {visibleColumns.payment && <TableHead>Payment</TableHead>}
 
-            <TableHead className="text-right">More</TableHead>
+            {/* <TableHead className="text-right">More</TableHead> */}
           </TableHeader>
           <TableBody>
             {sortedBookings?.map((booking, index) => (
@@ -233,11 +233,11 @@ export function Bookings({ centreId }: { centreId: string }) {
                   </TableCell>
                 )}
 
-                <TableCell className="space-x-4 text-right">
+                {/* <TableCell className="space-x-4 text-right">
                   <Button size="sm" variant="outline">
                     Edit
                   </Button>
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>
