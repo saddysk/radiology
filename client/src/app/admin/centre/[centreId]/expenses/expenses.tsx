@@ -380,7 +380,18 @@ export function Expenses({ centreId }: { centreId: string }) {
                   </Dialog>
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button size={"sm"} variant="outline">
+                      <Button
+                        size={"sm"}
+                        variant="outline"
+                        onClick={() => {
+                          setExpensesUpdates({
+                            expenseId: expense.id,
+                            expenseType: expense.expenseType,
+                            paymentMethod: expense.paymentMethod,
+                            amount: expense.amount,
+                          });
+                        }}
+                      >
                         Delete
                       </Button>
                     </AlertDialogTrigger>
