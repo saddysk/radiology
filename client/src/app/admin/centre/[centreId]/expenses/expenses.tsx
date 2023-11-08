@@ -11,7 +11,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DropdownMenuCheckboxes } from "@/components/ui/dropdown-checkbox-custom";
 import { Input } from "@/components/ui/input";
@@ -40,6 +39,15 @@ import {
 import { centreexpense } from "@/app/api";
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 
 export function Expenses({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState({
@@ -47,16 +55,16 @@ export function Expenses({ centreId }: { centreId: string }) {
     expenseType: true,
     paymentMethod: true,
     amount: true,
-    createdAt: false,
-    date: true,
+    createdAt: true,
+    date: false,
   });
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDel, setOpenDel] = useState(false);
-  const [sortOrder, setSortOrder] = useState("asc"); // or 'desc'
-  const [sortField, setSortField] = useState("expenseId");
+  const [sortOrder, setSortOrder] = useState("desc"); // or 'asc'
+  const [sortField, setSortField] = useState("createdAt");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState<ExpenseDto[]>([]);
   const [expensesUpdates, setExpensesUpdates] = useState({
@@ -184,20 +192,46 @@ export function Expenses({ centreId }: { centreId: string }) {
           <Button className="bg-blue-50 text-blue-950 hover:opacity-80 ml-auto border border-blue-200 shadow-none">
             Add New Expense
           </Button>
-        </Link>{" "}
+        </Link>
       </div>
       <div className="p-6 my-4 rounded-lg   bg-blue-100">
         <div className="flex justify-between mb-4 items-center">
-          {" "}
           <h3 className="text-xl font-bold uppercase">Expenses</h3>
-          <div className="w-[40vw]">
+          <div className="w-[25vw]">
             <Input
               type="text"
-              placeholder="Search expenses by expense type, payment method or amount"
+              placeholder="Search"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="p-2 w-full border rounded"
             />
+          </div>
+          <div className="flex items-center gap-3">
+            <Select defaultValue={sortField} onValueChange={setSortField}>
+              <SelectTrigger className="w-52 border-blue-200">
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent className="bg-blue-100 border-blue-200">
+                <SelectItem value="expenseId">Sort by Expense Id</SelectItem>
+                <SelectItem value="createdAt">Sort by Created At</SelectItem>
+                <SelectItem value="date">Sort by Expense Date</SelectItem>
+                {/* Add other fields if you want */}
+              </SelectContent>
+            </Select>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="border border-blue-200"
+              onClick={() =>
+                setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
+              }
+            >
+              {sortOrder === "asc" ? (
+                <ArrowUpIcon size={16} />
+              ) : (
+                <ArrowDownIcon size={16} />
+              )}
+            </Button>
           </div>
           <DropdownMenuCheckboxes
             visibleColumns={visibleColumns}
@@ -217,95 +251,16 @@ export function Expenses({ centreId }: { centreId: string }) {
           )}
           <TableHeader>
             <TableRow>
-              {visibleColumns.expenseId && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("expenseId");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Expense Id{" "}
-                  {sortField === "expenseId" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
-              )}
+              {visibleColumns.expenseId && <TableHead>Expense Id</TableHead>}
               {visibleColumns.expenseType && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("expenseType");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Expense Type{" "}
-                  {sortField === "expenseType" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
+                <TableHead>Expense Type</TableHead>
               )}
               {visibleColumns.paymentMethod && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("paymentMethod");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Payment Method{" "}
-                  {sortField === "paymentMethod" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
+                <TableHead>Payment Method</TableHead>
               )}
-              {visibleColumns.amount && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("amount");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Amount (in Rs.){" "}
-                  {sortField === "amount" && (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
-              )}
-              {visibleColumns.createdAt && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("createdAt");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Created At{" "}
-                  {sortField === "createdAt" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
-              )}
-              {visibleColumns.date && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("date");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Date{" "}
-                  {sortField === "date" && (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
-              )}
-
+              {visibleColumns.amount && <TableHead>Amount (in Rs.)</TableHead>}
+              {visibleColumns.createdAt && <TableHead>Created At</TableHead>}
+              {visibleColumns.date && <TableHead>Expense Date</TableHead>}
               <TableHead className="text-right">Options</TableHead>
             </TableRow>
           </TableHeader>

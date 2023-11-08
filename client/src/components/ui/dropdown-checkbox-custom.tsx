@@ -33,7 +33,7 @@ export function DropdownMenuCheckboxes({
     <DropdownMenu onOpenChange={(open) => setIsOpen(open)}>
       <DropdownMenuTrigger>
         <Button variant="outline" className="border-blue-200">
-          Select Columns to Display
+          Columns to Display
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="16"

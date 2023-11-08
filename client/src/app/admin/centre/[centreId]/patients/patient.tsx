@@ -1,7 +1,7 @@
 "use client";
 
 import { useGetPatients } from "@/lib/query-hooks";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -15,6 +15,15 @@ import { DropdownMenuCheckboxes } from "@/components/ui/dropdown-checkbox-custom
 import { Input } from "@/components/ui/input";
 import { PatientDto } from "@/app/api/data-contracts";
 import CenteredSpinner from "@/components/ui/centered-spinner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 
 export function Patient({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState({
@@ -27,8 +36,8 @@ export function Patient({ centreId }: { centreId: string }) {
     email: true,
     address: true,
   });
-  const [sortOrder, setSortOrder] = useState("asc"); // or 'desc'
-  const [sortField, setSortField] = useState("patientNumber");
+  const [sortOrder, setSortOrder] = useState("desc"); // or 'asc'
+  const [sortField, setSortField] = useState("createdAt");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState<PatientDto[]>([]);
 
@@ -72,10 +81,10 @@ export function Patient({ centreId }: { centreId: string }) {
 
   return (
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
-      <div className="p-6 my-4 rounded-lg   bg-blue-100">
+      <div className="p-6 my-4 rounded-lg bg-blue-100">
         <div className="flex justify-between mb-4 items-center">
           <h3 className="text-xl font-bold uppercase">Patients</h3>
-          <div className="w-[40vw]">
+          <div className="w-[25vw]">
             <Input
               type="text"
               placeholder="Search by name"
@@ -83,6 +92,32 @@ export function Patient({ centreId }: { centreId: string }) {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="p-2 w-full border rounded"
             />
+          </div>
+          <div className="flex items-center gap-3">
+            <Select defaultValue={sortField} onValueChange={setSortField}>
+              <SelectTrigger className="w-52 border-blue-200">
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent className="bg-blue-100 border-blue-200">
+                <SelectItem value="patient.name">Sort by Name</SelectItem>
+                <SelectItem value="createdAt">Sort by Created At</SelectItem>
+                {/* Add other fields if you want */}
+              </SelectContent>
+            </Select>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="border border-blue-200"
+              onClick={() =>
+                setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"))
+              }
+            >
+              {sortOrder === "asc" ? (
+                <ArrowUpIcon size={16} />
+              ) : (
+                <ArrowDownIcon size={16} />
+              )}
+            </Button>
           </div>
           <DropdownMenuCheckboxes
             visibleColumns={visibleColumns}
@@ -104,119 +139,15 @@ export function Patient({ centreId }: { centreId: string }) {
           <TableHeader>
             <TableRow>
               {visibleColumns.patientNumber && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("patientNumber");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Patient Id{" "}
-                  {sortField === "patientNumber" &&
-                    (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
+                <TableHead>Patient Id</TableHead>
               )}
-              {visibleColumns.abhaId && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("abhaId");
-                    ``;
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Abha Id{" "}
-                  {sortField === "abhaId" && (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
-              )}
-              {visibleColumns.name && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("name");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Name{" "}
-                  {sortField === "name" && (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
-              )}
-              {visibleColumns.age && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("age");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Age {sortField === "age" && (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
-              )}
-              {visibleColumns.gender && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("gender");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Gender{" "}
-                  {sortField === "gender" && (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
-              )}
-              {visibleColumns.phone && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("phone");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Phone{" "}
-                  {sortField === "phone" && (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
-              )}
-              {visibleColumns.email && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("email");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Email{" "}
-                  {sortField === "email" && (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
-              )}
-              {visibleColumns.address && (
-                <TableHead
-                  className="cursor-pointer"
-                  onClick={() => {
-                    setSortField("address");
-                    sortOrder === "asc"
-                      ? setSortOrder("desc")
-                      : setSortOrder("asc");
-                  }}
-                >
-                  Address{" "}
-                  {sortField === "address" && (sortOrder === "asc" ? "↑" : "↓")}
-                </TableHead>
-              )}
-
+              {visibleColumns.abhaId && <TableHead>Abha Id</TableHead>}
+              {visibleColumns.name && <TableHead>Name</TableHead>}
+              {visibleColumns.age && <TableHead>Age</TableHead>}
+              {visibleColumns.gender && <TableHead>Gender</TableHead>}
+              {visibleColumns.phone && <TableHead>Phone</TableHead>}
+              {visibleColumns.email && <TableHead>Email</TableHead>}
+              {visibleColumns.address && <TableHead>Address</TableHead>}
               <TableHead className="text-right">Options</TableHead>
             </TableRow>
           </TableHeader>
