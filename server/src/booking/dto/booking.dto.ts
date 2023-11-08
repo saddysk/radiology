@@ -9,6 +9,7 @@ import {
   ObjectField,
   FileFieldOptional,
   NumberField,
+  NumberFieldOptional,
 } from 'libs/decorators';
 import { Booking, IBookingRecord } from 'src/database/entities/booking.entity';
 import { CreatePatientDto, PatientDto } from 'src/patient/dto/patient.dto';
@@ -67,8 +68,8 @@ export class BookingDto {
   })
   records?: BookingRecordDto[];
 
-  @NumberField()
-  totalAmount: number;
+  @NumberFieldOptional()
+  totalAmount?: number;
 
   @ObjectFieldOptional(() => PaymentDto, {
     isArray: true,
@@ -146,4 +147,4 @@ export class UpdateBookingDto extends OmitType(BookingDto, [
   'patient',
   'payment',
   'consultantName',
-]) {}
+]) { }

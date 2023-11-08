@@ -62,7 +62,7 @@ export function AddExpenses({ centreId }: { centreId: string }) {
           title: `Expense added to centre`,
           variant: "default",
         });
-        router.push(`/pr/${centreId}/expenses`);
+        router.push(`/admin/centre/${centreId}/expenses`);
       }
     } catch (error: any) {
       console.log(error);

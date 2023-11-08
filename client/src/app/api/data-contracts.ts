@@ -399,7 +399,7 @@ export interface CreateBookingDto {
   investigation: string;
   remark?: string;
   /** @example 1 */
-  totalAmount: number;
+  totalAmount?: number;
   /**
    * @format uuid
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
@@ -472,7 +472,7 @@ export interface BookingDto {
   remark?: string;
   records?: BookingRecordDto[];
   /** @example 1 */
-  totalAmount: number;
+  totalAmount?: number;
   payment?: PaymentDto[];
   patient?: PatientDto;
 }
@@ -512,7 +512,7 @@ export interface UpdateBookingDto {
   remark?: string;
   records?: BookingRecordDto[];
   /** @example 1 */
-  totalAmount: number;
+  totalAmount?: number;
 }
 
 export enum RequestType {

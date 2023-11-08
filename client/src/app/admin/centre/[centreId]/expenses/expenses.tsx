@@ -188,7 +188,7 @@ export function Expenses({ centreId }: { centreId: string }) {
   return (
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
       <div className="w-full flex">
-        <Link href={`/pr/${centreId}/expenses/add`}>
+        <Link href={`/admin/centre/${centreId}/expenses/add`}>
           <Button className="bg-blue-50 text-blue-950 hover:opacity-80 ml-auto border border-blue-200 shadow-none">
             Add New Expense
           </Button>
@@ -244,7 +244,10 @@ export function Expenses({ centreId }: { centreId: string }) {
             <TableCaption className="py-6">
               No expenses added. <br />
               Add an expense to get started!{" "}
-              <Link className="underline" href={`/pr/${centreId}/expenses/add`}>
+              <Link
+                className="underline"
+                href={`/admin/centre/${centreId}/expenses/add`}
+              >
                 Here{" "}
               </Link>
             </TableCaption>
