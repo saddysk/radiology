@@ -16,7 +16,7 @@ export class ExpenseService {
     private readonly centreService: CentreService,
     private readonly centreAdminRepository: CentreAdminRepository,
     private readonly userRepository: UserRepository,
-  ) { }
+  ) {}
 
   async create(userId: string, data: CreateExpenseDto): Promise<Expense> {
     const centre = await this.centreRepository.findOneBy({ id: data.centreId });

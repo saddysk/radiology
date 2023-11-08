@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DropdownMenuCheckboxes } from "@/components/ui/dropdown-checkbox-custom";
 import { Input } from "@/components/ui/input";
-import { CentreExpense } from "@/app/api/CentreExpense";
 import { ExpenseDto } from "@/app/api/data-contracts";
 import {
   AlertDialog,

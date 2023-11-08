@@ -105,7 +105,7 @@ export function AddBookingsComponent({
         abhaId: "",
       },
       payment: {
-        discount: undefined,
+        discount: 0,
         extraCharge: "",
         payments: [
           {
@@ -160,15 +160,17 @@ export function AddBookingsComponent({
 
     // Calculating initial cost and discount
     const initialCost = Number(selectedInvestigation?.amount) || 0;
-    const discountPercentage = selectedDoctor?.letGo
-      ? selectedDoctor[selectedModality?.modality!] || 0
-      : 0;
-    const discountAmount =
-      Math.round((discountPercentage / 100) * initialCost) || 0;
+    // const discountPercentage = selectedDoctor?.letGo
+    //   ? selectedDoctor[selectedModality?.modality!] || 0
+    //   : 0;
+    // const discountAmount =
+    //   Math.round((discountPercentage / 100) * initialCost) || 0;
 
-    // Setting the discount and total cost
-    setDiscount(discountAmount);
-    setCost(initialCost - discountAmount + extraCharge);
+    // // Setting the discount and total cost
+    // setDiscount(discountAmount);
+    setCost(
+      initialCost - addBookingForm.watch("payment.discount")! + extraCharge
+    );
   };
 
   async function addBookingSubmit(bookingData: BokingDtoType) {
@@ -201,6 +203,7 @@ export function AddBookingsComponent({
           .find((e) => e.id == data.modality)
           ?.investigation.find((e) => e.id == data.investigation)?.type!,
         centreId,
+        totalAmount: cost,
       });
 
       if (response?.status !== 200) {
@@ -563,32 +566,13 @@ export function AddBookingsComponent({
 
           <FormField
             control={addBookingForm.control}
-            name={`payment.discount`}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Discount</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Discount"
-                    value={discount}
-                    disabled
-                    type="number"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={addBookingForm.control}
             name={`payment.extraCharge`}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Extra Charge</FormLabel>
+                <FormLabel>Emergency Charge</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="Extra Charge"
+                    placeholder="Emergency Charge"
                     {...field}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -599,6 +583,25 @@ export function AddBookingsComponent({
                         updateCost();
                       }
                     }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={addBookingForm.control}
+            name={`payment.discount`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Discount</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Discount"
+                    type="number"
+                    min={0}
+                    {...field}
                   />
                 </FormControl>
                 <FormMessage />

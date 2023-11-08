@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -109,7 +108,7 @@ export function PRDashboard({ centreId }: { centreId: string }) {
           description: `Copied the doctor's email and password to clipboard`,
           variant: "default",
         });
-        router.push("/pr/dashboard");
+        router.push(`/pr/${centreId}/dashboard`);
       }
     } catch (error: any) {
       toast({
@@ -399,7 +398,7 @@ export function PRDashboard({ centreId }: { centreId: string }) {
 
                   <FormField
                     control={addDoctorToCentreForm.control}
-                    name={`commissions.${0}.letGo`}
+                    name="letGo"
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border border-blue-200 p-4">
                         <FormControl>

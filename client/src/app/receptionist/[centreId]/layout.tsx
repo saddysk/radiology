@@ -1,4 +1,5 @@
 "use client";
+import Nabvbar from "@/components/navbar";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import clsx from "clsx";
@@ -28,39 +29,29 @@ export default function ReceptionistLayout({
     {
       title: "Dashboard",
       path: `/receptionist/${params.centreId}/dashboard`, // Adjust the path for Dashboard
-      icon: <LayoutDashboard />,
+      icon: <LayoutDashboard size={20} />,
     },
 
     {
       title: "Bookings",
       path: `/receptionist/${params.centreId}/bookings`,
-      icon: <ClipboardList />,
+      icon: <ClipboardList size={20} />,
     },
     {
       title: "Patients",
       path: `/receptionist/${params.centreId}/patients`,
-      icon: <Contact2 />,
+      icon: <Contact2 size={20} />,
     },
     {
       title: "Expenses",
       path: `/receptionist/${params.centreId}/expenses`,
-      icon: <Receipt />,
+      icon: <Receipt size={20} />,
     },
   ];
 
   return (
     <Card className="flex flex-col m-4 h-full rounded-md bg-blue-50 border-blue-200">
-      <nav className="flex items-center justify-between gap-4 p-6 border-b border-b-blue-200">
-        <h1 className="text-xl  text-blue-950">Receptionist Dashboard</h1>
-        <Avatar>
-          <AvatarImage
-            className="w-[30px] rounded-xl"
-            src="https://github.com/shadcn.png"
-            alt="@shadcn"
-          />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-      </nav>
+      <Nabvbar />
 
       <div className="flex h-full">
         <div className="border-r border-r-blue-200 flex flex-col gap-2 py-6">

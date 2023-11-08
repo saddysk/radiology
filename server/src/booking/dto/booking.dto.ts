@@ -8,6 +8,7 @@ import {
   UUIDFieldOptional,
   ObjectField,
   FileFieldOptional,
+  NumberField,
 } from 'libs/decorators';
 import { Booking, IBookingRecord } from 'src/database/entities/booking.entity';
 import { CreatePatientDto, PatientDto } from 'src/patient/dto/patient.dto';
@@ -66,6 +67,9 @@ export class BookingDto {
   })
   records?: BookingRecordDto[];
 
+  @NumberField()
+  totalAmount: number;
+
   @ObjectFieldOptional(() => PaymentDto, {
     isArray: true,
   })
@@ -89,6 +93,7 @@ export class BookingDto {
     this.modality = booking.modality;
     this.investigation = booking.investigation;
     this.remark = booking.remark;
+    this.totalAmount = booking.totalAmount;
 
     if (booking.records) {
       this.records = booking.records.map(
@@ -122,6 +127,7 @@ export class CreateBookingDto extends PickType(BookingDto, [
   'modality',
   'investigation',
   'remark',
+  'totalAmount',
 ]) {
   @UUIDFieldOptional()
   patientId?: string;

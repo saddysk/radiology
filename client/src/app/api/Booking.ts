@@ -20,12 +20,18 @@ export class Booking<SecurityDataType = unknown> extends HttpClient<SecurityData
    * @name BookingControllerCreate
    * @request POST:/api/booking
    */
-  bookingControllerCreate = (data: CreateBookingDto, params: RequestParams = {}) =>
+  bookingControllerCreate = (
+    data?: CreateBookingDto & {
+      /** @format binary */
+      recordFile?: File;
+    },
+    params: RequestParams = {},
+  ) =>
     this.request<BookingDto, ErrorDto>({
       path: `/api/booking`,
       method: "POST",
       body: data,
-      type: ContentType.Json,
+      type: ContentType.FormData,
       format: "json",
       ...params,
     });

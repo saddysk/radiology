@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import {
-  ExpenseDto,
   RequestStatus,
   RequestType,
   UpdateRequestDto,
@@ -134,7 +133,9 @@ export function EditReq({ centreId }: { centreId: string }) {
         <Table>
           <TableHeader>
             <TableHead>ID</TableHead>
+            <TableHead>Requested By</TableHead>
             <TableHead>Request Type</TableHead>
+            <TableHead>Requested On</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Options</TableHead>
           </TableHeader>
@@ -142,7 +143,9 @@ export function EditReq({ centreId }: { centreId: string }) {
             {dataEdit?.data.map((request) => (
               <TableRow key={request.id}>
                 <TableCell>{request.id}</TableCell>
+                <TableCell>{request.requestedBy}</TableCell>
                 <TableCell>{request.type}</TableCell>
+                <TableCell>{request.createdAt}</TableCell>
                 <TableCell>{request.status}</TableCell>
                 <TableCell className="space-x-4 text-right">
                   <Dialog>
@@ -225,7 +228,9 @@ export function EditReq({ centreId }: { centreId: string }) {
               <div>
                 {/* Display details of the selected request */}
                 <p>ID: {selectedRequest.id}</p>
+                <p>Type: {selectedRequest.requestedBy}</p>
                 <p>Type: {selectedRequest.type}</p>
+                <p>Status: {selectedRequest.createdAt}</p>
                 <p>Status: {selectedRequest.status}</p>
                 {/* Add more details as needed */}
               </div>

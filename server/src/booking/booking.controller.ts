@@ -27,16 +27,16 @@ export class BookingController {
     Ok: BookingDto,
   })
   @UseAuthGuard(AuthGuardOption.BEARER)
-  // @ApiFile([{ name: 'recordFile' }])
+  @ApiFile([{ name: 'recordFile' }])
   async create(
     @Req() request: any,
     @Body() data: CreateBookingDto,
-    // @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
   ): Promise<BookingDto> {
     const booking = await this.bookingService.create(
       request.user.user.id,
       data,
-      // file,
+      file,
     );
     return BookingDto.toDto(booking, this.authService);
   }

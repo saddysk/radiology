@@ -42,6 +42,7 @@ export class BookingService {
     booking.modality = data.modality;
     booking.investigation = data.investigation;
     booking.remark = data.remark;
+    booking.totalAmount = data.totalAmount;
 
     booking.patientId = await this.getOrCreatePatient(
       userId,
