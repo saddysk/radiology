@@ -9,6 +9,7 @@ import { useContainer } from 'class-validator';
 import { Logger } from '@nestjs/common';
 import { middleware as expressCtx } from 'express-ctx';
 import { setupSwagger } from 'libs/swagger/setup';
+import { json } from 'express';
 
 const CONFIG = AppConfig();
 
@@ -25,6 +26,7 @@ async function bootstrap() {
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   app.use(expressCtx);
+  app.use(json({ limit: '10mb' }));
 
   if (CONFIG.SWAGGER_ENABLED) {
     await setupSwagger(app, CONFIG.APP_VERSION);

@@ -10,9 +10,19 @@ interface InputFileProps {
 
 const InputFile: FC<InputFileProps> = ({ id, name, onFileUpload }) => {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) {
-      const file = e.target.files[0];
-      onFileUpload(file);
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64Url = reader.result;
+
+        if (base64Url && typeof base64Url === "string") {
+          const base64 = base64Url.split(",")[1];
+          onFileUpload(base64);
+        }
+      };
+      reader.readAsDataURL(file);
     } else {
       onFileUpload(null);
     }

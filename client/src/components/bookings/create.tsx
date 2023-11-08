@@ -83,7 +83,6 @@ export function AddBookingsComponent({
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [cost, setCost] = useState(0);
-  const [discount, setDiscount] = useState(0);
 
   const addBookingForm = useForm<BokingDtoType>({
     //resolver: zodResolver(bookingSchema),

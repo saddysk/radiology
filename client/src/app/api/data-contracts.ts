@@ -407,8 +407,7 @@ export interface CreateBookingDto {
   patientId?: string;
   patient?: CreatePatientDto;
   payment: BookingPaymentDto;
-  /** @format binary */
-  recordFile?: File;
+  recordFile?: string;
 }
 
 export interface BookingRecordDto {

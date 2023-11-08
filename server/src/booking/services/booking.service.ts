@@ -12,6 +12,7 @@ import {
   StorageFileTypes,
   StorageService,
 } from 'src/storage/services/storage.service';
+import { uuid } from 'libs/helpers/generator.helper';
 
 @Injectable()
 export class BookingService {
@@ -24,11 +25,7 @@ export class BookingService {
     private readonly storageService: StorageService,
   ) {}
 
-  async create(
-    userId: string,
-    data: CreateBookingDto,
-    recordFile?: Express.Multer.File,
-  ): Promise<Booking> {
+  async create(userId: string, data: CreateBookingDto): Promise<Booking> {
     const centre = await this.centreService.get(userId, data.centreId);
 
     if (centre == null) {
@@ -51,11 +48,11 @@ export class BookingService {
       data.patient,
     );
 
-    if (recordFile) {
+    if (data.recordFile) {
       const recordUrl = await this.storageService.store(
         StorageFileTypes.PRESCRIPTOIN,
-        'filename',
-        recordFile.buffer,
+        uuid(),
+        Buffer.from(data.recordFile, 'base64'),
       );
       booking.records = [{ url: recordUrl }];
     }

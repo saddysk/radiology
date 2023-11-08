@@ -7,8 +7,6 @@ import {
   DateField,
   UUIDFieldOptional,
   ObjectField,
-  FileFieldOptional,
-  NumberField,
   NumberFieldOptional,
 } from 'libs/decorators';
 import { Booking, IBookingRecord } from 'src/database/entities/booking.entity';
@@ -139,12 +137,12 @@ export class CreateBookingDto extends PickType(BookingDto, [
   @ObjectField(() => BookingPaymentDto)
   payment: BookingPaymentDto;
 
-  @FileFieldOptional()
-  recordFile?: Express.Multer.File;
+  @StringFieldOptional()
+  recordFile?: string;
 }
 
 export class UpdateBookingDto extends OmitType(BookingDto, [
   'patient',
   'payment',
   'consultantName',
-]) { }
+]) {}
