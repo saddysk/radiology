@@ -17,6 +17,9 @@ import {
   StorageService,
 } from 'src/storage/services/storage.service';
 import { uuid } from 'libs/helpers/generator.helper';
+import { UserRole } from 'src/database/entities/user.entity';
+import { UserRepository } from 'src/auth/repositories/user.repository';
+import { Not } from 'typeorm';
 
 @Injectable()
 export class BookingService {
@@ -27,6 +30,7 @@ export class BookingService {
     private readonly paymentRepository: PaymentRepository,
     private readonly centreAdminRepository: CentreAdminRepository,
     private readonly storageService: StorageService,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async create(userId: string, data: CreateBookingDto): Promise<Booking> {
@@ -43,6 +47,7 @@ export class BookingService {
     booking.modality = data.modality;
     booking.investigation = data.investigation;
     booking.remark = data.remark;
+    booking.referralAmount = data.referralAmount || 0;
     booking.totalAmount = data.totalAmount;
 
     booking.patientId = await this.getOrCreatePatient(
@@ -93,6 +98,26 @@ export class BookingService {
 
   async get(centreId: string): Promise<Booking[]> {
     return this.bookingRepository.findBy({ centreId });
+  }
+
+  async getDoctoReferrals(doctorId: string): Promise<Booking[]> {
+    const doctor = await this.userRepository.findOneBy({
+      id: doctorId,
+      role: UserRole.Doctor,
+    });
+
+    if (doctor == null) {
+      throw new BadRequestException(`Invalid doctor id: ${doctorId}`);
+    }
+
+    const bookings = await this.bookingRepository.find({
+      where: {
+        consultant: doctor.id,
+        referralAmount: Not(0),
+      },
+    });
+
+    return bookings;
   }
 
   async update(

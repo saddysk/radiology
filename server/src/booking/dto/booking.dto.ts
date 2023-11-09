@@ -70,6 +70,9 @@ export class BookingDto {
   records?: BookingRecordDto[];
 
   @NumberFieldOptional()
+  referralAmount?: number;
+
+  @NumberFieldOptional()
   totalAmount?: number;
 
   @ObjectFieldOptional(() => PaymentDto, {
@@ -95,6 +98,7 @@ export class BookingDto {
     this.modality = booking.modality;
     this.investigation = booking.investigation;
     this.remark = booking.remark;
+    this.referralAmount = booking.referralAmount;
     this.totalAmount = booking.totalAmount;
 
     if (booking.records) {
@@ -129,6 +133,7 @@ export class CreateBookingDto extends PickType(BookingDto, [
   'modality',
   'investigation',
   'remark',
+  'referralAmount',
   'totalAmount',
 ]) {
   @UUIDFieldOptional()

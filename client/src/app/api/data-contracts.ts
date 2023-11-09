@@ -399,6 +399,8 @@ export interface CreateBookingDto {
   investigation: string;
   remark?: string;
   /** @example 1 */
+  referralAmount?: number;
+  /** @example 1 */
   totalAmount?: number;
   /**
    * @format uuid
@@ -471,6 +473,8 @@ export interface BookingDto {
   remark?: string;
   records?: BookingRecordDto[];
   /** @example 1 */
+  referralAmount?: number;
+  /** @example 1 */
   totalAmount?: number;
   payment?: PaymentDto[];
   patient?: PatientDto;
@@ -510,6 +514,8 @@ export interface UpdateBookingDto {
   investigation: string;
   remark?: string;
   records?: BookingRecordDto[];
+  /** @example 1 */
+  referralAmount?: number;
   /** @example 1 */
   totalAmount?: number;
 }

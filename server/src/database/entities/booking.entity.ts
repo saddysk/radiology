@@ -30,6 +30,9 @@ export class Booking extends AbstractEntity {
   @Column({ type: 'json', nullable: true })
   records?: IBookingRecord[];
 
+  @Column({ nullable: true, default: 0 })
+  referralAmount?: number;
+
   @Column({ nullable: true })
   totalAmount?: number;
 

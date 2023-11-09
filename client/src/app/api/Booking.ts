@@ -49,6 +49,26 @@ export class Booking<SecurityDataType = unknown> extends HttpClient<SecurityData
    * No description
    *
    * @tags Booking
+   * @name BookingControllerGetDoctorReferrals
+   * @request GET:/api/booking/referrals
+   */
+  bookingControllerGetDoctorReferrals = (
+    query: {
+      doctorId: string;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<BookingDto[], ErrorDto>({
+      path: `/api/booking/referrals`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Booking
    * @name BookingControllerGetById
    * @request GET:/api/booking/{id}
    */

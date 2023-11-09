@@ -2,7 +2,7 @@
 
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-import { CreateBookingDto } from "@/app/api/data-contracts";
+import { CreateBookingDto, RateListDto } from "@/app/api/data-contracts";
 import { booking } from "@/app/api";
 import { z } from "zod";
 import { useFieldArray, useForm } from "react-hook-form";
@@ -83,6 +83,7 @@ export function AddBookingsComponent({
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [cost, setCost] = useState(0);
+  const [commissionAmount, setCommissionAmount] = useState(0);
 
   const addBookingForm = useForm<BokingDtoType>({
     //resolver: zodResolver(bookingSchema),
@@ -156,6 +157,23 @@ export function AddBookingsComponent({
     // Calculating initial cost and discount
     const initialCost = Number(selectedInvestigation?.amount) || 0;
     setCost(initialCost - discount + extraCharge);
+
+    calculateReferralAmount(selectedModality!, initialCost);
+  };
+
+  const calculateReferralAmount = (
+    selectedModality: RateListDto,
+    initialCost: number
+  ) => {
+    // referral amount
+    const doctorId = addBookingForm.getValues("consultant");
+    const selectedDoctor = doctors?.find((doc) => doc.doctorId === doctorId);
+    const discountPercentage = selectedDoctor?.letGo
+      ? selectedDoctor[selectedModality?.modality!] || 0
+      : 0;
+    const discountAmount =
+      Math.round((discountPercentage / 100) * initialCost) || 0;
+    setCommissionAmount(discountAmount);
   };
 
   async function addBookingSubmit(bookingData: BokingDtoType) {
@@ -189,6 +207,7 @@ export function AddBookingsComponent({
           ?.investigation.find((e) => e.id == data.investigation)?.type!,
         centreId,
         totalAmount: cost,
+        referralAmount: commissionAmount,
       });
 
       if (response?.status !== 200) {
