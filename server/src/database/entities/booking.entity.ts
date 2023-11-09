@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { AbstractEntity } from './abstract.entity';
 import { Patient } from './patient.entity';
 import { Payment } from './payment.entity';
+import { StorageFileTypes } from 'src/storage/services/storage.service';
 
 @Entity()
 export class Booking extends AbstractEntity {
@@ -45,4 +46,5 @@ export class Booking extends AbstractEntity {
 
 export interface IBookingRecord {
   url: string;
+  type: StorageFileTypes;
 }

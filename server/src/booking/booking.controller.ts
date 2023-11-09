@@ -5,6 +5,7 @@ import {
   BookingDto,
   CreateBookingDto,
   UpdateBookingDto,
+  UploadRecordDto,
 } from './dto/booking.dto';
 import {
   GetRoute,
@@ -70,5 +71,14 @@ export class BookingController {
       data,
     );
     return BookingDto.toDto(booking, this.authService);
+  }
+
+  @PutRoute('upload-record', {
+    Ok: BookingDto,
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async uploadRecord(@Body() data: UploadRecordDto): Promise<BookingDto> {
+    const booking = await this.bookingService.uploadRecord(data);
+    return BookingDto.toDto(booking);
   }
 }

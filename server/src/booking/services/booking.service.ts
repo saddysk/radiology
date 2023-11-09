@@ -1,6 +1,10 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { Booking } from 'src/database/entities/booking.entity';
-import { CreateBookingDto, UpdateBookingDto } from '../dto/booking.dto';
+import {
+  CreateBookingDto,
+  UpdateBookingDto,
+  UploadRecordDto,
+} from '../dto/booking.dto';
 import { BookingRepository } from '../repositories/booking.repository';
 import { PatientService } from 'src/patient/services/patient.service';
 import { Patient } from 'src/database/entities/patient.entity';
@@ -54,7 +58,12 @@ export class BookingService {
         uuid(),
         Buffer.from(data.recordFile, 'base64'),
       );
-      booking.records = [{ url: recordUrl }];
+      booking.records = [
+        {
+          url: recordUrl,
+          type: StorageFileTypes.PRESCRIPTOIN,
+        },
+      ];
     }
 
     await this.bookingRepository.save(booking);
@@ -116,6 +125,39 @@ export class BookingService {
     const updatedBooking = await this.bookingRepository.save(bookingData);
 
     return updatedBooking;
+  }
+
+  async uploadRecord(data: UploadRecordDto): Promise<Booking> {
+    const booking = await this.bookingRepository.findOneBy({
+      id: data.id,
+    });
+
+    if (booking == null) {
+      throw new BadRequestException(
+        `Expense not found to be update, requested booking id: ${data.id}`,
+      );
+    }
+
+    if (data.recordFile) {
+      const recordUrl = await this.storageService.store(
+        StorageFileTypes.REPORT,
+        uuid(),
+        Buffer.from(data.recordFile, 'base64'),
+      );
+      booking.records = [
+        ...booking.records,
+        {
+          url: recordUrl,
+          type: StorageFileTypes.REPORT,
+        },
+      ];
+    }
+
+    await this.bookingRepository.update(booking.id, {
+      records: booking.records,
+    });
+
+    return booking;
   }
 
   private async getOrCreatePatient(

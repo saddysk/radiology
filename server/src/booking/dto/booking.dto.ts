@@ -13,10 +13,12 @@ import { Booking, IBookingRecord } from 'src/database/entities/booking.entity';
 import { CreatePatientDto, PatientDto } from 'src/patient/dto/patient.dto';
 import { BookingPaymentDto, PaymentDto } from './payment.dto';
 import { AuthService } from 'src/auth/services/auth.service';
+import { StorageFileTypes } from 'src/storage/services/storage.service';
 
 export class BookingRecordDto {
   @StringField()
   url: string;
+  type: StorageFileTypes;
 
   constructor(record?: IBookingRecord) {
     if (record == null) {
@@ -24,6 +26,7 @@ export class BookingRecordDto {
     }
 
     this.url = record.url;
+    this.type = record.type;
   }
 }
 
@@ -146,3 +149,8 @@ export class UpdateBookingDto extends OmitType(BookingDto, [
   'payment',
   'consultantName',
 ]) {}
+
+export class UploadRecordDto extends PickType(BookingDto, ['id']) {
+  @StringFieldOptional()
+  recordFile?: string;
+}
