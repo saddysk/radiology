@@ -65,6 +65,18 @@ export class PatientService {
     return patient;
   }
 
+  async getByPatientNumber(patientNumber: string): Promise<Patient> {
+    const patient = await this.patientRepository.findOneBy({ patientNumber });
+
+    if (!patient) {
+      throw new BadRequestException(
+        `Patient with patient number ${patientNumber} not found.`,
+      );
+    }
+
+    return patient;
+  }
+
   async get(centreId: string): Promise<Patient[]> {
     return this.patientRepository.findBy({ centreId });
   }

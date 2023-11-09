@@ -7,7 +7,6 @@ import {
 } from '../dto/booking.dto';
 import { BookingRepository } from '../repositories/booking.repository';
 import { PatientService } from 'src/patient/services/patient.service';
-import { Patient } from 'src/database/entities/patient.entity';
 import { CreatePatientDto } from 'src/patient/dto/patient.dto';
 import { PaymentRepository } from '../repositories/payment.repository';
 import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repository';
@@ -53,7 +52,7 @@ export class BookingService {
     booking.patientId = await this.getOrCreatePatient(
       userId,
       centre.id,
-      data.patientId,
+      data.patientNumber,
       data.patient,
     );
 
@@ -188,12 +187,13 @@ export class BookingService {
   private async getOrCreatePatient(
     userId: string,
     centreId: string,
-    patientId?: string,
+    patientNumber?: string,
     patientData?: CreatePatientDto,
   ): Promise<string> {
-    let patient: Patient = null;
+    let patient =
+      patientNumber &&
+      (await this.patientService.getByPatientNumber(patientNumber));
 
-    patient = patientId && (await this.patientService.getById(patientId));
     if (patient != null) {
       return patient.id;
     }

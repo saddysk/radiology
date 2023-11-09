@@ -137,7 +137,7 @@ export class CreateBookingDto extends PickType(BookingDto, [
   'totalAmount',
 ]) {
   @UUIDFieldOptional()
-  patientId?: string;
+  patientNumber?: string;
 
   @ObjectFieldOptional(() => CreatePatientDto)
   patient?: CreatePatientDto;
