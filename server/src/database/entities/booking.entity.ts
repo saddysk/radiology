@@ -34,9 +34,6 @@ export class Booking extends AbstractEntity {
   referralAmount?: number;
 
   @Column({ nullable: true })
-  referralAmount?: number;
-
-  @Column({ nullable: true })
   totalAmount?: number;
 
   @OneToMany(() => Payment, (p) => p.booking)
