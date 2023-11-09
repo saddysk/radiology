@@ -9,13 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import {
-  CentreDto,
-  CreateDoctorCommissionDto,
-  DoctorCommissionDto,
-  ErrorDto,
-  UpdateDoctorCommissionDto,
-} from "./data-contracts";
+import { CreateDoctorCommissionDto, DoctorCommissionDto, ErrorDto, UpdateDoctorCommissionDto } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class DoctorCommission<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -48,20 +42,6 @@ export class DoctorCommission<SecurityDataType = unknown> extends HttpClient<Sec
       method: "PUT",
       body: data,
       type: ContentType.Json,
-      format: "json",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags DoctorCommission
-   * @name DoctorCommissionControllerGetAllCentresForDoctor
-   * @request GET:/api/doctor-commission/centres-by-doctor
-   */
-  doctorCommissionControllerGetAllCentresForDoctor = (params: RequestParams = {}) =>
-    this.request<CentreDto[], ErrorDto>({
-      path: `/api/doctor-commission/centres-by-doctor`,
-      method: "GET",
       format: "json",
       ...params,
     });

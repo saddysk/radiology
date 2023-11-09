@@ -3,10 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 
-import {
-  useAllConnectedCentresData,
-  useGetAllCentreForDoctorData,
-} from "@/lib/query-hooks";
+import { useAllConnectedCentresData } from "@/lib/query-hooks";
 import CenteredSpinner from "@/components/ui/centered-spinner";
 import Nabvbar from "@/components/navbar";
 
@@ -15,9 +12,7 @@ export function DoctorDashboard() {
   const {
     data: dataAllConnectedCentres,
     isLoading: isLoadingAllConnectedCentres,
-  } = useGetAllCentreForDoctorData({
-    enabled: true,
-  });
+  } = useAllConnectedCentresData({ enabled: true });
 
   return (
     <Card className="flex flex-col m-4 h-full rounded-md bg-blue-50 border-blue-200">

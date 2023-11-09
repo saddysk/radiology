@@ -312,10 +312,9 @@ export function Bookings({ centreId }: { centreId: string }) {
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button
-                        size={"sm"}
+                        size="sm"
                         variant="outline"
                         className="bg-blue-50 border border-blue-300"
-                        onClick={() => {}}
                       >
                         Upload Report
                       </Button>
@@ -335,6 +334,7 @@ export function Bookings({ centreId }: { centreId: string }) {
                           id="prescription"
                           onChange={handleFileChange}
                           name="recordFile"
+                          accept=".pdf"
                         />
                       </div>
                       <DialogFooter>

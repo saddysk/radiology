@@ -13,6 +13,7 @@ import { UserRole } from 'src/database/entities/user.entity';
 import { AuthService } from 'src/auth/services/auth.service';
 import { CentrePrRepository } from '../repositories/centre-pr.repository';
 import { DoctorCommissionRepository } from 'src/doctor-commission/repositories/doctor-commission.repository';
+import { DoctorCommissionService } from 'src/doctor-commission/services/doctor-commission.service';
 
 @Injectable()
 export class CentreService {
@@ -23,6 +24,7 @@ export class CentreService {
     private readonly centreAdminRepository: CentreAdminRepository,
     private readonly centrePrRepository: CentrePrRepository,
     private readonly doctorCommissionRepository: DoctorCommissionRepository,
+    private readonly doctorCommissionService: DoctorCommissionService,
   ) {}
 
   async create(userId: string, data: CreateCentreDto): Promise<Centre> {
@@ -169,12 +171,9 @@ export class CentreService {
       const centre = await Promise.all(centrePr.map((cp) => cp.centre));
       return centre;
     } else if (user.role === UserRole.Doctor) {
-      const centreDoctor = await this.doctorCommissionRepository.find({
-        where: {
-          doctorId: userId,
-        },
-      });
-      const centre = await Promise.all(centreDoctor.map((cd) => cd.centre));
+      const centre = await this.doctorCommissionService.getAllCentresForDoctor(
+        userId,
+      );
       return centre;
     }
   }

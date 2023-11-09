@@ -84,30 +84,26 @@ export const useGetCentreForDoctorData = ({
 }) => {
   return useQuery(
     ["centres", "doctor", centreId],
-    () =>
-      drcommission.doctorCommissionControllerGet(centreId, doctorId),
+    () => drcommission.doctorCommissionControllerGet(centreId, doctorId),
     {
       enabled,
     }
   );
 };
 
-export const useGetAllCentreForDoctorData = ({
-
-  enabled,
-}: {
-
-  enabled: boolean;
-}) => {
-  return useQuery(
-    ["centres", "doctor"],
-    () =>
-      drcommission.doctorCommissionControllerGetAllCentresForDoctor(),
-    {
-      enabled,
-    }
-  );
-};
+// export const useGetAllCentreForDoctorData = ({
+//   enabled,
+// }: {
+//   enabled: boolean;
+// }) => {
+//   return useQuery(
+//     ["centres", "doctor"],
+//     () => drcommission.doctorCommissionControllerGetAllCentresForDoctor(),
+//     {
+//       enabled,
+//     }
+//   );
+// };
 
 export const useAllDoctorsData = ({ enabled }: { enabled: boolean }) => {
   return useQuery(["doctors"], auth.authControllerGetDoctors, {
@@ -205,14 +201,21 @@ export const useCentreExpenses = ({ centreId }: { centreId: string }) => {
   });
 };
 
-export const useCentreExpense = ({ id, centreId, enabled }: { id: string, centreId: string, enabled: boolean }) => {
+export const useCentreExpense = ({
+  id,
+  centreId,
+  enabled,
+}: {
+  id: string;
+  centreId: string;
+  enabled: boolean;
+}) => {
   return useQuery({
     queryKey: ["expenses", centreId],
     queryFn: () => centreexpense.expenseControllerGet(id, centreId),
-    enabled
+    enabled,
   });
 };
-
 
 export const useEditRequest = ({ centreId }: { centreId: string }) => {
   return useQuery({

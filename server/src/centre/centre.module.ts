@@ -14,6 +14,7 @@ import { RateListService } from './services/rate-list.service';
 import { CentrePrRepository } from './repositories/centre-pr.repository';
 import { DoctorCommissionRepository } from 'src/doctor-commission/repositories/doctor-commission.repository';
 import { AuthModule } from 'src/auth/auth.module';
+import { DoctorCommissionService } from 'src/doctor-commission/services/doctor-commission.service';
 
 @Module({
   imports: [
@@ -29,7 +30,12 @@ import { AuthModule } from 'src/auth/auth.module';
     AuthModule,
   ],
   controllers: [CentreController, ExpenseController, RateListController],
-  providers: [CentreService, ExpenseService, RateListService],
+  providers: [
+    CentreService,
+    ExpenseService,
+    RateListService,
+    DoctorCommissionService,
+  ],
   exports: [CentreService, ExpenseService],
 })
 export class CentreModule {}
