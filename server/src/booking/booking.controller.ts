@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Req } from '@nestjs/common';
+import { Body, Controller, Param, Query, Req } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { BookingService } from './services/booking.service';
 import {
@@ -36,6 +36,19 @@ export class BookingController {
       data,
     );
     return BookingDto.toDto(booking, this.authService);
+  }
+
+  @GetRoute('referrals', { Ok: { dtoType: 'ArrayDto', type: BookingDto } })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async getDoctorReferrals(
+    @Req() request: any,
+    @Query('doctorId') doctorId?: string,
+  ): Promise<BookingDto[]> {
+    const id = doctorId || request.user.user.id;
+    const bookings = await this.bookingService.getDoctoReferrals(id);
+    return Promise.all(
+      bookings.map((booking) => BookingDto.toDto(booking, this.authService)),
+    );
   }
 
   @GetRoute(':id', {

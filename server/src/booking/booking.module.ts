@@ -9,6 +9,7 @@ import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repo
 import { CentreModule } from 'src/centre/centre.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { StorageService } from 'src/storage/services/storage.service';
+import { UserRepository } from 'src/auth/repositories/user.repository';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { StorageService } from 'src/storage/services/storage.service';
       BookingRepository,
       PaymentRepository,
       CentreAdminRepository,
+      UserRepository,
     ]),
     PatientModule,
     CentreModule,
