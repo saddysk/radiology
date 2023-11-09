@@ -178,11 +178,10 @@ export function AddBookingsComponent({
     // referral amount
     const doctorId = addBookingForm.getValues("consultant");
     const selectedDoctor = doctors?.find((doc) => doc.doctorId === doctorId);
-    const discountPercentage = selectedDoctor?.letGo
-      ? selectedDoctor[selectedModality?.modality!] || 0
-      : 0;
+    const discountPercentage = selectedDoctor?.[selectedModality?.modality];
     const discountAmount =
       Math.round((discountPercentage / 100) * initialCost) || 0;
+
     setCommissionAmount(discountAmount);
   };
 
@@ -239,7 +238,7 @@ export function AddBookingsComponent({
       setLoading(false);
     }
   }
-  console.log(addBookingForm.formState.errors, "errors");
+
   return (
     <Form {...addBookingForm}>
       <form
@@ -430,7 +429,10 @@ export function AddBookingsComponent({
                 <FormLabel>Consultant</FormLabel>
                 <FormControl>
                   <Select
-                    onValueChange={(value) => field.onChange(value)}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      updateCost();
+                    }}
                     defaultValue={field.value}
                   >
                     <SelectTrigger className="w-full border border-blue-200 bg-blue-50 shadow-none">
