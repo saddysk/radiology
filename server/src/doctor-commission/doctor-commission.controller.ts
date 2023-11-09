@@ -12,6 +12,7 @@ import {
   DoctorCommissionDto,
   UpdateDoctorCommissionDto,
 } from './dto/doctor-commission.dto';
+import { CentreDto } from 'src/centre/dto/centre.dto';
 
 @Controller('api/doctor-commission')
 @ApiTags('DoctorCommission')
@@ -34,6 +35,17 @@ export class DoctorCommissionController {
     );
 
     return commissions.map((commission) => new DoctorCommissionDto(commission));
+  }
+
+  @GetRoute('centres-by-doctor', {
+    Ok: { dtoType: 'ArrayDto', type: CentreDto },
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async getAllCentresForDoctor(@Req() request: any): Promise<CentreDto[]> {
+    const centres = await this.doctorCommissionService.getAllCentresForDoctor(
+      request.user.user.id,
+    );
+    return Promise.all(centres.map((centre) => new CentreDto(centre)));
   }
 
   @GetRoute(':id', {
@@ -59,25 +71,6 @@ export class DoctorCommissionController {
     return Promise.all(
       commissions.map((commission) =>
         DoctorCommissionDto.toDoctorDto(commission),
-      ),
-    );
-  }
-
-  @GetRoute('centres-by-doctor', {
-    Ok: { dtoType: 'ArrayDto', type: DoctorCommissionDto },
-  })
-  @UseAuthGuard(AuthGuardOption.BEARER)
-  async getAllCentresForDoctor(
-    @Req() request: any,
-  ): Promise<DoctorCommissionDto[]> {
-    const commissions =
-      await this.doctorCommissionService.getAllCentresForDoctor(
-        request.user.user.id,
-      );
-
-    return Promise.all(
-      commissions.map((commission) =>
-        DoctorCommissionDto.toCentreDto(commission),
       ),
     );
   }

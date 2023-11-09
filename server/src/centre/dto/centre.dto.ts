@@ -11,6 +11,7 @@ import {
   StringFieldOptional,
   UUIDField,
 } from 'libs/decorators';
+import { Centre } from 'src/database/entities/centre.entity';
 import { IAddress } from 'src/database/interfaces/address.interface';
 
 export class AddressDto {
@@ -68,7 +69,7 @@ export class CentreDto {
   @ObjectField(() => AddressDto)
   address: AddressDto;
 
-  constructor(centre?) {
+  constructor(centre?: Centre) {
     if (centre == null) {
       return;
     }

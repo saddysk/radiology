@@ -10,6 +10,7 @@ import { UserRepository } from 'src/auth/repositories/user.repository';
 import { CentreRepository } from 'src/centre/repositories/centre.repository';
 import { In, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { UserRole } from 'src/database/entities/user.entity';
+import { Centre } from 'src/database/entities/centre.entity';
 
 @Injectable()
 export class DoctorCommissionService {
@@ -147,7 +148,7 @@ export class DoctorCommissionService {
     });
   }
 
-  async getAllCentresForDoctor(doctorId: string): Promise<DoctorCommission[]> {
+  async getAllCentresForDoctor(doctorId: string): Promise<Centre[]> {
     const currentDate = new Date();
 
     const doctorCommissions = await this.doctorCommissionRepository
@@ -157,10 +158,23 @@ export class DoctorCommissionService {
         startDate: LessThanOrEqual(currentDate),
         endDate: MoreThanOrEqual(currentDate),
       })
-      .distinct()
-      .getMany();
+      .select('commission.centreId as centreId')
+      .groupBy('commission.centreId')
+      .getRawMany();
 
-    return doctorCommissions;
+    const centreIds = doctorCommissions.map(
+      (commission) => commission.centreid,
+    );
+
+    const centres = await this.centreRepository
+      .createQueryBuilder('centre')
+      .where('centre.id IN (:...centreIds)', {
+        centreIds,
+      })
+      .select('*')
+      .getRawMany();
+
+    return centres;
   }
 
   private addCommissions(
