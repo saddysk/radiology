@@ -25,7 +25,13 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import CenteredSpinner from "@/components/ui/centered-spinner";
-import { ArrowDownIcon, ArrowUpIcon, IndianRupeeIcon } from "lucide-react";
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  Download,
+  IndianRupeeIcon,
+  Link2,
+} from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -43,6 +49,8 @@ import {
 } from "@tanstack/react-query";
 import { booking } from "@/app/api";
 import { useToast } from "@/components/ui/use-toast";
+import { LinkedInLogoIcon } from "@radix-ui/react-icons";
+import { record } from "zod";
 
 export function Bookings({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState<{
@@ -60,11 +68,12 @@ export function Bookings({ centreId }: { centreId: string }) {
     investigation: true,
     remark: false,
     payment: true,
+    records: true,
   });
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
-
+  const [openModal, setOpenModal] = useState(false);
   const { data: dataCentreBookings, isLoading: isLoadingCentreBookings } =
     useCentreBookings({
       centreId,
@@ -94,6 +103,7 @@ export function Bookings({ centreId }: { centreId: string }) {
           variant: "default",
         });
         setLoading(false);
+        setOpenModal(false);
       }
     } catch (error) {
       toast({
@@ -103,6 +113,7 @@ export function Bookings({ centreId }: { centreId: string }) {
       });
       //localStorage.removeItem("x-session-token");
       setLoading(false);
+      setOpenModal(false);
     }
   };
 
@@ -254,7 +265,7 @@ export function Bookings({ centreId }: { centreId: string }) {
             )}
             {visibleColumns.remark && <TableHead>Remark</TableHead>}
             {visibleColumns.payment && <TableHead>Payment</TableHead>}
-
+            {visibleColumns.records && <TableHead>Records</TableHead>}
             <TableHead className="text-right">More</TableHead>
           </TableHeader>
           <TableBody>
@@ -307,9 +318,37 @@ export function Bookings({ centreId }: { centreId: string }) {
                     ))}
                   </TableCell>
                 )}
+                {visibleColumns.records && (
+                  <TableCell>
+                    {booking.records
+                      ?.filter((record) => record.type == "prescription")
+                      .map((record, index) => (
+                        <div key={index} className="flex items-center gap-1">
+                          <Download size={14} />
+                          <div className="flex items-center gap-2">
+                            <a href={record.url} className="capitalize">
+                              {index + 1}. {record.type}
+                            </a>
+                          </div>
+                        </div>
+                      ))}
+                    {booking.records
+                      ?.filter((record) => record.type == "report")
+                      .map((record, index) => (
+                        <div key={index} className="flex items-center gap-1">
+                          <Download size={14} />
+                          <div className="flex items-center gap-2">
+                            <a href={record.url} className="capitalize">
+                              {index + 1}. {record.type}
+                            </a>
+                          </div>
+                        </div>
+                      ))}
+                  </TableCell>
+                )}
 
                 <TableCell className="space-x-4 text-right">
-                  <Dialog>
+                  <Dialog open={openModal} onOpenChange={setOpenModal}>
                     <DialogTrigger asChild>
                       <Button
                         size="sm"
@@ -344,6 +383,7 @@ export function Bookings({ centreId }: { centreId: string }) {
                           </Button>
                         </DialogClose>
                         <Button
+                          loading={loading}
                           onClick={() => {
                             updateReport({
                               id: booking.id,

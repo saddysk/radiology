@@ -414,6 +414,7 @@ export interface CreateBookingDto {
 
 export interface BookingRecordDto {
   url: string;
+  type: string;
 }
 
 export interface PaymentDto {

@@ -35,37 +35,47 @@ import {
 } from "@/lib/utils";
 import { MinusSquareIcon, PlusSquareIcon } from "lucide-react";
 import InputFile from "./input-file";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-const bookingSchema = z.object({
-  //user
+const paymentSchema = z.object({
+  discount: z.number().optional(),
+  extraCharge: z.string().optional(),
+  payments: z.array(
+    z.object({
+      amount: z.number(),
+      paymentType: z.string(),
+    })
+  ),
+});
+
+const ageInYearsSchema = z.object({
+  years: z.number(),
+  months: z.number(),
+});
+
+const patientSchema = z.object({
   name: z.string(),
-  email: z.string().email(),
-  // age: z.number(), // in years and months
+  age: z.number().optional(),
   gender: z.string(),
   phone: z
     .string()
     .refine((value) => /^[1-9]\d{9}$/.test(value), "Phone number is invalid."),
+
+  email: z.string().email().optional(),
   address: z.string(),
-  abhaId: z.string().nullable(),
+  abhaId: z.string().nullable().optional(),
+});
 
-  //booking
+const bookingSchema = z.object({
   centreId: z.string(),
-  submittedBy: z.string(),
   consultant: z.string(),
-
-  modality: z.string({
-    required_error: "Please select an email to display.",
-  }),
-  investigation: z.string({
-    required_error: "Please select an email to display.",
-  }),
-
-  amount: z.number(),
-  discount: z.number(),
-  remarks: z.string(),
-  emergencyCharges: z.number(),
-
-  paymentType: z.string(),
+  modality: z.string(),
+  investigation: z.string(),
+  remark: z.string().optional(),
+  recordFile: z.any().optional(), // Adjust this based on what `recordFile` should be
+  patient: patientSchema,
+  payment: paymentSchema,
+  ageInYears: ageInYearsSchema,
 });
 
 type BokingDtoType = CreateBookingDto & {
@@ -86,18 +96,18 @@ export function AddBookingsComponent({
   const [commissionAmount, setCommissionAmount] = useState(0);
 
   const addBookingForm = useForm<BokingDtoType>({
-    //resolver: zodResolver(bookingSchema),
+    resolver: zodResolver(bookingSchema),
     defaultValues: {
       centreId: centreId,
-      consultant: "",
-      modality: "",
-      investigation: "",
+      consultant: undefined,
+      modality: undefined,
+      investigation: undefined,
       remark: "",
       recordFile: undefined,
       patient: {
         name: "",
         age: undefined,
-        gender: "",
+        gender: undefined,
         phone: "",
         email: "",
         address: "",
@@ -216,10 +226,11 @@ export function AddBookingsComponent({
         onSuccess();
       }
     } catch (error: any) {
+      console.log(error, "here");
       toast({
         title: "Error",
         description:
-          error.response.data.statuCode === 400
+          error.response.status === 400
             ? error.response.data.message
             : "Error in validation",
         variant: "destructive",
@@ -228,7 +239,7 @@ export function AddBookingsComponent({
       setLoading(false);
     }
   }
-
+  console.log(addBookingForm.formState.errors, "errors");
   return (
     <Form {...addBookingForm}>
       <form
