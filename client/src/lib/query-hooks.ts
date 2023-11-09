@@ -73,6 +73,42 @@ export const useAllConnectedCentresData = ({
   });
 };
 
+export const useGetCentreForDoctorData = ({
+  centreId,
+  doctorId,
+  enabled,
+}: {
+  centreId: string;
+  doctorId: string;
+  enabled: boolean;
+}) => {
+  return useQuery(
+    ["centres", "doctor", centreId],
+    () =>
+      drcommission.doctorCommissionControllerGet(centreId, doctorId),
+    {
+      enabled,
+    }
+  );
+};
+
+export const useGetAllCentreForDoctorData = ({
+
+  enabled,
+}: {
+
+  enabled: boolean;
+}) => {
+  return useQuery(
+    ["centres", "doctor"],
+    () =>
+      drcommission.doctorCommissionControllerGetAllCentresForDoctor(),
+    {
+      enabled,
+    }
+  );
+};
+
 export const useAllDoctorsData = ({ enabled }: { enabled: boolean }) => {
   return useQuery(["doctors"], auth.authControllerGetDoctors, {
     enabled,

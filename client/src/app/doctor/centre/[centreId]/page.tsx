@@ -1,5 +1,6 @@
 import * as React from "react";
-import DoctorCentre from "./dashboard";
+
+import { DoctorCentre } from "./dashboard";
 
 export default async function CentrePage({
   params,

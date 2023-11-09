@@ -13,6 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -89,18 +90,26 @@ export function AddRateList({ centreId }: { centreId: string }) {
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <label htmlFor="name">Name</label>
-            <Input
-              id="name"
-              placeholder="eg. USG"
+            <Select
               value={investigationUpdates.type}
-              className="col-span-3 bg-white"
-              onChange={(e) => {
-                setInvestigationUpdates({
-                  ...investigationUpdates,
-                  type: e.target.value,
-                });
-              }}
-            />
+              onValueChange={(e) => setInvestigationUpdates({ type: e })}
+            >
+              <SelectTrigger className="w-[400px] border border-blue-200 bg-blue-100">
+                <SelectValue placeholder="Select a name for modality" />
+              </SelectTrigger>
+              <SelectContent className="w-full border border-blue-200 bg-blue-100">
+                <SelectGroup>
+                  <SelectItem value="X-RAY">X-Ray</SelectItem>
+                  <SelectItem value="USG">USG</SelectItem>
+                  <SelectItem value="CT-SCAN">CT-SCAN</SelectItem>
+                  <SelectItem value="MRI">MRI</SelectItem>
+                  <SelectItem value="2D-ECHO">2D-Echo</SelectItem>
+                  <SelectItem value="SPECIAL-INVESTIGATIONS">
+                    Special Investigations
+                  </SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

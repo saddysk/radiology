@@ -26,6 +26,16 @@ import {
 import { Input } from "@/components/ui/input";
 import CenteredSpinner from "@/components/ui/centered-spinner";
 import { ArrowDownIcon, ArrowUpIcon, IndianRupeeIcon } from "lucide-react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export function Bookings({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState<{
@@ -180,7 +190,7 @@ export function Bookings({ centreId }: { centreId: string }) {
             {visibleColumns.remark && <TableHead>Remark</TableHead>}
             {visibleColumns.payment && <TableHead>Payment</TableHead>}
 
-            {/* <TableHead className="text-right">More</TableHead> */}
+            <TableHead className="text-right">More</TableHead>
           </TableHeader>
           <TableBody>
             {sortedBookings?.map((booking, index) => (
@@ -233,11 +243,47 @@ export function Bookings({ centreId }: { centreId: string }) {
                   </TableCell>
                 )}
 
-                {/* <TableCell className="space-x-4 text-right">
-                  <Button size="sm" variant="outline">
-                    Edit
-                  </Button>
-                </TableCell> */}
+                <TableCell className="space-x-4 text-right">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        size={"sm"}
+                        variant="outline"
+                        className="bg-blue-50 border border-blue-300"
+                        onClick={() => {}}
+                      >
+                        Upload Report
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-blue-50 p-8 gap-12">
+                      <DialogHeader>
+                        <DialogTitle>Upload Report Files here</DialogTitle>
+                        <DialogDescription>
+                          You can upload any booking related report, results
+                          here.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div>
+                        <Input
+                          type="file"
+                          className="bg-blue-100"
+                          id="prescription"
+                          name="recordFile"
+                        />
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button type="button" variant="outline">
+                            Close
+                          </Button>
+                        </DialogClose>
+                        <Button onClick={() => {}} className="bg-blue-200">
+                          Continue
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
