@@ -1,7 +1,7 @@
 "use client";
 
 import { useCentreBookings } from "@/lib/query-hooks";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import {
   Table,
   TableBody,
@@ -36,6 +36,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  QueryClient,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { booking } from "@/app/api";
+import { useToast } from "@/components/ui/use-toast";
 
 export function Bookings({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState<{
@@ -54,16 +61,74 @@ export function Bookings({ centreId }: { centreId: string }) {
     remark: false,
     payment: true,
   });
-
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
+
   const { data: dataCentreBookings, isLoading: isLoadingCentreBookings } =
     useCentreBookings({
       centreId,
     });
 
+  const updateReport = async ({
+    id,
+    recordFile,
+  }: {
+    id: string;
+    recordFile: string;
+  }) => {
+    try {
+      setLoading(true);
+
+      const response = await booking.bookingControllerUploadRecord({
+        id,
+        recordFile,
+      });
+
+      if (response?.status !== 200) {
+        throw new Error(response?.statusText);
+      } else {
+        queryClient.invalidateQueries(["booking", centreId]);
+        toast({
+          title: "Report added successfully",
+          variant: "default",
+        });
+        setLoading(false);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+      //localStorage.removeItem("x-session-token");
+      setLoading(false);
+    }
+  };
+
   const [searchTerm, setSearchTerm] = useState("");
   const [sortField, setSortField] = useState("createdAt");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [fileUpload, setFileUpload] = useState<string | null>(null);
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        const base64Url = reader.result;
+
+        if (base64Url && typeof base64Url === "string") {
+          const base64 = base64Url.split(",")[1];
+          setFileUpload(base64);
+        }
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFileUpload(null);
+    }
+  };
 
   const doesBookingMatchTerm = (booking: BookingDto, term: string) => {
     const loweredTerm = term.toLowerCase();
@@ -268,6 +333,7 @@ export function Bookings({ centreId }: { centreId: string }) {
                           type="file"
                           className="bg-blue-100"
                           id="prescription"
+                          onChange={handleFileChange}
                           name="recordFile"
                         />
                       </div>
@@ -277,8 +343,16 @@ export function Bookings({ centreId }: { centreId: string }) {
                             Close
                           </Button>
                         </DialogClose>
-                        <Button onClick={() => {}} className="bg-blue-200">
-                          Continue
+                        <Button
+                          onClick={() => {
+                            updateReport({
+                              id: booking.id,
+                              recordFile: fileUpload!,
+                            });
+                          }}
+                          className="bg-blue-200"
+                        >
+                          Upload
                         </Button>
                       </DialogFooter>
                     </DialogContent>

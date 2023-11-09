@@ -9,7 +9,13 @@
  * ---------------------------------------------------------------
  */
 
-import { CreateDoctorCommissionDto, DoctorCommissionDto, ErrorDto, UpdateDoctorCommissionDto } from "./data-contracts";
+import {
+  CentreDto,
+  CreateDoctorCommissionDto,
+  DoctorCommissionDto,
+  ErrorDto,
+  UpdateDoctorCommissionDto,
+} from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class DoctorCommission<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -49,6 +55,20 @@ export class DoctorCommission<SecurityDataType = unknown> extends HttpClient<Sec
    * No description
    *
    * @tags DoctorCommission
+   * @name DoctorCommissionControllerGetAllCentresForDoctor
+   * @request GET:/api/doctor-commission/centres-by-doctor
+   */
+  doctorCommissionControllerGetAllCentresForDoctor = (params: RequestParams = {}) =>
+    this.request<CentreDto[], ErrorDto>({
+      path: `/api/doctor-commission/centres-by-doctor`,
+      method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags DoctorCommission
    * @name DoctorCommissionControllerGetById
    * @request GET:/api/doctor-commission/{id}
    */
@@ -69,20 +89,6 @@ export class DoctorCommission<SecurityDataType = unknown> extends HttpClient<Sec
   doctorCommissionControllerGetAllDoctorsForCentre = (centreId: string, params: RequestParams = {}) =>
     this.request<DoctorCommissionDto[], ErrorDto>({
       path: `/api/doctor-commission/centre/${centreId}/all`,
-      method: "GET",
-      format: "json",
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags DoctorCommission
-   * @name DoctorCommissionControllerGetAllCentresForDoctor
-   * @request GET:/api/doctor-commission/centres-by-doctor
-   */
-  doctorCommissionControllerGetAllCentresForDoctor = (params: RequestParams = {}) =>
-    this.request<DoctorCommissionDto[], ErrorDto>({
-      path: `/api/doctor-commission/centres-by-doctor`,
       method: "GET",
       format: "json",
       ...params,

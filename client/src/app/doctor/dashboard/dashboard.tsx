@@ -31,9 +31,9 @@ export function DoctorDashboard() {
               <div
                 key={index}
                 className="flex items-center space-x-2 p-6 border border-blue-200 rounded-md"
-                onClick={() => router.push(`/doctor/centre/${centre.centreId}`)}
+                onClick={() => router.push(`/doctor/centre/${centre.id}`)}
               >
-                {centre.centre?.name} {centre.modality}
+                {centre?.name}
               </div>
             ))}
           </div>

@@ -514,6 +514,15 @@ export interface UpdateBookingDto {
   totalAmount?: number;
 }
 
+export interface UploadRecordDto {
+  /**
+   * @format uuid
+   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
+   */
+  id: string;
+  recordFile?: string;
+}
+
 export enum RequestType {
   Expense = "expense",
   Booking = "booking",

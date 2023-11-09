@@ -9,7 +9,7 @@
  * ---------------------------------------------------------------
  */
 
-import { BookingDto, CreateBookingDto, ErrorDto, UpdateBookingDto } from "./data-contracts";
+import { BookingDto, CreateBookingDto, ErrorDto, UpdateBookingDto, UploadRecordDto } from "./data-contracts";
 import { ContentType, HttpClient, RequestParams } from "./http-client";
 
 export class Booking<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
@@ -70,6 +70,22 @@ export class Booking<SecurityDataType = unknown> extends HttpClient<SecurityData
     this.request<BookingDto[], ErrorDto>({
       path: `/api/booking/centre/${centreId}`,
       method: "GET",
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Booking
+   * @name BookingControllerUploadRecord
+   * @request PUT:/api/booking/upload-record
+   */
+  bookingControllerUploadRecord = (data: UploadRecordDto, params: RequestParams = {}) =>
+    this.request<BookingDto, ErrorDto>({
+      path: `/api/booking/upload-record`,
+      method: "PUT",
+      body: data,
+      type: ContentType.Json,
       format: "json",
       ...params,
     });
