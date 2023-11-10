@@ -406,7 +406,7 @@ export interface CreateBookingDto {
    * @format uuid
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
-  patientId?: string;
+  patientNumber?: string;
   patient?: CreatePatientDto;
   payment: BookingPaymentDto;
   recordFile?: string;
@@ -414,7 +414,6 @@ export interface CreateBookingDto {
 
 export interface BookingRecordDto {
   url: string;
-  type: string;
 }
 
 export interface PaymentDto {

@@ -70,7 +70,7 @@ export class PatientService {
 
     if (!patient) {
       throw new BadRequestException(
-        `Patient with patient number ${patientNumber} not found.`,
+        `Patient number ${patientNumber} not found.`,
       );
     }
 

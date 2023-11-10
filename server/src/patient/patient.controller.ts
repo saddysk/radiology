@@ -19,6 +19,17 @@ export class PatientController {
     return Promise.all(patients.map((patient) => new PatientDto(patient)));
   }
 
+  @GetRoute('get-by-patient-number', {
+    Ok: PatientDto,
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async getByPatientNumber(
+    @Query('patientNumber') patientNumber: string,
+  ): Promise<PatientDto> {
+    const patient = await this.patientService.getByPatientNumber(patientNumber);
+    return new PatientDto(patient);
+  }
+
   @GetRoute(':id', {
     Ok: PatientDto,
   })

@@ -151,6 +151,10 @@ export class CentreService {
     }
   }
 
+  async getById(centreId: string): Promise<Centre> {
+    return this.centreRepository.findOneBy({ id: centreId });
+  }
+
   async getAll(userId: string): Promise<Centre[]> {
     const user = await this.authSerice.get(userId);
 

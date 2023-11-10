@@ -53,6 +53,26 @@ export class Patient<SecurityDataType = unknown> extends HttpClient<SecurityData
    * No description
    *
    * @tags Patient
+   * @name PatientControllerGetByPatientNumber
+   * @request GET:/api/patient/get-by-patient-number
+   */
+  patientControllerGetByPatientNumber = (
+    query: {
+      patientNumber: string;
+    },
+    params: RequestParams = {},
+  ) =>
+    this.request<PatientDto, ErrorDto>({
+      path: `/api/patient/get-by-patient-number`,
+      method: "GET",
+      query: query,
+      format: "json",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags Patient
    * @name PatientControllerGetById
    * @request GET:/api/patient/{id}
    */

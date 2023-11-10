@@ -14,6 +14,7 @@ import { CreatePatientDto, PatientDto } from 'src/patient/dto/patient.dto';
 import { BookingPaymentDto, PaymentDto } from './payment.dto';
 import { AuthService } from 'src/auth/services/auth.service';
 import { StorageFileTypes } from 'src/storage/services/storage.service';
+import { CentreService } from 'src/centre/services/centre.service';
 
 export class BookingRecordDto {
   @StringField()
@@ -54,6 +55,9 @@ export class BookingDto {
 
   @StringField()
   consultantName: string;
+
+  @StringField()
+  centreName: string;
 
   @StringField()
   modality: string;
@@ -108,7 +112,11 @@ export class BookingDto {
     }
   }
 
-  static async toDto(booking: Booking, authService?: AuthService) {
+  static async toDto(
+    booking: Booking,
+    authService?: AuthService,
+    centreService?: CentreService,
+  ) {
     const dto = new BookingDto(booking);
 
     dto.patient = new PatientDto(await booking.patient);
@@ -121,6 +129,10 @@ export class BookingDto {
     if (authService) {
       const consultant = await authService.get(booking.consultant);
       dto.consultantName = consultant.name;
+    }
+    if (centreService) {
+      const centre = await centreService.getById(booking.centreId);
+      dto.centreName = centre.name;
     }
 
     return dto;

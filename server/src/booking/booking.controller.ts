@@ -14,6 +14,7 @@ import {
 } from 'libs/decorators/route.decorators';
 import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
 import { AuthService } from 'src/auth/services/auth.service';
+import { CentreService } from 'src/centre/services/centre.service';
 
 @Controller('api/booking')
 @ApiTags('Booking')
@@ -21,6 +22,7 @@ export class BookingController {
   constructor(
     private readonly bookingService: BookingService,
     private readonly authService: AuthService,
+    private readonly centreService: CentreService,
   ) {}
 
   @PostRoute('', {
@@ -47,7 +49,9 @@ export class BookingController {
     const id = doctorId || request.user.user.id;
     const bookings = await this.bookingService.getDoctoReferrals(id);
     return Promise.all(
-      bookings.map((booking) => BookingDto.toDto(booking, this.authService)),
+      bookings.map((booking) =>
+        BookingDto.toDto(booking, this.authService, this.centreService),
+      ),
     );
   }
 

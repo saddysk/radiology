@@ -238,6 +238,18 @@ export const useGetPatients = ({ centreId }: { centreId: string }) => {
   });
 };
 
+export const useGetPatienByNumber = ({
+  patientNumber,
+}: {
+  patientNumber: string;
+}) => {
+  return useQuery({
+    queryKey: ["patient-by-number", patientNumber],
+    queryFn: () =>
+      patient.patientControllerGetByPatientNumber({ patientNumber }),
+  });
+};
+
 // // hooks/useThreadsData.js
 // export const useThreadsData = ({ enabled, funcArgs }) => {
 // 	return useQuery({

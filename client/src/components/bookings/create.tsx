@@ -104,6 +104,7 @@ export function AddBookingsComponent({
       investigation: undefined,
       remark: "",
       recordFile: undefined,
+      patientNumber: "",
       patient: {
         name: "",
         age: undefined,
@@ -205,6 +206,12 @@ export function AddBookingsComponent({
           variant: "default",
         });
         return;
+      }
+
+      if (data.patientNumber && !data.patient?.name) {
+        delete data.patient;
+      } else {
+        delete data.patientNumber;
       }
 
       const response = await booking.bookingControllerCreate({
