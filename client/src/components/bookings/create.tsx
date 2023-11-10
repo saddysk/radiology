@@ -168,7 +168,7 @@ export function AddBookingsComponent({
     // Calculating initial cost and discount
     const initialCost = Number(selectedInvestigation?.amount) || 0;
     setCost(initialCost - discount + extraCharge);
-
+    console.log(selectedModality, initialCost, "here");
     calculateReferralAmount(selectedModality!, initialCost);
   };
 
