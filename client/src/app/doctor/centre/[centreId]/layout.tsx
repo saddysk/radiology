@@ -27,7 +27,12 @@ export default function CentreLayout({
   const tabs = [
     {
       title: "Dashboard",
-      path: `/admin/centre/${params.centreId}`, // Adjust the path for Dashboard
+      path: `/doctor/centre/${params.centreId}`, // Adjust the path for Dashboard
+      icon: <LayoutDashboard size={20} />,
+    },
+    {
+      title: "Analytics",
+      path: `/doctor/analytics`, // Adjust the path for Dashboard
       icon: <LayoutDashboard size={20} />,
     },
   ];

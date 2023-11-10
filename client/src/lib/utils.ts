@@ -128,8 +128,39 @@ export function convertAgeFromYearsToMonths(ageInYears: IAgeInYears): number {
   return totalMonths;
 }
 
-export function convertAgeFromMonthsToYears(ageInMonths: number): IAgeInYears {
+export function convertAgeFromMonthsToYears(ageInMonths: number): string {
   const years = Math.floor(ageInMonths / 12);
   const months = ageInMonths % 12;
-  return { years, months };
+  return `${years}yr ${months}m`;
 }
+function replacer(key: string, value: any) {
+  // Modify the value as needed
+  if (value === null) {
+    return "";
+  }
+  return value;
+}
+
+export function convertToCSV(data: Record<string, any>[]): string {
+  const headers = Object.keys(data[0]);
+  const csvRows = data.map(row =>
+    headers.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(',')
+  );
+  return [headers.join(','), ...csvRows].join('\r\n');
+}
+
+export function downloadCSV(rows: { original: Record<string, any> }[]): void {
+  console.log(rows);
+  const dataToDownload = rows.map(row => row.original);
+  const csvData = convertToCSV(dataToDownload);
+  const blob = new Blob([csvData], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.setAttribute('hidden', '');
+  a.setAttribute('href', url);
+  a.setAttribute('download', 'download.csv');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
