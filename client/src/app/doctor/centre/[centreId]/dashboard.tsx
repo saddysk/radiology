@@ -16,12 +16,18 @@ export function DoctorCentre({ centreId }: { centreId: string }) {
     centreId,
   });
   const { data: dataConnectedCentres, isLoading: isLoadingConnectedCentres } =
+    useCentreData({
+      centreId,
+      enabled: centreId ? true : false,
+    });
+
+  const { data: dataCentreDetails, isLoading: isLoadingCentreDetails } =
     useGetCentreForDoctorData({
       centreId,
       doctorId: dataUser?.data.id!,
       enabled: dataUser ? true : false,
     });
-
+  console.log(dataCentreDetails);
   if (isLoadingConnectedCentres) {
     return <CenteredSpinner />;
   }
@@ -47,9 +53,29 @@ export function DoctorCentre({ centreId }: { centreId: string }) {
       </div>
 
       <div className="flex items-center mt-2">
-        <p className="w-40 font-semibold">Centre Name</p>
-        <p>{centre[0]?.centre?.name}</p>
+        <p className="w-40 font-semibold">Centre Name:</p>
+        <p>{centre.name}</p>
       </div>
+      <p className="font-semibold mt-6 mb-2">
+        {dataCentreDetails?.data[0].letGo
+          ? "Let go of referall money is set"
+          : "Referral Percentages : "}
+      </p>
+      {!dataCentreDetails?.data[0].letGo && (
+        <div className="flex flex-wrap items-center border border-blue-200 p-2 w-[fit-content]">
+          {dataCentreDetails?.data?.map((e, index) => (
+            <div
+              key={index}
+              className="border border-gray-300 m-2 p-4 px-8 rounded shadow-sm"
+            >
+              <div className="uppercase text-blue-600 font-semibold">
+                {e.modality}
+              </div>
+              <div className="text-gray-800">{e.amount}%</div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
