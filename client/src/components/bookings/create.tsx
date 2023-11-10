@@ -208,12 +208,6 @@ export function AddBookingsComponent({
         return;
       }
 
-      if (data.patientNumber && !data.patient?.name) {
-        delete data.patient;
-      } else {
-        delete data.patientNumber;
-      }
-
       const response = await booking.bookingControllerCreate({
         ...data,
         modality: dataRateList?.data.find((e) => e.id == data.modality)
