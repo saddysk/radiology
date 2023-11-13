@@ -165,7 +165,8 @@ export class UpdateBookingDto extends OmitType(BookingDto, [
   'patient',
   'payment',
   'consultantName',
-]) {}
+  'centreName'
+]) { }
 
 export class UploadRecordDto extends PickType(BookingDto, ['id']) {
   @StringFieldOptional()

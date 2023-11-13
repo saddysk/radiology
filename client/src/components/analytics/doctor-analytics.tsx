@@ -57,9 +57,9 @@ const columns: ColumnDef<BookingDto>[] = [
     filterFn: "dateRangeFilter",
   },
   {
-    accessorKey: "centreId",
-    header: "Centre ID",
-    cell: ({ row }) => row.original.centreId,
+    accessorKey: "centreName",
+    header: "Centre Name",
+    cell: ({ row }) => row.original.centreName,
   },
   {
     accessorKey: "patient.name",
@@ -317,6 +317,26 @@ export function DoctorAnalyticsComponent() {
                 ))}
               </TableBody>
             </Table>
+          </div>
+          <div className="flex items-center justify-end space-x-2 py-4">
+            <div className="space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </Button>
+            </div>
           </div>
         </div>
       </div>

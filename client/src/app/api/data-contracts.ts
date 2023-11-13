@@ -468,6 +468,7 @@ export interface BookingDto {
    */
   consultant: string;
   consultantName: string;
+  centreName: string;
   modality: string;
   investigation: string;
   remark?: string;
