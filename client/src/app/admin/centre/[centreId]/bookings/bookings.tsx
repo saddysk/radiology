@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DropdownMenuCheckboxes } from "@/components/ui/dropdown-checkbox-custom";
 import { BookingDto } from "@/app/api/data-contracts";
-import { compareSortValues } from "@/lib/utils";
+import { compareSortValues, convertAgeFromMonthsToYears } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -67,13 +67,14 @@ export function Bookings({ centreId }: { centreId: string }) {
     modality: true,
     investigation: true,
     remark: false,
-    payment: true,
+    totalAmount: true,
     records: true,
   });
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [currentBooking, setCurrentBooking] = useState<string | null>(null);
   const { data: dataCentreBookings, isLoading: isLoadingCentreBookings } =
     useCentreBookings({
       centreId,
@@ -264,7 +265,7 @@ export function Bookings({ centreId }: { centreId: string }) {
               <TableHead>Investigation</TableHead>
             )}
             {visibleColumns.remark && <TableHead>Remark</TableHead>}
-            {visibleColumns.payment && <TableHead>Payment</TableHead>}
+            {visibleColumns.totalAmount && <TableHead>Total Amount</TableHead>}
             {visibleColumns.records && <TableHead>Records</TableHead>}
             <TableHead className="text-right">More</TableHead>
           </TableHeader>
@@ -281,7 +282,9 @@ export function Bookings({ centreId }: { centreId: string }) {
                   <TableCell>{booking.patient?.name}</TableCell>
                 )}
                 {visibleColumns.age && (
-                  <TableCell>{booking.patient?.age}</TableCell>
+                  <TableCell>
+                    {convertAgeFromMonthsToYears(booking.patient?.age!)}
+                  </TableCell>
                 )}
                 {visibleColumns.gender && (
                   <TableCell>{booking.patient?.gender}</TableCell>
@@ -304,18 +307,10 @@ export function Bookings({ centreId }: { centreId: string }) {
                 {visibleColumns.remark && (
                   <TableCell>{booking.remark || "-"}</TableCell>
                 )}
-                {visibleColumns.payment && (
-                  <TableCell>
-                    {booking.payment?.map((payment) => (
-                      <div key={payment.id} className="flex items-center">
-                        <IndianRupeeIcon size={14} />
-                        <div className="flex items-center gap-2">
-                          <span>{payment.amount}</span>
-                          <span>via</span>
-                          <span>{payment.paymentType}</span>
-                        </div>
-                      </div>
-                    ))}
+                {visibleColumns.totalAmount && (
+                  <TableCell className="flex items-center">
+                    <IndianRupeeIcon size={14} />
+                    {booking.totalAmount}
                   </TableCell>
                 )}
                 {visibleColumns.records && (
@@ -354,6 +349,9 @@ export function Bookings({ centreId }: { centreId: string }) {
                         size="sm"
                         variant="outline"
                         className="bg-blue-50 border border-blue-300"
+                        onClick={() => {
+                          setCurrentBooking(booking.id);
+                        }}
                       >
                         Upload Report
                       </Button>
@@ -385,8 +383,9 @@ export function Bookings({ centreId }: { centreId: string }) {
                         <Button
                           loading={loading}
                           onClick={() => {
+                            console.log(booking.id, currentBooking);
                             updateReport({
-                              id: booking.id,
+                              id: currentBooking!,
                               recordFile: fileUpload!,
                             });
                           }}

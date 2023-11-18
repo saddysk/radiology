@@ -12,16 +12,20 @@ import { UserRole } from 'src/database/entities/user.entity';
 import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repository';
 import { ExpenseService } from 'src/centre/services/expense.service';
 import { BookingService } from 'src/booking/services/booking.service';
+import { BookingRepository } from 'src/booking/repositories/booking.repository';
+import { ExpenseRepository } from 'src/centre/repositories/expense.repository';
 
 @Injectable()
 export class UpdateRequestService {
   constructor(
+    private readonly expenseRepository: ExpenseRepository,
+    private readonly bookingRepository: BookingRepository,
     private readonly updateRequestRepository: UpdateRequestRepository,
     private readonly userRepository: UserRepository,
     private readonly centreAdminRepository: CentreAdminRepository,
     private readonly expenseService: ExpenseService,
     private readonly bookingService: BookingService,
-  ) {}
+  ) { }
 
   async save(userId: string, data: CreateUpdateRequestDto) {
     const user = this.userRepository.findOne({
@@ -90,14 +94,19 @@ export class UpdateRequestService {
     if (status === RequestStatus.Accepted) {
       if (updateRequest.type === RequestType.Expense) {
         await this.expenseService.update(userId, updateRequest.expenseData);
+        const existingData = await this.expenseRepository.findOneBy({ id: updateRequest.expenseData.id });
+        updateRequest.approvedData = existingData
       }
       if (updateRequest.type === RequestType.Booking) {
         await this.bookingService.update(userId, updateRequest.bookingData);
+        const existingData = await this.bookingRepository.findOneBy({ id: updateRequest.bookingData.id });
+        updateRequest.approvedData = existingData
       }
 
       await this.updateRequestRepository.upadteStatus(
         updateRequest.id,
         RequestStatus.Accepted,
+        updateRequest.approvedData,
       );
     } else {
       await this.updateRequestRepository.upadteStatus(

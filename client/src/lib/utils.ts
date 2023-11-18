@@ -131,8 +131,27 @@ export function convertAgeFromYearsToMonths(ageInYears: IAgeInYears): number {
 export function convertAgeFromMonthsToYears(ageInMonths: number): string {
   const years = Math.floor(ageInMonths / 12);
   const months = ageInMonths % 12;
-  return `${years}yr ${months}m`;
+
+  let yearString = years === 1 ? '1 yr' : `${years} yrs`;
+  let monthString = months === 1 ? '1 m' : `${months} m`;
+
+  if (years === 0 && months === 0) {
+    return '0 m';
+  } else if (years === 0) {
+    return monthString;
+  } else if (months === 0) {
+    return yearString;
+  } else {
+    return `${yearString}, ${monthString}`;
+  }
 }
+
+export function formatAge(months: number) {
+  const years = Math.floor(months / 12);
+  const remainingMonths = months % 12;
+  return { years, months: remainingMonths };
+}
+
 function replacer(key: string, value: any) {
   // Modify the value as needed
   if (value === null) {

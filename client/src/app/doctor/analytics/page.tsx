@@ -1,5 +1,5 @@
-import { DoctorAnalyticsComponent } from "@/components/analytics/doctor-analytics";
+import { Analytics } from "./analytics";
 
 export default async function AnalyticsPage() {
-  return <DoctorAnalyticsComponent />;
+  return <Analytics />;
 }

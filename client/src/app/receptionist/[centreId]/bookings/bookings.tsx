@@ -60,13 +60,13 @@ export function Bookings({ centreId }: { centreId: string }) {
     modality: true,
     investigation: true,
     remark: false,
-    payment: true,
+    totalAmount: true,
     records: true,
   });
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
-
+  const [currentBooking, setCurrentBooking] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
 
@@ -260,7 +260,7 @@ export function Bookings({ centreId }: { centreId: string }) {
               <TableHead>Investigation</TableHead>
             )}
             {visibleColumns.remark && <TableHead>Remark</TableHead>}
-            {visibleColumns.payment && <TableHead>Payment</TableHead>}
+            {visibleColumns.totalAmount && <TableHead>Total Amount</TableHead>}
             {visibleColumns.records && <TableHead>Records</TableHead>}
 
             <TableHead className="text-right">More</TableHead>
@@ -298,8 +298,11 @@ export function Bookings({ centreId }: { centreId: string }) {
                 {visibleColumns.investigation && (
                   <TableCell>{booking.investigation}</TableCell>
                 )}
-                {visibleColumns.remark && (
-                  <TableCell>{booking.remark || "-"}</TableCell>
+                {visibleColumns.totalAmount && (
+                  <TableCell className="flex items-center">
+                    <IndianRupeeIcon size={14} />
+                    {booking.totalAmount}
+                  </TableCell>
                 )}
                 {visibleColumns.payment && (
                   <TableCell>
@@ -351,6 +354,9 @@ export function Bookings({ centreId }: { centreId: string }) {
                         size="sm"
                         variant="outline"
                         className="bg-blue-50 border border-blue-300"
+                        onClick={() => {
+                          setCurrentBooking(booking.id);
+                        }}
                       >
                         Upload Report
                       </Button>
@@ -382,8 +388,9 @@ export function Bookings({ centreId }: { centreId: string }) {
                         <Button
                           loading={loading}
                           onClick={() => {
+                            console.log(booking.id, currentBooking);
                             updateReport({
-                              id: booking.id,
+                              id: currentBooking!,
                               recordFile: fileUpload!,
                             });
                           }}

@@ -26,12 +26,14 @@ import {
 } from "@/components/ui/select";
 import {
   useGetAllDoctorsForCentreData,
+  useGetPatienByNumber,
   useGetRateList,
 } from "@/lib/query-hooks";
 import {
   IAgeInYears,
   aggregateDoctorData,
   convertAgeFromYearsToMonths,
+  formatAge,
 } from "@/lib/utils";
 import { MinusSquareIcon, PlusSquareIcon } from "lucide-react";
 import InputFile from "./input-file";
@@ -39,7 +41,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 const paymentSchema = z.object({
   discount: z.number().optional(),
-  extraCharge: z.string().optional(),
+  extraCharge: z.number().optional(),
   payments: z.array(
     z.object({
       amount: z.number(),
@@ -52,6 +54,7 @@ const ageInYearsSchema = z.object({
   years: z.number(),
   months: z.number(),
 });
+``;
 
 const patientSchema = z.object({
   name: z.string(),
@@ -116,7 +119,7 @@ export function AddBookingsComponent({
       },
       payment: {
         discount: 0,
-        extraCharge: "",
+        extraCharge: undefined,
         payments: [
           {
             amount: undefined,
@@ -186,6 +189,31 @@ export function AddBookingsComponent({
     setCommissionAmount(discountAmount);
   };
 
+  const [patientId, setPatientId] = useState("");
+  const [foundPatient, setFoundPatient] = useState(false);
+  const {
+    data: patientData,
+    isLoading: isPatientLoading,
+    refetch: fetchPatientData,
+  } = useGetPatienByNumber({
+    patientNumber: patientId,
+    onSuccess: (data: any) => {
+      console.log(
+        data?.data.name,
+        "here",
+        formatAge(data?.data?.age!),
+        addBookingForm.getValues("patient")
+      );
+
+      addBookingForm.setValue("patient", data?.data);
+      addBookingForm.setValue("patient.gender", "Female");
+      addBookingForm.setValue("ageInYears", formatAge(data?.data?.age!));
+      updateCost();
+      setFoundPatient(true);
+    },
+    enabled: false,
+  });
+
   async function addBookingSubmit(bookingData: BokingDtoType) {
     try {
       setLoading(true);
@@ -218,6 +246,7 @@ export function AddBookingsComponent({
         centreId,
         totalAmount: cost,
         referralAmount: commissionAmount,
+        patientNumber: patientId,
       });
 
       if (response?.status !== 200) {
@@ -240,12 +269,29 @@ export function AddBookingsComponent({
     }
   }
 
+  // New states for patient ID and fetched patient data
+
   return (
     <Form {...addBookingForm}>
       <form
         onSubmit={addBookingForm.handleSubmit(addBookingSubmit)}
         className="space-y-8 px-4 sm:w-[60%] w-full"
       >
+        <div className="flex gap-4 bg-blue-100 p-8 py-8 rounded-md justify-center">
+          <Input
+            placeholder="Enter Patient ID"
+            value={patientId}
+            onChange={(e) => setPatientId(e.target.value)}
+          />
+          <Button
+            type="button"
+            // loading={isPatientLoading}
+            onClick={() => fetchPatientData({ cancelRefetch: false })}
+            className="w-full sm:w-1/3 bg-blue-50 border border-blue-200 whitespace-nowrap"
+          >
+            Get Patient Details
+          </Button>
+        </div>
         <div className="flex flex-col gap-8 bg-blue-100 p-8 py-8 rounded-md justify-center">
           <h2 className="text-xl">Patient Details</h2>
 
@@ -256,7 +302,11 @@ export function AddBookingsComponent({
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Patient Name" {...field} />
+                  <Input
+                    placeholder="Patient Name"
+                    {...field}
+                    disabled={foundPatient}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -283,6 +333,7 @@ export function AddBookingsComponent({
                             field.onChange(numberValue);
                           }
                         }}
+                        disabled={foundPatient}
                       />
                     </FormControl>
                     <p className="text-sm font-medium">
@@ -313,6 +364,7 @@ export function AddBookingsComponent({
                             field.onChange(numberValue);
                           }
                         }}
+                        disabled={foundPatient}
                       />
                     </FormControl>
                     <p className="text-sm font-medium">
@@ -335,10 +387,12 @@ export function AddBookingsComponent({
                 <FormLabel>Gender</FormLabel>
                 <FormControl>
                   <Select
+                    key={field.value}
                     onValueChange={(value) => {
-                      field.onChange(value); // This should update the form state
+                      field.onChange(value);
                     }}
                     defaultValue={field.value}
+                    disabled={foundPatient}
                   >
                     <SelectTrigger className="w-full border border-blue-200 bg-blue-50 shadow-none">
                       <SelectValue placeholder="Select gender" />
@@ -368,7 +422,11 @@ export function AddBookingsComponent({
               <FormItem>
                 <FormLabel>Phone</FormLabel>
                 <FormControl>
-                  <Input placeholder="Phone Number" {...field} />
+                  <Input
+                    placeholder="Phone Number"
+                    {...field}
+                    disabled={foundPatient}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -382,7 +440,12 @@ export function AddBookingsComponent({
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Email Address" type="email" {...field} />
+                  <Input
+                    placeholder="Email Address"
+                    type="email"
+                    {...field}
+                    disabled={foundPatient}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -396,7 +459,12 @@ export function AddBookingsComponent({
               <FormItem>
                 <FormLabel>Address</FormLabel>
                 <FormControl>
-                  <Input placeholder="Address" type="address" {...field} />
+                  <Input
+                    placeholder="Address"
+                    type="address"
+                    {...field}
+                    disabled={foundPatient}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -410,7 +478,11 @@ export function AddBookingsComponent({
               <FormItem>
                 <FormLabel>Abha ID</FormLabel>
                 <FormControl>
-                  <Input placeholder="Abha ID" {...field} />
+                  <Input
+                    placeholder="Abha ID"
+                    {...field}
+                    disabled={foundPatient}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -587,10 +659,10 @@ export function AddBookingsComponent({
                 <FormControl>
                   <Input
                     placeholder="Emergency Charge"
+                    type="number"
                     {...field}
                     onChange={(e) => {
                       const value = e.target.value;
-                      // Use a regular expression to check if the input value is numeric
                       if (/^\d*\.?\d*$/.test(value)) {
                         const numberValue = Number(value);
                         field.onChange(numberValue);

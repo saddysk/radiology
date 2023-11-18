@@ -40,4 +40,7 @@ export class UpdateRequest extends AbstractEntity {
 
   @Column({ type: 'json', nullable: true })
   bookingData?: Booking;
+
+  @Column({ type: 'json', nullable: true })
+  approvedData?: Expense | Booking;
 }

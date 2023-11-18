@@ -8,6 +8,7 @@ import {
   UUIDFieldOptional,
   ObjectField,
   NumberFieldOptional,
+  EnumField,
 } from 'libs/decorators';
 import { Booking, IBookingRecord } from 'src/database/entities/booking.entity';
 import { CreatePatientDto, PatientDto } from 'src/patient/dto/patient.dto';
@@ -19,6 +20,8 @@ import { CentreService } from 'src/centre/services/centre.service';
 export class BookingRecordDto {
   @StringField()
   url: string;
+
+  @EnumField(() => StorageFileTypes)
   type: StorageFileTypes;
 
   constructor(record?: IBookingRecord) {
@@ -148,7 +151,7 @@ export class CreateBookingDto extends PickType(BookingDto, [
   'referralAmount',
   'totalAmount',
 ]) {
-  @UUIDFieldOptional()
+  @StringFieldOptional()
   patientNumber?: string;
 
   @ObjectFieldOptional(() => CreatePatientDto)

@@ -8,7 +8,7 @@ import {
   patient,
   ratelist,
 } from "@/app/api";
-import { CommissionDto, UpdateRateListDto } from "@/app/api/data-contracts";
+import { CommissionDto, UpdatePatientDto, UpdateRateListDto } from "@/app/api/data-contracts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // // hooks/useUserData.js
@@ -229,15 +229,42 @@ export const useGetPatients = ({ centreId }: { centreId: string }) => {
   });
 };
 
+export const useUpdatePatient = ({
+  centreId,
+  data,
+  onSuccess
+}: {
+  centreId: string;
+  data: UpdatePatientDto;
+  onSuccess: any;
+}) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => patient.patientControllerUpdate(data),
+    onSuccess: () => {
+      onSuccess()
+      queryClient.invalidateQueries(["patients", centreId]);
+    },
+  });
+};
+
 export const useGetPatienByNumber = ({
   patientNumber,
+  enabled,
+  onSuccess
 }: {
   patientNumber: string;
+  enabled: boolean;
+  onSuccess: any
 }) => {
   return useQuery({
     queryKey: ["patient-by-number", patientNumber],
     queryFn: () =>
       patient.patientControllerGetByPatientNumber({ patientNumber }),
+    enabled,
+    onSuccess: (data) => {
+      onSuccess(data)
+    }
   });
 };
 

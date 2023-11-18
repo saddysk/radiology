@@ -110,6 +110,8 @@ export function AddRateList({ centreId }: { centreId: string }) {
     },
   });
 
+  console.log(form.formState.errors);
+
   type TselectedRows = {
     [key: string]: boolean;
   };
@@ -292,7 +294,14 @@ export function AddRateList({ centreId }: { centreId: string }) {
                                 disabled={
                                   !selectedRows[`${rateList.modality}-${j}`]
                                 }
-                                onChange={field.onChange}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  // Use a regular expression to check if the input value is numeric
+                                  if (/^\d*\.?\d*$/.test(value)) {
+                                    const numberValue = Number(value);
+                                    field.onChange(numberValue);
+                                  }
+                                }}
                               />
                             )}
                           />
@@ -308,7 +317,14 @@ export function AddRateList({ centreId }: { centreId: string }) {
                                 disabled={
                                   !selectedRows[`${rateList.modality}-${j}`]
                                 }
-                                onChange={field.onChange}
+                                onChange={(e) => {
+                                  const value = e.target.value;
+                                  // Use a regular expression to check if the input value is numeric
+                                  if (/^\d*\.?\d*$/.test(value)) {
+                                    const numberValue = Number(value);
+                                    field.onChange(numberValue);
+                                  }
+                                }}
                               />
                             )}
                           />
@@ -376,10 +392,13 @@ export function AddRateList({ centreId }: { centreId: string }) {
                 type="number"
                 value={investigationUpdates.amount}
                 onChange={(e) => {
-                  setInvestigationUpdates({
-                    ...investigationUpdates,
-                    amount: Number(e.target.value),
-                  });
+                  const value = e.target.value;
+                  if (/^\d*\.?\d*$/.test(value)) {
+                    setInvestigationUpdates({
+                      ...investigationUpdates,
+                      amount: Number(value),
+                    });
+                  }
                 }}
                 className="col-span-3"
               />
@@ -391,10 +410,13 @@ export function AddRateList({ centreId }: { centreId: string }) {
                 type="number"
                 value={investigationUpdates.filmCount}
                 onChange={(e) => {
-                  setInvestigationUpdates({
-                    ...investigationUpdates,
-                    filmCount: Number(e.target.value),
-                  });
+                  const value = e.target.value;
+                  if (/^\d*\.?\d*$/.test(value)) {
+                    setInvestigationUpdates({
+                      ...investigationUpdates,
+                      filmCount: Number(value),
+                    });
+                  }
                 }}
                 className="col-span-3"
               />

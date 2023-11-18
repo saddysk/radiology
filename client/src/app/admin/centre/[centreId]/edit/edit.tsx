@@ -71,6 +71,20 @@ export function EditReq({ centreId }: { centreId: string }) {
     );
   }
 
+  let pastApprovedData = "";
+  if (selectedRequest?.status === RequestStatus.Accepted) {
+    console.log("selectedRequest", selectedRequest);
+    pastApprovedData = JSON.stringify(
+      {
+        amount: selectedRequest?.approvedData?.amount,
+        expenseType: selectedRequest?.approvedData?.expenseType,
+        paymentMethod: selectedRequest?.approvedData?.paymentMethod,
+      },
+      null,
+      4
+    );
+  }
+
   const updateRequest = async ({
     id,
     selection,
@@ -166,23 +180,42 @@ export function EditReq({ centreId }: { centreId: string }) {
                           You can view the changes here
                         </DialogDescription>
                       </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <ReactDiffViewer
-                          oldValue={JSON.stringify(
-                            {
-                              amount: request?.expenseData?.amount,
-                              expenseType: request?.expenseData?.expenseType,
-                              paymentMethod:
-                                request?.expenseData?.paymentMethod,
-                            },
-                            null,
-                            4
-                          )}
-                          newValue={newCode}
-                          splitView={true}
-                          disableWordDiff={true}
-                        />
+
+                      <div className="flex flex-col space-y-4">
+                        <div>
+                          <h3 className="text-lg font-semibold">Past Data</h3>
+                          <pre className="bg-gray-100 p-2 rounded">
+                            {pastApprovedData}
+                          </pre>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold">
+                            Update Data (Proposed Changes)
+                          </h3>
+                          {/* Show the data representing the changes */}
+                          <pre className="bg-gray-100 p-2 rounded">
+                            {/* Update data here */}
+                          </pre>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold">
+                            Current Data
+                          </h3>
+                          <pre className="bg-gray-100 p-2 rounded">
+                            {newCode}
+                          </pre>
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold">Comparison</h3>
+                          <ReactDiffViewer
+                            oldValue={pastApprovedData}
+                            newValue={newCode}
+                            splitView={true}
+                            disableWordDiff={true}
+                          />
+                        </div>
                       </div>
+
                       {request.status == RequestStatus.Pending && (
                         <DialogFooter>
                           <Button

@@ -402,18 +402,20 @@ export interface CreateBookingDto {
   referralAmount?: number;
   /** @example 1 */
   totalAmount?: number;
-  /**
-   * @format uuid
-   * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
-   */
   patientNumber?: string;
   patient?: CreatePatientDto;
   payment: BookingPaymentDto;
   recordFile?: string;
 }
 
+export enum StorageFileTypes {
+  Prescription = "prescription",
+  Report = "report",
+}
+
 export interface BookingRecordDto {
   url: string;
+  type: StorageFileTypes;
 }
 
 export interface PaymentDto {
@@ -569,4 +571,5 @@ export interface UpdateRequestDto {
   status: RequestStatus;
   expenseData?: ExpenseDto;
   bookingData?: UpdateBookingDto;
+  approvedData?: ExpenseDto;
 }

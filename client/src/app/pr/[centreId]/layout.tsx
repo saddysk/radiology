@@ -1,7 +1,12 @@
 "use client";
 import Nabvbar from "@/components/navbar";
 import clsx from "clsx";
-import { LayoutDashboard, LayoutList, Receipt } from "lucide-react";
+import {
+  BarChartHorizontalBig,
+  LayoutDashboard,
+  LayoutList,
+  Receipt,
+} from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function PrLayout({
@@ -29,6 +34,11 @@ export default function PrLayout({
       title: "Expenses",
       path: `/pr/${params.centreId}/expenses`,
       icon: <Receipt size={20} />,
+    },
+    {
+      title: "Doctor Analytics",
+      path: `/pr/${params.centreId}/analytics`,
+      icon: <BarChartHorizontalBig size={20} />,
     },
   ];
 

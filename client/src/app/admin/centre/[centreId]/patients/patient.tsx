@@ -1,7 +1,7 @@
 "use client";
 
-import { useGetPatients } from "@/lib/query-hooks";
-import { useState } from "react";
+import { useGetPatients, useUpdatePatient } from "@/lib/query-hooks";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { DropdownMenuCheckboxes } from "@/components/ui/dropdown-checkbox-custom";
 import { Input } from "@/components/ui/input";
-import { PatientDto } from "@/app/api/data-contracts";
+import { ExpenseDto, PatientDto } from "@/app/api/data-contracts";
 import CenteredSpinner from "@/components/ui/centered-spinner";
 import {
   Select,
@@ -22,13 +22,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
+import {
+  convertAgeFromMonthsToYears,
+  convertAgeFromYearsToMonths,
+  formatAge,
+} from "@/lib/utils";
+import { useToast } from "@/components/ui/use-toast";
 
 export function Patient({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState({
     patientNumber: true,
-    abhaId: true,
+    abhaId: false,
     name: true,
     age: true,
     gender: true,
@@ -36,48 +52,80 @@ export function Patient({ centreId }: { centreId: string }) {
     email: true,
     address: true,
   });
+  const [openEdit, setOpenEdit] = useState(false);
   const [sortOrder, setSortOrder] = useState("desc"); // or 'asc'
-  const [sortField, setSortField] = useState("createdAt");
+  const [sortField, setSortField] = useState<any>("createdAt");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState<PatientDto[]>([]);
-
+  const [patientUpdates, setPatientUpdates] = useState<any>({
+    id: "",
+    centreId: "",
+    email: "",
+    address: "",
+    abhaId: "",
+    name: "",
+    age: {
+      years: 0,
+      months: 0,
+    },
+    gender: "",
+    phone: "",
+  });
+  const { toast } = useToast();
   const { data: dataPatients, isLoading: isLoadingPatients } = useGetPatients({
     centreId,
   });
 
-  // useEffect(() => {
-  //   let result = [...(dataPatients?.data || [])];
+  console.log(dataPatients);
+  useEffect(() => {
+    let result = [...(dataPatients?.data || [])];
 
-  //   // Search
-  //   if (searchQuery) {
-  //     result = result.filter((patient) =>
-  //       Object.values(patient).some((val) =>
-  //         String(val).toLowerCase().includes(searchQuery.toLowerCase())
-  //       )
-  //     );
-  //   }
+    // Search
+    if (searchQuery) {
+      result = result.filter((patient) =>
+        Object.values(patient).some((val) =>
+          String(val).toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      );
+    }
 
-  //   // Sort
-  //   result.sort((a, b) => {
-  //     if (sortField === "createdAt" || sortField === "date") {
-  //       const dateA = new Date(a[sortField]);
-  //       const dateB = new Date(b[sortField]);
-  //       return sortOrder === "desc"
-  //         ? dateB.getTime() - dateA.getTime()
-  //         : dateA.getTime() - dateB.getTime();
-  //     } else if (sortField === "amount") {
-  //       return sortOrder === "desc" ? b.amount - a.amount : a.amount - b.amount;
-  //     } else {
-  //       const fieldA = a[sortField as keyof ExpenseDto] as string;
-  //       const fieldB = b[sortField as keyof ExpenseDto] as string;
-  //       return sortOrder === "desc"
-  //         ? fieldB?.localeCompare(fieldA)
-  //         : fieldA?.localeCompare(fieldB);
-  //     }
-  //   });
+    // Sort
+    result.sort((a: any, b: any) => {
+      if (sortField === "createdAt" || sortField === "date") {
+        const dateA = new Date(a[sortField]);
+        const dateB = new Date(b[sortField]);
+        return sortOrder === "desc"
+          ? dateB.getTime() - dateA.getTime()
+          : dateA.getTime() - dateB.getTime();
+      } else if (sortField === "amount") {
+        return sortOrder === "desc" ? b.amount - a.amount : a.amount - b.amount;
+      } else {
+        const fieldA = a[sortField as keyof ExpenseDto] as string;
+        const fieldB = b[sortField as keyof ExpenseDto] as string;
+        return sortOrder === "desc"
+          ? fieldB?.localeCompare(fieldA)
+          : fieldA?.localeCompare(fieldB);
+      }
+    });
 
-  //   setFilteredData(result);
-  // }, [dataPatients, searchQuery, sortOrder, sortField]);
+    setFilteredData(result);
+  }, [dataPatients, searchQuery, sortOrder, sortField]);
+
+  const { mutate: updatePatient, isLoading: updatePatientLoading } =
+    useUpdatePatient({
+      centreId,
+      data: {
+        ...patientUpdates,
+        age: convertAgeFromYearsToMonths(patientUpdates.age),
+      },
+      onSuccess: () => {
+        toast({
+          title: "Patient Details Updated",
+          variant: "default",
+        });
+        setOpenEdit(false);
+      },
+    });
 
   return (
     <div className="w-full h-[85vh] p-8 overflow-y-scroll">
@@ -157,6 +205,197 @@ export function Patient({ centreId }: { centreId: string }) {
                 {visibleColumns.patientNumber && (
                   <TableCell>{patient.patientNumber}</TableCell>
                 )}
+                {visibleColumns.abhaId && (
+                  <TableCell>{patient.abhaId}</TableCell>
+                )}
+                {visibleColumns.name && <TableCell>{patient.name}</TableCell>}
+                {visibleColumns.age && (
+                  <TableCell>
+                    {convertAgeFromMonthsToYears(patient.age)}
+                  </TableCell>
+                )}
+                {visibleColumns.gender && (
+                  <TableCell>{patient.gender}</TableCell>
+                )}
+                {visibleColumns.phone && <TableCell>{patient.phone}</TableCell>}
+                {visibleColumns.email && <TableCell>{patient.email}</TableCell>}
+                {visibleColumns.address && (
+                  <TableCell>{patient.address}</TableCell>
+                )}
+                <TableCell className="text-right">
+                  <Dialog open={openEdit} onOpenChange={setOpenEdit}>
+                    <DialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setPatientUpdates({
+                            id: patient.id,
+                            centreId: patient.centreId,
+                            email: patient.email,
+                            address: patient.address,
+                            abhaId: patient.abhaId,
+                            name: patient.name,
+                            age: formatAge(patient.age),
+                            gender: patient.gender,
+                            phone: patient.phone,
+                          });
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-blue-100 p-8">
+                      <DialogHeader>
+                        <DialogTitle>Edit Patient</DialogTitle>
+                        <DialogDescription>
+                          Update patient details here. Click save when done.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        {/* Name */}
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="name">Name</label>
+                          <Input
+                            id="name"
+                            value={patientUpdates.name}
+                            onChange={(e) =>
+                              setPatientUpdates({
+                                ...patientUpdates,
+                                name: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                          />
+                        </div>
+                        {/* Email */}
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="email">Email</label>
+                          <Input
+                            id="email"
+                            value={patientUpdates.email}
+                            onChange={(e) =>
+                              setPatientUpdates({
+                                ...patientUpdates,
+                                email: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                          />
+                        </div>
+                        {/* Address */}
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="address">Address</label>
+                          <Input
+                            id="address"
+                            value={patientUpdates.address}
+                            onChange={(e) =>
+                              setPatientUpdates({
+                                ...patientUpdates,
+                                address: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                          />
+                        </div>
+                        {/* ABHA ID */}
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="abhaId">ABHA ID</label>
+                          <Input
+                            id="abhaId"
+                            value={patientUpdates.abhaId}
+                            onChange={(e) =>
+                              setPatientUpdates({
+                                ...patientUpdates,
+                                abhaId: e.target.value,
+                              })
+                            }
+                            className="col-span-3"
+                          />
+                        </div>
+                        {/* Age */}
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="ageYears">Age (Years)</label>
+                          <Input
+                            id="ageYears"
+                            type="number"
+                            value={patientUpdates.age.years}
+                            onChange={(e) =>
+                              setPatientUpdates({
+                                ...patientUpdates,
+                                age: {
+                                  ...patientUpdates.age,
+                                  years: Number(e.target.value),
+                                },
+                              })
+                            }
+                            className="col-span-1"
+                          />
+                          <label htmlFor="ageMonths">Months</label>
+                          <Input
+                            id="ageMonths"
+                            type="number"
+                            value={patientUpdates.age.months}
+                            onChange={(e) =>
+                              setPatientUpdates({
+                                ...patientUpdates,
+                                age: {
+                                  ...patientUpdates.age,
+                                  months: Number(e.target.value),
+                                },
+                              })
+                            }
+                            className="col-span-1"
+                          />
+                        </div>
+                        {/* Gender */}
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="gender">Gender</label>
+                          <Select
+                            onValueChange={(value) => {
+                              setPatientUpdates({
+                                ...patientUpdates,
+                                gender: value,
+                              });
+                            }}
+                            defaultValue={patientUpdates.gender}
+                          >
+                            <SelectTrigger className="w-full border border-blue-200 bg-blue-50 shadow-none">
+                              <SelectValue placeholder="Select gender" />
+                            </SelectTrigger>
+                            <SelectContent className=" border-blue-200 bg-blue-50">
+                              <SelectItem value={"Male"} className="capitalize">
+                                Male
+                              </SelectItem>
+                              <SelectItem
+                                value={"Female"}
+                                className="capitalize"
+                              >
+                                Female
+                              </SelectItem>
+                              <SelectItem value={"Null"} className="capitalize">
+                                Prefer not to say
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        {/* Phone */}
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button
+                            type="button"
+                            loading={updatePatientLoading}
+                            onClick={() => updatePatient()}
+                            className="bg-blue-50 border border-blue-200"
+                          >
+                            Save changes
+                          </Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

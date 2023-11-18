@@ -11,7 +11,7 @@ export class PatientService {
     private readonly patientRepository: PatientRepository,
     private readonly centreService: CentreService,
     private readonly centreAdminRepository: CentreAdminRepository,
-  ) {}
+  ) { }
 
   async create(
     userId: string,
@@ -104,19 +104,19 @@ export class PatientService {
     }
 
     if (data.age) {
-      patient.age = patient.age;
+      patient.age = data.age;
     }
     if (data.gender) {
-      patient.gender = patient.gender;
+      patient.gender = data.gender;
     }
     if (data.email) {
-      patient.email = patient.email;
+      patient.email = data.email;
     }
     if (data.address) {
-      patient.address = patient.address;
+      patient.address = data.address;
     }
     if (data.abhaId) {
-      patient.abhaId = patient.abhaId;
+      patient.abhaId = data.abhaId;
     }
 
     await this.patientRepository.update(patient.id, patient);

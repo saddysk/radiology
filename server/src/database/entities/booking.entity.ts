@@ -27,7 +27,7 @@ export class Booking extends AbstractEntity {
   @Column({ nullable: true })
   remark?: string;
 
-  @Column({ type: 'json', nullable: true })
+  @Column({ type: 'json', nullable: true, default: [] })
   records?: IBookingRecord[];
 
   @Column({ nullable: true, default: 0 })

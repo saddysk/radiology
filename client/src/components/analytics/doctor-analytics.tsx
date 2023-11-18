@@ -123,7 +123,11 @@ const columns: ColumnDef<BookingDto>[] = [
   // Add more columns as needed
 ];
 
-export function DoctorAnalyticsComponent() {
+export function DoctorAnalyticsComponent({
+  data,
+}: {
+  data: BookingDto[] | undefined;
+}) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -132,13 +136,6 @@ export function DoctorAnalyticsComponent() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-
-  const { data: dataUser, isLoading: isLoadingAllUser } = useUserDetailData();
-  const { data: dataDoctorAnalytics, isLoading: isDoctorAnalyticsLoading } =
-    useGetDoctorAnalytics({
-      doctorId: dataUser?.data.id!,
-      enabled: dataUser?.data.id ? true : false,
-    });
 
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(2023, 8, 20),
@@ -168,7 +165,7 @@ export function DoctorAnalyticsComponent() {
   }, [date, setColumnFilters]);
 
   const table = useReactTable({
-    data: dataDoctorAnalytics?.data || [],
+    data: data || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -204,142 +201,132 @@ export function DoctorAnalyticsComponent() {
     }, 0);
   };
   return (
-    <Card className="flex flex-col m-4 h-full rounded-md bg-blue-50 border-blue-200">
-      <Nabvbar />
-
-      <div className="flex h-full flex-col">
-        <div className="grid grid-cols-3 gap-4 p-6">
-          <div className="p-4 bg-blue-100 border border-blue-200 rounded-lg">
-            <h2 className="mb-2">Total Referrals Booking</h2>
-            <p className="font-bold text-xl  text-gray-700">
-              {dataDoctorAnalytics?.data.length}
-            </p>
-          </div>
-          <div className="p-4 bg-blue-100 border border-blue-200 rounded-lg">
-            <h2 className=" mb-2">Total Referral Amount Earned</h2>
-            <p className="text-gray-700 text-xl font-bold">
-              ₹
-              {dataDoctorAnalytics?.data?.reduce(
-                (sum, booking) => sum + booking?.referralAmount!,
-                0
-              )}
-            </p>
-          </div>
-
-          <div className="p-4 bg-blue-100 border border-blue-200 rounded-lg">
-            <h2 className="mb-2">Referral Amount This Month</h2>
-            <p className="font-bold text-xl  text-gray-700">
-              ₹{getReferralAmountThisMonth(dataDoctorAnalytics?.data!)}
-            </p>
-          </div>
+    <div className="flex h-full flex-col gap-6 mt-6">
+      <div className="grid grid-cols-3 gap-4">
+        <div className="p-4 bg-blue-100 border border-blue-200 rounded-lg">
+          <h2 className="mb-2">Total Referrals Booking</h2>
+          <p className="font-bold text-xl  text-gray-700">{data?.length}</p>
+        </div>
+        <div className="p-4 bg-blue-100 border border-blue-200 rounded-lg">
+          <h2 className=" mb-2">Total Referral Amount Earned</h2>
+          <p className="text-gray-700 text-xl font-bold">
+            ₹{data?.reduce((sum, booking) => sum + booking?.referralAmount!, 0)}
+          </p>
         </div>
 
-        <div className="w-full p-6">
-          <div className="flex items-center py-4 gap-4">
-            <Input
-              placeholder="Filter emails..."
-              value={
-                (table.getColumn("modality")?.getFilterValue() as string) ?? ""
-              }
-              onChange={(event) =>
-                table.getColumn("modality")?.setFilterValue(event.target.value)
-              }
-              className="max-w-sm"
-            />
-            <DatePickerWithRange
-              className="bg-blue-50"
-              date={date}
-              setDate={setDate}
-            />
+        <div className="p-4 bg-blue-100 border border-blue-200 rounded-lg">
+          <h2 className="mb-2">Referral Amount This Month</h2>
+          <p className="font-bold text-xl  text-gray-700">
+            ₹{getReferralAmountThisMonth(data!)}
+          </p>
+        </div>
+      </div>
 
+      <div className="w-full">
+        <div className="flex items-center py-4 gap-4">
+          <Input
+            placeholder="Filter analytics by modality"
+            value={
+              (table.getColumn("modality")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn("modality")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+          <DatePickerWithRange
+            className="bg-blue-50"
+            date={date}
+            setDate={setDate}
+          />
+
+          <Button
+            variant="outline"
+            className="ml-auto"
+            onClick={() => downloadCSV(table.getRowModel().rows)}
+          >
+            Download CSV
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-blue-50" align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader className="bg-blue-100">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex items-center justify-end space-x-2 py-4">
+          <div className="space-x-2">
             <Button
               variant="outline"
-              className="ml-auto"
-              onClick={() => downloadCSV(table.getRowModel().rows)}
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
             >
-              Download CSV
+              Previous
             </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="">
-                  Columns <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-blue-50" align="end">
-                {table
-                  .getAllColumns()
-                  .filter((column) => column.getCanHide())
-                  .map((column) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) =>
-                          column.toggleVisibility(!!value)
-                        }
-                      >
-                        {column.id}
-                      </DropdownMenuCheckboxItem>
-                    );
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader className="bg-blue-100">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <TableHead key={header.id}>
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          <div className="flex items-center justify-end space-x-2 py-4">
-            <div className="space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                Previous
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                Next
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
           </div>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }
