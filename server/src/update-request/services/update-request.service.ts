@@ -25,7 +25,7 @@ export class UpdateRequestService {
     private readonly centreAdminRepository: CentreAdminRepository,
     private readonly expenseService: ExpenseService,
     private readonly bookingService: BookingService,
-  ) { }
+  ) {}
 
   async save(userId: string, data: CreateUpdateRequestDto) {
     const user = this.userRepository.findOne({
@@ -94,13 +94,16 @@ export class UpdateRequestService {
     if (status === RequestStatus.Accepted) {
       if (updateRequest.type === RequestType.Expense) {
         await this.expenseService.update(userId, updateRequest.expenseData);
-        const existingData = await this.expenseRepository.findOneBy({ id: updateRequest.expenseData.id });
-        updateRequest.approvedData = existingData
-      }
-      if (updateRequest.type === RequestType.Booking) {
+        const existingData = await this.expenseRepository.findOneBy({
+          id: updateRequest.expenseData.id,
+        });
+        updateRequest.approvedData = existingData;
+      } else if (updateRequest.type === RequestType.Booking) {
         await this.bookingService.update(userId, updateRequest.bookingData);
-        const existingData = await this.bookingRepository.findOneBy({ id: updateRequest.bookingData.id });
-        updateRequest.approvedData = existingData
+        const existingData = await this.bookingRepository.findOneBy({
+          id: updateRequest.bookingData.id,
+        });
+        updateRequest.approvedData = existingData;
       }
 
       await this.updateRequestRepository.upadteStatus(
