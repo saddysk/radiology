@@ -13,7 +13,7 @@ export class UpdateRequestRepository extends AbstractRepository<UpdateRequest> {
   async upadteStatus(
     id: string,
     status: RequestStatus,
-    approvedData?: Expense | Booking,
+    pastData?: Expense | Booking,
   ): Promise<UpdateRequest> {
     const updateRequest = await this.findOneBy({ id });
     if (updateRequest == null) {
@@ -21,11 +21,11 @@ export class UpdateRequestRepository extends AbstractRepository<UpdateRequest> {
     }
 
     updateRequest.status = status;
-    updateRequest.approvedData = approvedData;
+    updateRequest.pastData = pastData;
 
     await this.update(updateRequest.id, {
       status: updateRequest.status,
-      approvedData: updateRequest.approvedData,
+      pastData: updateRequest.pastData,
     });
 
     return updateRequest;

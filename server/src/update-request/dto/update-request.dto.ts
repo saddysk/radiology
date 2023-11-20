@@ -40,7 +40,7 @@ export class UpdateRequestDto {
   bookingData?: UpdateBookingDto;
 
   @ObjectFieldOptional(() => ExpenseDto || BookingDto)
-  approvedData?: ExpenseDto | BookingDto;
+  pastData?: ExpenseDto | BookingDto;
 
   constructor(updateRequest?: UpdateRequest) {
     if (updateRequest == null) {
@@ -55,12 +55,12 @@ export class UpdateRequestDto {
     this.status = updateRequest.status;
     this.expenseData = new ExpenseDto(updateRequest.expenseData);
     this.bookingData = new BookingDto(updateRequest.bookingData);
-    this.approvedData =
-      updateRequest.approvedData instanceof Expense
-        ? new ExpenseDto(updateRequest.approvedData)
-        : updateRequest.approvedData
-        ? new BookingDto(updateRequest.approvedData)
-        : undefined;
+    this.pastData =
+      updateRequest.pastData instanceof Expense
+        ? new ExpenseDto(updateRequest.pastData)
+        : updateRequest.pastData
+          ? new BookingDto(updateRequest.pastData)
+          : undefined;
   }
 }
 
@@ -68,4 +68,4 @@ export class CreateUpdateRequestDto extends PickType(UpdateRequestDto, [
   'type',
   'expenseData',
   'bookingData',
-]) {}
+]) { }
