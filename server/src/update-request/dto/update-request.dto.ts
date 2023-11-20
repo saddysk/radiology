@@ -33,11 +33,8 @@ export class UpdateRequestDto {
   @EnumField(() => RequestStatus)
   status: RequestStatus;
 
-  @ObjectFieldOptional(() => ExpenseDto)
-  expenseData?: ExpenseDto;
-
-  @ObjectFieldOptional(() => UpdateBookingDto)
-  bookingData?: UpdateBookingDto;
+  @ObjectFieldOptional(() => ExpenseDto || UpdateBookingDto)
+  requestData?: ExpenseDto | UpdateBookingDto;
 
   @ObjectFieldOptional(() => ExpenseDto || BookingDto)
   pastData?: ExpenseDto | BookingDto;
@@ -53,19 +50,22 @@ export class UpdateRequestDto {
     this.requestedBy = updateRequest.requestedBy;
     this.type = updateRequest.type;
     this.status = updateRequest.status;
-    this.expenseData = new ExpenseDto(updateRequest.expenseData);
-    this.bookingData = new BookingDto(updateRequest.bookingData);
-    this.pastData =
-      updateRequest.pastData instanceof Expense
-        ? new ExpenseDto(updateRequest.pastData)
-        : updateRequest.pastData
-          ? new BookingDto(updateRequest.pastData)
-          : undefined;
+
+    this.requestData =
+      updateRequest.requestData instanceof Expense
+        ? new ExpenseDto(updateRequest.requestData)
+        : new BookingDto(updateRequest.requestData);
+
+    if (updateRequest.pastData) {
+      this.pastData =
+        updateRequest.pastData instanceof Expense
+          ? new ExpenseDto(updateRequest.pastData)
+          : new BookingDto(updateRequest.pastData);
+    }
   }
 }
 
 export class CreateUpdateRequestDto extends PickType(UpdateRequestDto, [
   'type',
-  'expenseData',
-  'bookingData',
-]) { }
+  'requestData',
+]) {}

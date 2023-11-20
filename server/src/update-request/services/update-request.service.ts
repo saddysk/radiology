@@ -10,8 +10,6 @@ import { UserRepository } from 'src/auth/repositories/user.repository';
 import { In } from 'typeorm';
 import { UserRole } from 'src/database/entities/user.entity';
 import { CentreAdminRepository } from 'src/centre/repositories/centre-admin.repository';
-import { ExpenseService } from 'src/centre/services/expense.service';
-import { BookingService } from 'src/booking/services/booking.service';
 import { BookingRepository } from 'src/booking/repositories/booking.repository';
 import { ExpenseRepository } from 'src/centre/repositories/expense.repository';
 
@@ -23,9 +21,7 @@ export class UpdateRequestService {
     private readonly updateRequestRepository: UpdateRequestRepository,
     private readonly userRepository: UserRepository,
     private readonly centreAdminRepository: CentreAdminRepository,
-    private readonly expenseService: ExpenseService,
-    private readonly bookingService: BookingService,
-  ) { }
+  ) {}
 
   async save(userId: string, data: CreateUpdateRequestDto) {
     const user = this.userRepository.findOne({
@@ -43,15 +39,8 @@ export class UpdateRequestService {
     const updateRequest = new UpdateRequest();
     updateRequest.requestedBy = userId;
     updateRequest.type = data.type;
-
-    if (data.expenseData) {
-      updateRequest.expenseData = data.expenseData;
-      updateRequest.centreId = data.expenseData.centreId;
-    }
-    if (data.bookingData) {
-      updateRequest.bookingData = data.bookingData;
-      updateRequest.centreId = data.bookingData.centreId;
-    }
+    updateRequest.requestData = data.requestData;
+    updateRequest.centreId = data.requestData.centreId;
 
     await this.updateRequestRepository.save(updateRequest, { reload: true });
   }
@@ -94,16 +83,16 @@ export class UpdateRequestService {
     if (status === RequestStatus.Accepted) {
       if (updateRequest.type === RequestType.Expense) {
         const existingData = await this.expenseRepository.findOneBy({
-          id: updateRequest.expenseData.id,
+          id: updateRequest.requestData.id,
         });
         updateRequest.pastData = existingData;
-        await this.expenseService.update(userId, updateRequest.expenseData);
+        await this.expenseRepository.save(updateRequest.requestData);
       } else if (updateRequest.type === RequestType.Booking) {
         const existingData = await this.bookingRepository.findOneBy({
-          id: updateRequest.bookingData.id,
+          id: updateRequest.requestData.id,
         });
         updateRequest.pastData = existingData;
-        await this.bookingService.update(userId, updateRequest.bookingData);
+        await this.bookingRepository.save(updateRequest.requestData);
       }
 
       await this.updateRequestRepository.upadteStatus(
