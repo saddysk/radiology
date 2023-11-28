@@ -194,7 +194,7 @@ export class BookingService {
       patientNumber &&
       (await this.patientService.getByPatientNumber(patientNumber));
 
-    if (patient != null) {
+    if (patient) {
       return patient.id;
     }
 
