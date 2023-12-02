@@ -33,12 +33,7 @@ const createCentreSchema = z.object({
     line1: z.string(),
     line2: z.string().nullable(),
     city: z.string(),
-    postalCode: z
-      .string()
-      .refine(
-        (value: any) => /^[1-9]{1}[0-9]{2}\s{0,1}[0-9]{3}$/.test(value),
-        "Postal code format is invalid."
-      ),
+    postalCode: z.number().max(6, "Postal code cant be more than 6"),
     state: z.string(),
     country: z.string().nullable(),
   }),
@@ -62,7 +57,7 @@ const CentreCreateUpdateForm: FC<CentreCreateUpdateFormProps> = ({
         line1: "",
         line2: "",
         city: "",
-        postalCode: "",
+        postalCode: undefined,
         state: "",
       },
     },
@@ -167,6 +162,7 @@ const CentreCreateUpdateForm: FC<CentreCreateUpdateFormProps> = ({
                 <Input
                   placeholder="Enter your phone"
                   {...field}
+                  type="number"
                   onChange={(e) => {
                     const value = e.target.value;
                     // Use a regular expression to check if the input value is numeric

@@ -197,7 +197,7 @@ export function Bookings({ centreId }: { centreId: string }) {
           </Button>
         </Link>
       </div>
-      <div className="p-6 my-4 rounded-lg   bg-blue-100">
+      <div className="p-6 my-4 rounded-lg bg-blue-100">
         <div className="flex justify-between mb-4">
           <h3 className="text-xl font-bold">All bookings</h3>
           <Input

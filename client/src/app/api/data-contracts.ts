@@ -138,6 +138,7 @@ export interface CreateExpenseDto {
   /** @example 1 */
   amount: number;
   expenseType: string;
+  name: string;
   paymentMethod: string;
   remark?: string;
 }
@@ -167,6 +168,7 @@ export interface ExpenseDto {
   /** @example 1 */
   amount: number;
   expenseType: string;
+  name: string;
   paymentMethod: string;
   remark?: string;
 }
@@ -185,6 +187,7 @@ export interface UpdateExpenseDto {
   /** @example 1 */
   amount: number;
   expenseType: string;
+  name: string;
   paymentMethod: string;
   remark?: string;
 }
@@ -539,8 +542,7 @@ export enum RequestType {
 
 export interface CreateUpdateRequestDto {
   type: RequestType;
-  expenseData?: ExpenseDto;
-  bookingData?: UpdateBookingDto;
+  requestData?: ExpenseDto;
 }
 
 export enum RequestStatus {
@@ -569,7 +571,6 @@ export interface UpdateRequestDto {
   requestedBy: string;
   type: RequestType;
   status: RequestStatus;
-  expenseData?: ExpenseDto;
-  bookingData?: UpdateBookingDto;
-  approvedData?: ExpenseDto;
+  requestData?: ExpenseDto;
+  pastData?: ExpenseDto;
 }

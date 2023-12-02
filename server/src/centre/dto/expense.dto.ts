@@ -34,6 +34,9 @@ export class ExpenseDto {
   expenseType: string;
 
   @StringField()
+  name: string;
+
+  @StringField()
   paymentMethod: string;
 
   @StringFieldOptional()
@@ -52,6 +55,7 @@ export class ExpenseDto {
     this.createdBy = expense.createdBy;
     this.amount = expense.amount;
     this.expenseType = expense.expenseType;
+    this.name = expense.name;
     this.paymentMethod = expense.paymentMethod;
     this.remark = expense.remark;
   }
@@ -62,15 +66,17 @@ export class CreateExpenseDto extends PickType(ExpenseDto, [
   'amount',
   'date',
   'expenseType',
+  'name',
   'paymentMethod',
   'remark',
-]) {}
+]) { }
 
 export class UpdateExpenseDto extends PickType(ExpenseDto, [
   'id',
   'centreId',
   'amount',
   'expenseType',
+  'name',
   'paymentMethod',
   'remark',
-]) {}
+]) { }

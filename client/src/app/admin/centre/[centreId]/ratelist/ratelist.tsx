@@ -344,12 +344,17 @@ export function RateList({ centreId }: { centreId: string }) {
                                     <Input
                                       id="amount"
                                       type="number"
+                                      onWheel={(e: any) => e.target.blur()}
                                       value={investigationUpdates.amount}
                                       onChange={(e) => {
-                                        setInvestigationUpdates({
-                                          ...investigationUpdates,
-                                          amount: Number(e.target.value),
-                                        });
+                                        if (
+                                          /^\d*\.?\d*$/.test(e.target.value)
+                                        ) {
+                                          setInvestigationUpdates({
+                                            ...investigationUpdates,
+                                            amount: Number(e.target.value),
+                                          });
+                                        }
                                       }}
                                       className="col-span-3"
                                     />
@@ -359,12 +364,17 @@ export function RateList({ centreId }: { centreId: string }) {
                                     <Input
                                       id="count"
                                       type="number"
+                                      onWheel={(e: any) => e.target.blur()}
                                       value={investigationUpdates.filmCount}
                                       onChange={(e) => {
-                                        setInvestigationUpdates({
-                                          ...investigationUpdates,
-                                          filmCount: Number(e.target.value),
-                                        });
+                                        if (
+                                          /^\d*\.?\d*$/.test(e.target.value)
+                                        ) {
+                                          setInvestigationUpdates({
+                                            ...investigationUpdates,
+                                            filmCount: Number(e.target.value),
+                                          });
+                                        }
                                       }}
                                       className="col-span-3"
                                     />

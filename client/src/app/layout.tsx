@@ -1,11 +1,11 @@
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Inter } from "next/font/google";
 import { Providers } from "./providers";
 import clsx from "clsx";
 
-const inter = Poppins({ subsets: ["latin"], weight: ["400", "600"] });
+const inter = Inter({ subsets: ["latin"], weight: ["400", "600"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",

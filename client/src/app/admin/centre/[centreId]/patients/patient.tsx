@@ -319,32 +319,38 @@ export function Patient({ centreId }: { centreId: string }) {
                           <Input
                             id="ageYears"
                             type="number"
+                            onWheel={(e: any) => e.target.blur()}
                             value={patientUpdates.age.years}
-                            onChange={(e) =>
-                              setPatientUpdates({
-                                ...patientUpdates,
-                                age: {
-                                  ...patientUpdates.age,
-                                  years: Number(e.target.value),
-                                },
-                              })
-                            }
+                            onChange={(e) => {
+                              if (/^\d*\.?\d*$/.test(e.target.value)) {
+                                setPatientUpdates({
+                                  ...patientUpdates,
+                                  age: {
+                                    ...patientUpdates.age,
+                                    years: Number(e.target.value),
+                                  },
+                                });
+                              }
+                            }}
                             className="col-span-1"
                           />
                           <label htmlFor="ageMonths">Months</label>
                           <Input
                             id="ageMonths"
                             type="number"
+                            onWheel={(e: any) => e.target.blur()}
                             value={patientUpdates.age.months}
-                            onChange={(e) =>
-                              setPatientUpdates({
-                                ...patientUpdates,
-                                age: {
-                                  ...patientUpdates.age,
-                                  months: Number(e.target.value),
-                                },
-                              })
-                            }
+                            onChange={(e) => {
+                              if (/^\d*\.?\d*$/.test(e.target.value)) {
+                                setPatientUpdates({
+                                  ...patientUpdates,
+                                  age: {
+                                    ...patientUpdates.age,
+                                    months: Number(e.target.value),
+                                  },
+                                });
+                              }
+                            }}
                             className="col-span-1"
                           />
                         </div>

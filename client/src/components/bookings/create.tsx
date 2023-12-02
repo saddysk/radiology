@@ -112,7 +112,7 @@ export function AddBookingsComponent({
         name: "",
         age: undefined,
         gender: undefined,
-        phone: "",
+        phone: undefined,
         email: "",
         address: "",
         abhaId: "",
@@ -425,6 +425,13 @@ export function AddBookingsComponent({
                   <Input
                     placeholder="Phone Number"
                     {...field}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (/^\d*\.?\d*$/.test(value)) {
+                        const numberValue = Number(value);
+                        field.onChange(numberValue);
+                      }
+                    }}
                     disabled={foundPatient}
                   />
                 </FormControl>
@@ -660,6 +667,7 @@ export function AddBookingsComponent({
                   <Input
                     placeholder="Emergency Charge"
                     type="number"
+                    onWheel={(e: any) => e.target.blur()}
                     {...field}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -686,7 +694,7 @@ export function AddBookingsComponent({
                   <Input
                     placeholder="Discount"
                     type="number"
-                    min={0}
+                    onWheel={(e: any) => e.target.blur()}
                     {...field}
                     onChange={(e) => {
                       const value = e.target.value;
@@ -739,6 +747,8 @@ export function AddBookingsComponent({
                         <Input
                           placeholder="Amount"
                           {...field}
+                          onWheel={(e: any) => e.target.blur()}
+                          type="number"
                           onChange={(e) => {
                             const value = e.target.value;
                             // Use a regular expression to check if the input value is numeric

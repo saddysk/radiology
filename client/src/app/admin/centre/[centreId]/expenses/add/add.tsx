@@ -105,10 +105,13 @@ export function AddExpenses({ centreId }: { centreId: string }) {
                     <Input
                       placeholder="3000"
                       type="number"
+                      onWheel={(e: any) => e.target.blur()}
                       {...field}
                       onChange={(e) => {
-                        const numberValue = Number(e.target.value);
-                        field.onChange(numberValue);
+                        if (/^\d*\.?\d*$/.test(e.target.value)) {
+                          const numberValue = Number(e.target.value);
+                          field.onChange(numberValue);
+                        }
                       }}
                     />
                   </FormControl>

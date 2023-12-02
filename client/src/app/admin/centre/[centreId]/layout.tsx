@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import clsx from "clsx";
 import {
+  BarChartHorizontalBig,
   ClipboardList,
   Contact2,
   Edit,
@@ -70,6 +71,11 @@ export default function CentreLayout({
       title: "Expenses",
       path: `/admin/centre/${params.centreId}/expenses`,
       icon: <Receipt size={20} />,
+    },
+    {
+      title: "Analytics",
+      path: `/admin/centre/${params.centreId}/analytics`,
+      icon: <BarChartHorizontalBig size={20} />,
     },
   ];
 

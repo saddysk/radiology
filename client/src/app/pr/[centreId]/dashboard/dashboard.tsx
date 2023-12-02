@@ -84,6 +84,19 @@ export function PRDashboard({ centreId }: { centreId: string }) {
           modality: "usg",
           amount: 0,
         },
+
+        {
+          modality: "mri",
+          amount: 0,
+        },
+        {
+          modality: "2d-echo",
+          amount: 0,
+        },
+        {
+          modality: "special-investigations",
+          amount: 0,
+        },
       ],
       letGo: false,
     },
@@ -378,12 +391,15 @@ export function PRDashboard({ centreId }: { centreId: string }) {
                                   <Input
                                     placeholder="Amount"
                                     type="number"
+                                    onWheel={(e: any) => e.target.blur()}
                                     {...field}
                                     onChange={(e) => {
-                                      const numberValue = Number(
-                                        e.target.value
-                                      );
-                                      field.onChange(numberValue);
+                                      if (/^\d*\.?\d*$/.test(e.target.value)) {
+                                        const numberValue = Number(
+                                          e.target.value
+                                        );
+                                        field.onChange(numberValue);
+                                      }
                                     }}
                                   />
                                 </div>

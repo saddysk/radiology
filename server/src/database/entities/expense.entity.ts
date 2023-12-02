@@ -16,6 +16,9 @@ export class Expense extends AbstractEntity {
   expenseType: string;
 
   @Column()
+  name: string;
+
+  @Column()
   paymentMethod: string;
 
   @Column({ nullable: true })

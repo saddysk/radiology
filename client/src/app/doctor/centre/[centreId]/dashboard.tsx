@@ -57,11 +57,11 @@ export function DoctorCentre({ centreId }: { centreId: string }) {
         <p>{centre.name}</p>
       </div>
       <p className="font-semibold mt-6 mb-2">
-        {dataCentreDetails?.data[0].letGo
+        {dataCentreDetails?.data[0]?.letGo
           ? "Let go of referall money is set"
           : "Referral Percentages : "}
       </p>
-      {!dataCentreDetails?.data[0].letGo && (
+      {!dataCentreDetails?.data[0]?.letGo && (
         <div className="flex flex-wrap items-center border border-blue-200 p-2 w-[fit-content]">
           {dataCentreDetails?.data?.map((e, index) => (
             <div
@@ -71,7 +71,7 @@ export function DoctorCentre({ centreId }: { centreId: string }) {
               <div className="uppercase text-blue-600 font-semibold">
                 {e.modality}
               </div>
-              <div className="text-gray-800">{e.amount}%</div>
+              <div className="text-gray-800">{e?.amount}%</div>
             </div>
           ))}
         </div>

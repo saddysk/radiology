@@ -183,3 +183,11 @@ export function downloadCSV(rows: { original: Record<string, any> }[]): void {
   document.body.removeChild(a);
 }
 
+
+export const amount = (number: number) => `₹${number.toLocaleString()}`;
+
+export const toTitleCase = (str: string) =>
+  str
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");

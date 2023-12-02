@@ -290,6 +290,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
                             render={({ field }) => (
                               <Input
                                 type="number"
+                                onWheel={(e: any) => e.target.blur()}
                                 value={field.value}
                                 disabled={
                                   !selectedRows[`${rateList.modality}-${j}`]
@@ -313,6 +314,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
                             render={({ field }) => (
                               <Input
                                 type="number"
+                                onWheel={(e: any) => e.target.blur()}
                                 value={field.value}
                                 disabled={
                                   !selectedRows[`${rateList.modality}-${j}`]
@@ -390,6 +392,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
               <Input
                 id="amount"
                 type="number"
+                onWheel={(e: any) => e.target.blur()}
                 value={investigationUpdates.amount}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -408,6 +411,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
               <Input
                 id="count"
                 type="number"
+                onWheel={(e: any) => e.target.blur()}
                 value={investigationUpdates.filmCount}
                 onChange={(e) => {
                   const value = e.target.value;

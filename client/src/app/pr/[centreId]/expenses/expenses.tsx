@@ -339,13 +339,16 @@ export function Expenses({ centreId }: { centreId: string }) {
                           <Input
                             id="amount"
                             type="number"
+                            onWheel={(e: any) => e.target.blur()}
                             value={expensesUpdates.amount}
-                            onChange={(e) =>
-                              setExpensesUpdates({
-                                ...expensesUpdates,
-                                amount: Number(e.target.value),
-                              })
-                            }
+                            onChange={(e) => {
+                              if (/^\d*\.?\d*$/.test(e.target.value)) {
+                                setExpensesUpdates({
+                                  ...expensesUpdates,
+                                  amount: Number(e.target.value),
+                                });
+                              }
+                            }}
                             className="col-span-3"
                           />
                         </div>
