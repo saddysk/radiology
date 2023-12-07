@@ -54,6 +54,8 @@ const env = cleanEnv(process.env, {
   S3_SECRET: str({ default: undefined }),
   S3_BUCKET: str({ default: undefined }),
   S3_REGION: str({ default: 'us-east-1' }),
+
+  IS_MIGRATING: bool({ default: false }),
 });
 
 const _AppConfig = () => ({ ...env } as const);

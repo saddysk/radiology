@@ -136,6 +136,48 @@ export class RateListService {
     await this.rateListRepository.remove([rateList]);
   }
 
+  // TODO: for migration
+  // async migration(
+  //   centreId: string,
+  //   csvFile: string,
+  //   modalities = ['X-RAY', 'CT SCAN', 'USG'],
+  // ) {
+  //   const createRateListDto = new CreateRateListDto();
+
+  //   createRateListDto.centreId = centreId;
+
+  //   // Parse the CSV file
+  //   const { data } = parse(csvFile, {
+  //     header: true,
+  //     skipEmptyLines: true,
+  //   });
+
+  //   // Assuming the CSV is structured in a way that each modality (X-RAY, CT SCAN, USG) is separated and identifiable
+  //   createRateListDto.rateLists = modalities.map((modality) => {
+  //     const rateListDto = new RateListsDto();
+  //     rateListDto.modality = modality;
+  //     rateListDto.investigation = [];
+
+  //     // Filter and map data for each modality
+  //     // The code assumes that there is a way to differentiate between the modalities (X-RAY, CT SCAN, USG) in your CSV file, like a 'Modality' column.
+  //     data
+  //       .filter((row) => row['Modality'] === modality)
+  //       .forEach((row) => {
+  //         const investigationDto = new InvestigationDto();
+  //         investigationDto.id = uuid();
+  //         investigationDto.type = row['Investigations'];
+  //         investigationDto.amount = Number(row['Rate']);
+  //         investigationDto.filmCount = Number(row['No. Of Films']);
+
+  //         rateListDto.investigation.push(investigationDto);
+  //       });
+
+  //     return rateListDto;
+  //   });
+
+  //   return createRateListDto;
+  // }
+
   private saveRateList(
     centreId: string,
     data: RateListsDto,

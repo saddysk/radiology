@@ -7,6 +7,7 @@ import {
   ObjectField,
   ObjectFieldOptional,
   StringField,
+  StringFieldOptional,
   UUIDField,
 } from 'libs/decorators';
 import { UserDto } from 'src/auth/dto/user.dto';
@@ -97,6 +98,10 @@ export class CreateDoctorCommissionDto extends PickType(DoctorCommissionDto, [
 ]) {
   @ObjectField(() => CommissionDto, { isArray: true })
   commissions: CommissionDto[];
+
+  // TODO: for migration
+  @StringFieldOptional()
+  doctorName?: string;
 }
 
 export class UpdateDoctorCommissionDto extends PickType(DoctorCommissionDto, [

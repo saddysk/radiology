@@ -11,6 +11,9 @@ import { CentreRepository } from 'src/centre/repositories/centre.repository';
 import { In, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
 import { UserRole } from 'src/database/entities/user.entity';
 import { Centre } from 'src/database/entities/centre.entity';
+import { AppConfig } from 'src/config/config';
+
+const CONFIG = AppConfig();
 
 @Injectable()
 export class DoctorCommissionService {
@@ -24,29 +27,44 @@ export class DoctorCommissionService {
     userId: string,
     data: CreateDoctorCommissionDto,
   ): Promise<DoctorCommission[]> {
-    const user = await this.userRepository.findOne({
-      where: {
-        id: userId,
-        role: In([UserRole.Pr, UserRole.Admin]),
-      },
-    });
-    if (user == null) {
-      throw new BadRequestException(
-        `Invalid access for user: ${user.id}, only ${UserRole.Pr} and ${UserRole.Admin} can onboard a doctor`,
-      );
+    // TODO: for migration - if statement
+    let doctorByName = null;
+    if (!CONFIG.IS_MIGRATING) {
+      const user = await this.userRepository.findOne({
+        where: {
+          id: userId,
+          role: In([UserRole.Pr, UserRole.Admin]),
+        },
+      });
+      if (user == null) {
+        throw new BadRequestException(
+          `Invalid access for user: ${user.id}, only ${UserRole.Pr} and ${UserRole.Admin} can onboard a doctor`,
+        );
+      }
+    } else {
+      doctorByName = await this.userRepository.findOneBy({
+        name: data.doctorName,
+      });
     }
 
-    const doctorCommissionExists = await this.get(data.centreId, data.doctorId);
+    // TODO: for migration - ternery statement
+    const doctorCommissionExists = await this.get(
+      data.centreId,
+      CONFIG.IS_MIGRATING ? doctorByName.id : data.doctorId,
+    );
     if (doctorCommissionExists.length > 0) {
       throw new BadRequestException('Doctor commission already exists');
     }
 
-    const doctor = await this.userRepository.findOne({
-      where: {
-        id: data.doctorId,
-        role: UserRole.Doctor,
-      },
-    });
+    // TODO: for migration - ternery statement
+    const doctor =
+      doctorByName ??
+      (await this.userRepository.findOne({
+        where: {
+          id: data.doctorId,
+          role: UserRole.Doctor,
+        },
+      }));
     if (doctor == null) {
       throw new BadRequestException(
         `Invalid user: ${data.doctorId}, the user should be a ${UserRole.Doctor}`,

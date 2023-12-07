@@ -1,0 +1,5 @@
+DOCTOR NAME,Total Referrals,CT,XRAY,USG,CT MONTH,XRAY MONTH,USG MONTH,Amount CT,Amount XRAY,Amount USG,CT %,XRAY %,USG %,CT Amount %,XRAY Amount %,USG Amount %,Total
+"AIMS, Nagpur",1,0,0,1,0,0,1,0,0,1000,0,0,0,0,0,0,0
+Arogya Hospital,0,0,0,0,0,0,0,0,0,0,30,0,20,0,0,0,0
+Dr. Aditi Somani,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+Dr. Aditya Mehta,3,1,0,2,1,0,2,7000,0,2600,30,20,20,2100,0,520,2620
