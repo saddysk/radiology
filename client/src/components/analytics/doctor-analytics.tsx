@@ -43,10 +43,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { BookingDto } from "@/app/api/data-contracts";
-import { convertAgeFromMonthsToYears, downloadCSV } from "@/lib/utils";
+import { amount, convertAgeFromMonthsToYears, downloadCSV } from "@/lib/utils";
 import { DatePickerWithRange } from "../ui/date-range-picker";
 import { addDays } from "date-fns";
 import { DateRange } from "react-day-picker";
+import { BarList, DonutChart } from "@tremor/react";
 
 const columns: ColumnDef<BookingDto>[] = [
   {
@@ -187,42 +188,53 @@ export function DoctorAnalyticsComponent({
     },
   });
 
-  const getReferralAmountThisMonth = (data: BookingDto[]) => {
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const currentMonth = now.getMonth(); // Note: January is 0, February is 1, and so on.
-
-    return data?.reduce((sum: number, booking: BookingDto) => {
-      const bookingDate = new Date(booking.createdAt);
-      return bookingDate.getFullYear() === currentYear &&
-        bookingDate.getMonth() === currentMonth
-        ? sum + booking?.referralAmount!
-        : sum;
-    }, 0);
-  };
   return (
     <div className="flex h-full flex-col gap-6 mt-6">
       <div className="grid grid-cols-3 gap-4">
         <div className="p-4 bg-blue-100 border border-blue-200 rounded-lg">
-          <h2 className="mb-2">Total Referrals Booking</h2>
+          <h2 className="mb-2">Referrals Booking Count</h2>
           <p className="font-bold text-xl  text-gray-700">{data?.length}</p>
         </div>
         <div className="p-4 bg-blue-100 border border-blue-200 rounded-lg">
           <h2 className=" mb-2">Total Referral Amount Earned</h2>
           <p className="text-gray-700 text-xl font-bold">
-            ₹{data?.reduce((sum, booking) => sum + booking?.referralAmount!, 0)}
+            {amount(
+              table
+                .getCoreRowModel()
+                .flatRows.reduce(
+                  (sum: number, booking) =>
+                    sum + booking.original.referralAmount!,
+                  0
+                )
+            )}
           </p>
         </div>
 
         <div className="p-4 bg-blue-100 border border-blue-200 rounded-lg">
-          <h2 className="mb-2">Referral Amount This Month</h2>
+          <h2 className="mb-2">Referral Amount in the selected period</h2>
           <p className="font-bold text-xl  text-gray-700">
-            ₹{getReferralAmountThisMonth(data!)}
+            {amount(
+              table
+                .getRowModel()
+                .flatRows.reduce(
+                  (sum: number, booking) =>
+                    sum + booking.original.referralAmount!,
+                  0
+                )
+            )}
           </p>
         </div>
       </div>
 
       <div className="w-full">
+        <div className="bg-blue-100 rounded-md p-4 mb-2">
+          <h1>Modality Wise Count</h1>
+
+          <BarList
+            data={convertData(table.getRowModel().flatRows)}
+            className="mt-2"
+          />
+        </div>
         <div className="flex items-center py-4 gap-4">
           <Input
             placeholder="Filter analytics by modality"
@@ -238,8 +250,17 @@ export function DoctorAnalyticsComponent({
             className="bg-blue-50"
             date={date}
             setDate={setDate}
+            placeholder="Filter bookings by date"
           />
-
+          <Button
+            variant="outline"
+            className=""
+            onClick={() => {
+              setDate({ from: undefined, to: undefined });
+            }}
+          >
+            Clear filter
+          </Button>
           <Button
             variant="outline"
             className="ml-auto"
@@ -329,4 +350,22 @@ export function DoctorAnalyticsComponent({
       </div>
     </div>
   );
+}
+
+function convertData(data: any) {
+  const modalityCount: { [key: string]: number } = {};
+
+  data.forEach((item: any) => {
+    const modality = item.original.modality;
+    if (modalityCount[modality]) {
+      modalityCount[modality]++;
+    } else {
+      modalityCount[modality] = 1;
+    }
+  });
+
+  return Object.keys(modalityCount).map((key) => ({
+    name: key,
+    value: modalityCount[key],
+  }));
 }

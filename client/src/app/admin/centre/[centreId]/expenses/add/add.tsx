@@ -25,6 +25,7 @@ const expensesSchema = z.object({
     message: "Invalid date format",
   }),
   amount: z.number(),
+  name: z.string(),
   expenseType: z.string(),
   paymentMethod: z.string(),
   remark: z.string().optional(),
@@ -42,6 +43,7 @@ export function AddExpenses({ centreId }: { centreId: string }) {
     defaultValues: {
       date: `${new Date("1900-01-01")}`,
       amount: undefined,
+      name: "",
       expenseType: "",
       paymentMethod: "",
     },
@@ -121,6 +123,21 @@ export function AddExpenses({ centreId }: { centreId: string }) {
               )}
             />
 
+            <FormField
+              control={addExpensesForm.control}
+              name="name"
+              rules={{ required: true }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Expense Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="eg. Rahul Salary" {...field} />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             {/* Expense Type Field */}
             <FormField
               control={addExpensesForm.control}

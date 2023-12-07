@@ -52,6 +52,7 @@ import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 export function Expenses({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState({
     expenseId: true,
+    name: true,
     expenseType: true,
     paymentMethod: true,
     amount: true,
@@ -69,6 +70,7 @@ export function Expenses({ centreId }: { centreId: string }) {
   const [filteredData, setFilteredData] = useState<ExpenseDto[]>([]);
   const [expensesUpdates, setExpensesUpdates] = useState({
     expenseId: "",
+    name: "",
     expenseType: "",
     paymentMethod: "",
     amount: 0,
@@ -158,6 +160,7 @@ export function Expenses({ centreId }: { centreId: string }) {
       const response = await centreexpense.expenseControllerUpdate({
         id: expensesUpdates.expenseId,
         centreId,
+        name: expensesUpdates.name,
         expenseType: expensesUpdates.expenseType,
         paymentMethod: expensesUpdates.paymentMethod,
         amount: expensesUpdates.amount,
@@ -255,6 +258,7 @@ export function Expenses({ centreId }: { centreId: string }) {
           <TableHeader>
             <TableRow>
               {visibleColumns.expenseId && <TableHead>Expense Id</TableHead>}
+              {visibleColumns.name && <TableHead>Expense Name</TableHead>}
               {visibleColumns.expenseType && (
                 <TableHead>Expense Type</TableHead>
               )}
@@ -273,6 +277,7 @@ export function Expenses({ centreId }: { centreId: string }) {
                 {visibleColumns.expenseId && (
                   <TableCell>{expense.id}</TableCell>
                 )}
+                {visibleColumns.name && <TableCell>{expense.name}</TableCell>}
                 {visibleColumns.expenseType && (
                   <TableCell>{expense.expenseType}</TableCell>
                 )}
@@ -301,6 +306,7 @@ export function Expenses({ centreId }: { centreId: string }) {
                         onClick={() => {
                           setExpensesUpdates({
                             expenseId: expense.id,
+                            name: expense.name,
                             expenseType: expense.expenseType,
                             paymentMethod: expense.paymentMethod,
                             amount: expense.amount,
@@ -319,6 +325,20 @@ export function Expenses({ centreId }: { centreId: string }) {
                         </DialogDescription>
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="name">Expense Name</label>
+                          <Input
+                            id="name"
+                            value={expensesUpdates.name}
+                            onChange={(e) => {
+                              setExpensesUpdates({
+                                ...expensesUpdates,
+                                name: e.target.value,
+                              });
+                            }}
+                            className="col-span-3"
+                          />
+                        </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                           <label htmlFor="name">Expense Type</label>
                           <Input
@@ -393,6 +413,7 @@ export function Expenses({ centreId }: { centreId: string }) {
                         onClick={() => {
                           setExpensesUpdates({
                             expenseId: expense.id,
+                            name: expense.name,
                             expenseType: expense.expenseType,
                             paymentMethod: expense.paymentMethod,
                             amount: expense.amount,
