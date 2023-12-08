@@ -24,6 +24,7 @@ def send_post_request(doctor_name, email):
         response = requests.post(url, json=data)
 
         if response.status_code != 200:
+            print(data, '\n')
             raise Exception(
                 f"HTTP error - {email} {response.status_code}: {response.text}")
     except Exception as e:
