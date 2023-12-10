@@ -35,7 +35,7 @@ def process_doctors_data(file_path):
     df = pd.read_csv(file_path)
     failed_rows = []
 
-    print('Looping through each row and storing...')
+    print('Migrating each doctor row...')
     for index, row in df.iterrows():
         doctor_name = row['DOCTOR NAME']
         email = create_email_from_name(doctor_name)

@@ -12,6 +12,9 @@ export class Booking extends AbstractEntity {
   @Column({ type: 'uuid' })
   patientId: string;
 
+  @Column({ nullable: true })
+  smkId?: string;
+
   @Column({ type: 'uuid' })
   submittedBy: string;
 

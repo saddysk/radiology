@@ -18,7 +18,7 @@ export class Patient extends AbstractEntity {
   name: string;
 
   @Column()
-  age: number;
+  age: number; // in month
 
   @Column()
   gender: string;

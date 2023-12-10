@@ -49,7 +49,7 @@ def process_doctor_commissions(file_path):
     df = pd.read_csv(file_path)
     failed_rows = []
 
-    print('Processing each doctor for commissions...')
+    print('Migrating each commission row...')
     for index, row in df.iterrows():
         doctor_name = row['DOCTOR NAME']
         commissions, let_go = create_commissions_entry(row)

@@ -15,6 +15,7 @@ import {
 import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
 import { AuthService } from 'src/auth/services/auth.service';
 import { CentreService } from 'src/centre/services/centre.service';
+import { SuccessDto } from 'libs/dtos';
 
 @Controller('api/booking')
 @ApiTags('Booking')
@@ -38,6 +39,16 @@ export class BookingController {
       data,
     );
     return BookingDto.toDto(booking, this.authService);
+  }
+
+  // TODO: only for migration
+  @PostRoute('migration', {
+    Ok: SuccessDto,
+  })
+  @UseAuthGuard(AuthGuardOption.BEARER)
+  async migration(@Req() request: any, @Body() data: any): Promise<SuccessDto> {
+    await this.bookingService.migration(request.user.user.id, data);
+    return new SuccessDto();
   }
 
   @GetRoute('referrals', { Ok: { dtoType: 'ArrayDto', type: BookingDto } })

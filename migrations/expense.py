@@ -19,7 +19,7 @@ def send_post_request(row):
         'expenseType': row['Type of Expense'],
         'name': row['Name of Expense'],
         'paymentMethod': row['Expense Mode'],
-        'remark': remark if pd.notna(remark) else ""
+        'remark': remark if pd.notna(remark) else None
     }
 
     try:
@@ -37,7 +37,7 @@ def process_expense(file_path):
     df = pd.read_csv(file_path)
     failed_rows = []
 
-    print('Looping through each row and storing...')
+    print('Migrating each expense row...')
     for index, row in df.iterrows():
         request_error = send_post_request(row)
 

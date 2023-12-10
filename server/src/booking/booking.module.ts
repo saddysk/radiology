@@ -10,6 +10,8 @@ import { CentreModule } from 'src/centre/centre.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { StorageService } from 'src/storage/services/storage.service';
 import { UserRepository } from 'src/auth/repositories/user.repository';
+import { PatientRepository } from 'src/patient/repositories/patient.repository';
+import { DoctorCommissionRepository } from 'src/doctor-commission/repositories/doctor-commission.repository';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { UserRepository } from 'src/auth/repositories/user.repository';
       PaymentRepository,
       CentreAdminRepository,
       UserRepository,
+      PatientRepository,
+      DoctorCommissionRepository,
     ]),
     PatientModule,
     CentreModule,

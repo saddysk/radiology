@@ -5,7 +5,6 @@ import {
   ObjectFieldOptional,
   StringFieldOptional,
   DateField,
-  UUIDFieldOptional,
   ObjectField,
   NumberFieldOptional,
   EnumField,
@@ -49,6 +48,9 @@ export class BookingDto {
 
   @UUIDField()
   patientId: string;
+
+  @StringFieldOptional()
+  smkId?: string;
 
   @UUIDField()
   submittedBy: string;
@@ -143,6 +145,7 @@ export class BookingDto {
 }
 
 export class CreateBookingDto extends PickType(BookingDto, [
+  'smkId',
   'centreId',
   'consultant',
   'modality',
@@ -168,8 +171,8 @@ export class UpdateBookingDto extends OmitType(BookingDto, [
   'patient',
   'payment',
   'consultantName',
-  'centreName'
-]) { }
+  'centreName',
+]) {}
 
 export class UploadRecordDto extends PickType(BookingDto, ['id']) {
   @StringFieldOptional()

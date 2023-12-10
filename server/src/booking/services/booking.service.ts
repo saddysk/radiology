@@ -19,6 +19,8 @@ import { uuid } from 'libs/helpers/generator.helper';
 import { UserRole } from 'src/database/entities/user.entity';
 import { UserRepository } from 'src/auth/repositories/user.repository';
 import { Not } from 'typeorm';
+import { PatientRepository } from 'src/patient/repositories/patient.repository';
+import { DoctorCommissionRepository } from 'src/doctor-commission/repositories/doctor-commission.repository';
 
 @Injectable()
 export class BookingService {
@@ -26,10 +28,12 @@ export class BookingService {
     private readonly bookingRepository: BookingRepository,
     private readonly centreService: CentreService,
     private readonly patientService: PatientService,
+    private readonly patientRepository: PatientRepository,
     private readonly paymentRepository: PaymentRepository,
     private readonly centreAdminRepository: CentreAdminRepository,
     private readonly storageService: StorageService,
     private readonly userRepository: UserRepository,
+    private doctorCommissionRepository: DoctorCommissionRepository,
   ) {}
 
   async create(userId: string, data: CreateBookingDto): Promise<Booking> {
@@ -46,8 +50,12 @@ export class BookingService {
     booking.modality = data.modality;
     booking.investigation = data.investigation;
     booking.remark = data.remark;
-    booking.referralAmount = data.referralAmount || 0;
+    booking.referralAmount = data.referralAmount ?? 0;
     booking.totalAmount = data.totalAmount;
+
+    if (data.smkId) {
+      booking.smkId = data.smkId;
+    }
 
     booking.patientId = await this.getOrCreatePatient(
       userId,
@@ -182,6 +190,44 @@ export class BookingService {
     });
 
     return booking;
+  }
+
+  async migration(userId: string, data: any) {
+    const patient$ = this.patientRepository.findOneBy({
+      name: data.patient.name,
+    });
+
+    const doctor$ = this.doctorCommissionRepository
+      .createQueryBuilder('commission')
+      .leftJoinAndSelect('commission.doctor', 'user')
+      .select(['commission.id as doctorid, amount'])
+      .where('commission.modality = :modality', { modality: data.modality })
+      .getRawOne();
+
+    const [patient, doctor] = await Promise.all([patient$, doctor$]);
+
+    const createBookingDto = new CreateBookingDto();
+
+    createBookingDto.centreId = data.centreId;
+    createBookingDto.smkId = data.smkId;
+    createBookingDto.consultant = doctor.doctorid;
+    createBookingDto.modality = data.modality;
+    createBookingDto.investigation = data.investigation;
+    createBookingDto.remark = data.remark;
+    createBookingDto.totalAmount = data.totalAmount;
+    createBookingDto.payment = data.payment;
+
+    createBookingDto.referralAmount = Math.round(
+      (doctor.amount / 100) * data.totalAmount,
+    );
+
+    if (patient != null) {
+      createBookingDto.patientNumber = patient.patientNumber;
+    } else {
+      createBookingDto.patient = data.patient;
+    }
+
+    await this.create(userId, createBookingDto);
   }
 
   private async getOrCreatePatient(
