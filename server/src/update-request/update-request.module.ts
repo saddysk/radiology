@@ -9,6 +9,7 @@ import { CentreModule } from 'src/centre/centre.module';
 import { BookingModule } from 'src/booking/booking.module';
 import { BookingRepository } from 'src/booking/repositories/booking.repository';
 import { ExpenseRepository } from 'src/centre/repositories/expense.repository';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
@@ -17,12 +18,13 @@ import { ExpenseRepository } from 'src/centre/repositories/expense.repository';
       UserRepository,
       CentreAdminRepository,
       ExpenseRepository,
-      BookingRepository
+      BookingRepository,
     ]),
     CentreModule,
     BookingModule,
+    AuthModule,
   ],
   controllers: [UpdateRequestController],
   providers: [UpdateRequestService],
 })
-export class UpdateRequestModule { }
+export class UpdateRequestModule {}
