@@ -11,23 +11,14 @@ import {
 import { CommissionDto, UpdatePatientDto, UpdateRateListDto } from "@/app/api/data-contracts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-// // hooks/useUserData.js
-// export const useUserData = () => {
-// 	return useQuery({
-// 		queryKey: ['user'],
-// 		queryFn: getUser,
-// 	})
-// }
-
-// export const useUserData = ({ enabled }: { enabled: boolean }) => {
-//     return useQuery(["user"], auth., {
-//         enabled
-//     })
-// }
 
 export const useGetUserById = (id: string) => {
   return useQuery(["get-user-by-id", id], () => auth.authControllerGetById(id));
 };
+
+export const getAllUsers = () => {
+  return useQuery(["users"], () => auth.authControllerGetDoctors());
+}
 
 export const useCentreData = ({
   enabled,
@@ -45,8 +36,8 @@ export const useCentreData = ({
   );
 };
 
-export const useUserData = ({ centreId }: { centreId: string }) => {
-  return useQuery(["user", centreId], () => auth.authControllerGet());
+export const useUserData = () => {
+  return useQuery(["user"], () => auth.authControllerGet());
 };
 
 export const useUserDetailData = () => {
@@ -202,8 +193,24 @@ export const useCentreExpense = ({
   enabled: boolean;
 }) => {
   return useQuery({
-    queryKey: ["expenses", centreId],
+    queryKey: ["expenses", centreId, "expense", id],
     queryFn: () => centreexpense.expenseControllerGet(id, centreId),
+    enabled,
+  });
+};
+
+export const useCentreBooking = ({
+  id,
+  centreId,
+  enabled,
+}: {
+  id: string;
+  centreId: string;
+  enabled: boolean;
+}) => {
+  return useQuery({
+    queryKey: ["bookings", centreId, "booking", id],
+    queryFn: () => booking.bookingControllerGetById(id),
     enabled,
   });
 };

@@ -3,14 +3,28 @@
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
-import { useAllConnectedCentresData } from "@/lib/query-hooks";
+import { useAllConnectedCentresData, useUserData } from "@/lib/query-hooks";
 import CenteredSpinner from "@/components/ui/centered-spinner";
 import Nabvbar from "@/components/navbar";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export function AdminDashboard() {
   const { toast } = useToast();
   const router = useRouter();
+
+  const { data: user } = useUserData();
+
+  useEffect(() => {
+    if (user?.data?.role !== "admin" && user !== undefined) {
+      toast({
+        title: `You are not authorized to view this page`,
+        variant: "destructive",
+      });
+      router.push("/");
+    }
+  }, [user]);
+
   const {
     data: dataAllConnectedCentres,
     isLoading: isLoadingAllConnectedCentres,

@@ -69,10 +69,6 @@ export function Expenses({ centreId }: { centreId: string }) {
       centreId,
     });
 
-  const { data: dataUser, isLoading: isLoadingAllUser } = useUserData({
-    centreId,
-  });
-
   useEffect(() => {
     let result = [...(dataCentreExpenses?.data || [])];
 
@@ -157,7 +153,7 @@ export function Expenses({ centreId }: { centreId: string }) {
 
       const response = await edit.updateRequestControllerSave({
         type: RequestType.Expense,
-        expenseData: {
+        requestData: {
           id: expensesUpdates.expenseId,
           centreId,
           name: expensesUpdates.name,

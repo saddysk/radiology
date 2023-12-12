@@ -12,9 +12,7 @@ import UpdateCentreDialog from "@/components/centre/update";
 
 export function DoctorCentre({ centreId }: { centreId: string }) {
   const { toast } = useToast();
-  const { data: dataUser, isLoading: isLoadingAllUser } = useUserData({
-    centreId,
-  });
+  const { data: dataUser, isLoading: isLoadingAllUser } = useUserData();
   const { data: dataConnectedCentres, isLoading: isLoadingConnectedCentres } =
     useCentreData({
       centreId,

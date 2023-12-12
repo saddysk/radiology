@@ -1,5 +1,7 @@
 "use client";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { useUserData } from "@/lib/query-hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import clsx from "clsx";
 import {
@@ -14,6 +16,7 @@ import {
   Users,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function CentreLayout({
   children,
@@ -78,6 +81,18 @@ export default function CentreLayout({
       icon: <BarChartHorizontalBig size={20} />,
     },
   ];
+  const { toast } = useToast();
+  const { data: user } = useUserData();
+
+  useEffect(() => {
+    if (user?.data?.role !== "admin" && user !== undefined) {
+      toast({
+        title: `You are not authorized to view this page`,
+        variant: "destructive",
+      });
+      route.push("/");
+    }
+  }, [user]);
 
   return (
     <Card className="flex flex-col m-4 h-full rounded-md bg-blue-50 border-blue-200">

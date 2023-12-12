@@ -1,6 +1,10 @@
 "use client";
 
-import { useCentreExpenses } from "@/lib/query-hooks";
+import {
+  getAllUsers,
+  useCentreExpenses,
+  useGetUserById,
+} from "@/lib/query-hooks";
 import { useEffect, useState } from "react";
 import {
   Table,
@@ -57,6 +61,7 @@ export function Expenses({ centreId }: { centreId: string }) {
     paymentMethod: true,
     amount: true,
     createdAt: true,
+    createdBy: true,
     date: false,
   });
   const queryClient = useQueryClient();
@@ -80,6 +85,9 @@ export function Expenses({ centreId }: { centreId: string }) {
       centreId,
     });
 
+  const { data: users } = getAllUsers();
+
+  console.log(users, "here");
   useEffect(() => {
     let result = [...(dataCentreExpenses?.data || [])];
 
@@ -267,6 +275,7 @@ export function Expenses({ centreId }: { centreId: string }) {
               )}
               {visibleColumns.amount && <TableHead>Amount (in Rs.)</TableHead>}
               {visibleColumns.createdAt && <TableHead>Created At</TableHead>}
+              {visibleColumns.createdBy && <TableHead>Created By</TableHead>}
               {visibleColumns.date && <TableHead>Expense Date</TableHead>}
               <TableHead className="text-right">Options</TableHead>
             </TableRow>
@@ -291,6 +300,9 @@ export function Expenses({ centreId }: { centreId: string }) {
                   <TableCell>
                     {new Date(expense.createdAt).toLocaleString()}
                   </TableCell>
+                )}
+                {visibleColumns.createdBy && (
+                  <TableCell>{expense.createdBy}</TableCell>
                 )}
                 {visibleColumns.date && (
                   <TableCell>
