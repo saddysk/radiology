@@ -44,7 +44,7 @@ export function DoctorsList({ centreId }: { centreId: string }) {
           <Input
             type="text"
             className="w-[300px] border border-blue-200"
-            placeholder="Search by patient name"
+            placeholder="Search by doctor's name"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
