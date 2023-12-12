@@ -14,11 +14,15 @@ import {
 } from './dto/expense.dto';
 import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
 import { SuccessDto } from 'libs/dtos';
+import { AuthService } from 'src/auth/services/auth.service';
 
 @Controller('api/centre/expense')
 @ApiTags('Centre Expense')
 export class ExpenseController {
-  constructor(private readonly expenseService: ExpenseService) {}
+  constructor(
+    private readonly expenseService: ExpenseService,
+    private readonly authService: AuthService,
+  ) {}
 
   @PostRoute('', {
     Ok: ExpenseDto,
@@ -47,7 +51,9 @@ export class ExpenseController {
       request.user.user.id,
       centreId,
     );
-    return expenses.map((expense) => new ExpenseDto(expense));
+    return Promise.all(
+      expenses.map((expense) => ExpenseDto.toDto(expense, this.authService)),
+    );
   }
 
   @GetRoute(':centreId/:id/', {
@@ -64,7 +70,7 @@ export class ExpenseController {
       centreId,
       id,
     );
-    return new ExpenseDto(expense);
+    return ExpenseDto.toDto(expense, this.authService);
   }
 
   @PutRoute('', {

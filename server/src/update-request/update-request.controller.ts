@@ -13,11 +13,15 @@ import {
 import { AuthGuardOption, UseAuthGuard } from 'libs/guards/auth.guard';
 import { SuccessDto } from 'libs/dtos';
 import { RequestStatus } from 'src/database/entities/update-request.entity';
+import { AuthService } from 'src/auth/services/auth.service';
 
 @Controller('api/update-request')
 @ApiTags('Update Request')
 export class UpdateRequestController {
-  constructor(private readonly updateRequestService: UpdateRequestService) {}
+  constructor(
+    private readonly updateRequestService: UpdateRequestService,
+    private readonly authService: AuthService,
+  ) {}
 
   @PostRoute('', {
     Ok: SuccessDto,
@@ -43,7 +47,7 @@ export class UpdateRequestController {
       request.user.user.id,
       id,
     );
-    return new UpdateRequestDto(updateRequest);
+    return UpdateRequestDto.toDto(updateRequest, this.authService);
   }
 
   @GetRoute(':centreId/centre', {
@@ -58,8 +62,10 @@ export class UpdateRequestController {
       request.user.user.id,
       centreId,
     );
-    return updateRequests.map(
-      (updateRequest) => new UpdateRequestDto(updateRequest),
+    return Promise.all(
+      updateRequests.map((updateRequest) =>
+        UpdateRequestDto.toDto(updateRequest, this.authService),
+      ),
     );
   }
 

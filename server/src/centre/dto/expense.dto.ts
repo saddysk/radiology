@@ -6,6 +6,7 @@ import {
   StringFieldOptional,
   UUIDField,
 } from 'libs/decorators';
+import { AuthService } from 'src/auth/services/auth.service';
 import { Expense } from 'src/database/entities/expense.entity';
 
 export class ExpenseDto {
@@ -59,6 +60,17 @@ export class ExpenseDto {
     this.paymentMethod = expense.paymentMethod;
     this.remark = expense.remark;
   }
+
+  static async toDto(expense: Expense, authService?: AuthService) {
+    const dto = new ExpenseDto(expense);
+
+    if (authService) {
+      const user = await authService.get(dto.createdBy);
+      dto.createdBy = user.name;
+    }
+
+    return dto;
+  }
 }
 
 export class CreateExpenseDto extends PickType(ExpenseDto, [
@@ -69,7 +81,7 @@ export class CreateExpenseDto extends PickType(ExpenseDto, [
   'name',
   'paymentMethod',
   'remark',
-]) { }
+]) {}
 
 export class UpdateExpenseDto extends PickType(ExpenseDto, [
   'id',
@@ -79,4 +91,4 @@ export class UpdateExpenseDto extends PickType(ExpenseDto, [
   'name',
   'paymentMethod',
   'remark',
-]) { }
+]) {}

@@ -5,6 +5,7 @@ import {
   ObjectFieldOptional,
   UUIDField,
 } from 'libs/decorators';
+import { AuthService } from 'src/auth/services/auth.service';
 import { BookingDto, UpdateBookingDto } from 'src/booking/dto/booking.dto';
 import { ExpenseDto } from 'src/centre/dto/expense.dto';
 import { Expense } from 'src/database/entities/expense.entity';
@@ -62,6 +63,17 @@ export class UpdateRequestDto {
           ? new ExpenseDto(updateRequest.pastData)
           : new BookingDto(updateRequest.pastData);
     }
+  }
+
+  static async toDto(updateRequest: UpdateRequest, authService?: AuthService) {
+    const dto = new UpdateRequestDto(updateRequest);
+
+    if (authService) {
+      const user = await authService.get(dto.requestedBy);
+      dto.requestedBy = user.name;
+    }
+
+    return dto;
   }
 }
 

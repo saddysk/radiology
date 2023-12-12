@@ -132,8 +132,11 @@ export class BookingDto {
     );
 
     if (authService) {
-      const consultant = await authService.get(booking.consultant);
+      const consultant = await authService.get(dto.consultant);
       dto.consultantName = consultant.name;
+
+      const user = await authService.get(dto.submittedBy);
+      dto.submittedBy = user.name;
     }
     if (centreService) {
       const centre = await centreService.getById(booking.centreId);
