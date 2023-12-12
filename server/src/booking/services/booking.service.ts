@@ -200,7 +200,7 @@ export class BookingService {
     const doctor$ = this.doctorCommissionRepository
       .createQueryBuilder('commission')
       .leftJoinAndSelect('commission.doctor', 'user')
-      .select(['commission.id as doctorid, amount'])
+      .select(['commission.doctorId as doctorid, amount'])
       .where('commission.modality = :modality', { modality: data.modality })
       .getRawOne();
 
