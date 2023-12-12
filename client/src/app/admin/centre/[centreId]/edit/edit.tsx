@@ -1,7 +1,12 @@
 "use client";
 
-import { useCentreExpense, useEditRequest } from "@/lib/query-hooks";
-import { useState } from "react";
+import {
+  useCentreBooking,
+  useCentreBookings,
+  useCentreExpense,
+  useEditRequest,
+} from "@/lib/query-hooks";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -31,6 +36,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { edit } from "@/app/api";
+import clsx from "clsx";
 
 export function EditReq({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState({
@@ -52,38 +58,78 @@ export function EditReq({ centreId }: { centreId: string }) {
   const { data: dataEdit, isLoading: isLoadingDataEdit } = useEditRequest({
     centreId,
   });
+
   const { data: expense } = useCentreExpense({
-    id: selectedRequest?.expenseData?.id!,
+    id: selectedRequest?.requestData?.id!,
     centreId,
-    enabled: selectedRequest?.expenseData?.id ? true : false,
+    enabled:
+      selectedRequest?.type == RequestType.Expense &&
+      selectedRequest.status !== RequestStatus.Accepted
+        ? true
+        : false,
   });
 
-  let newCode = "";
-  if (selectedRequest?.type === RequestType.Expense) {
-    newCode = JSON.stringify(
-      {
-        amount: expense?.data.amount,
-        expenseType: expense?.data.expenseType,
-        paymentMethod: expense?.data.paymentMethod,
-      },
-      null,
-      4
-    );
-  }
+  const { data: booking } = useCentreBooking({
+    id: selectedRequest?.requestData?.id!,
+    centreId,
+    enabled:
+      selectedRequest?.type == RequestType.Booking &&
+      selectedRequest.status !== RequestStatus.Accepted
+        ? true
+        : false,
+  });
 
-  let pastApprovedData = "";
-  if (selectedRequest?.status === RequestStatus.Accepted) {
-    console.log("selectedRequest", selectedRequest);
-    pastApprovedData = JSON.stringify(
-      {
-        amount: selectedRequest?.approvedData?.amount,
-        expenseType: selectedRequest?.approvedData?.expenseType,
-        paymentMethod: selectedRequest?.approvedData?.paymentMethod,
-      },
-      null,
-      4
+  const [newData, setNewData] = useState<any>("");
+  const [pastData, setPastData] = useState<any>("");
+
+  useEffect(() => {
+    console.log(
+      selectedRequest,
+      "heheh",
+      selectedRequest?.status == RequestStatus.Accepted
     );
-  }
+    if (selectedRequest?.type === RequestType.Expense) {
+      if (selectedRequest?.status == RequestStatus.Accepted) {
+        setPastData(
+          JSON.stringify(
+            {
+              name: selectedRequest?.pastData?.name,
+              amount: selectedRequest?.pastData?.amount,
+              expenseType: selectedRequest?.pastData?.expenseType,
+              paymentMethod: selectedRequest?.pastData?.paymentMethod,
+            },
+            null,
+            4
+          )
+        );
+      } else {
+        setPastData(
+          JSON.stringify(
+            {
+              name: expense?.data.name,
+              amount: expense?.data.amount,
+              expenseType: expense?.data.expenseType,
+              paymentMethod: expense?.data.paymentMethod,
+            },
+            null,
+            4
+          )
+        );
+      }
+      setNewData(
+        JSON.stringify(
+          {
+            name: selectedRequest?.requestData?.name,
+            amount: selectedRequest?.requestData?.amount,
+            expenseType: selectedRequest?.requestData?.expenseType,
+            paymentMethod: selectedRequest?.requestData?.paymentMethod,
+          },
+          null,
+          4
+        )
+      );
+    }
+  }, [selectedRequest, expense, booking]);
 
   const updateRequest = async ({
     id,
@@ -146,7 +192,7 @@ export function EditReq({ centreId }: { centreId: string }) {
 
         <Table>
           <TableHeader>
-            <TableHead>ID</TableHead>
+            {/* <TableHead>ID</TableHead> */}
             <TableHead>Requested By</TableHead>
             <TableHead>Request Type</TableHead>
             <TableHead>Requested On</TableHead>
@@ -156,11 +202,23 @@ export function EditReq({ centreId }: { centreId: string }) {
           <TableBody>
             {dataEdit?.data.map((request) => (
               <TableRow key={request.id}>
-                <TableCell>{request.id}</TableCell>
+                {/* <TableCell>{request.id}</TableCell> */}
                 <TableCell>{request.requestedBy}</TableCell>
                 <TableCell>{request.type}</TableCell>
                 <TableCell>{request.createdAt}</TableCell>
-                <TableCell>{request.status}</TableCell>
+                <TableCell>
+                  <p
+                    className={clsx(
+                      request.status == RequestStatus.Rejected &&
+                        "bg-red-500/30",
+                      request.status == RequestStatus.Accepted &&
+                        "bg-green-500/30",
+                      "px-4 py-2 text-center rounded-md w-fit"
+                    )}
+                  >
+                    {request.status.toUpperCase()}
+                  </p>
+                </TableCell>
                 <TableCell className="space-x-4 text-right">
                   <Dialog>
                     <DialogTrigger asChild>
@@ -175,44 +233,45 @@ export function EditReq({ centreId }: { centreId: string }) {
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[80vw] bg-blue-50">
                       <DialogHeader>
-                        <DialogTitle>View Changes</DialogTitle>
+                        <DialogTitle>View Changes </DialogTitle>
                         <DialogDescription>
-                          You can view the changes here
+                          {selectedRequest?.status == RequestStatus.Pending &&
+                            "You can view the changes here"}
+                          {selectedRequest?.status == RequestStatus.Accepted &&
+                            "You can view accepted changes here"}
+                          {selectedRequest?.status == RequestStatus.Rejected &&
+                            "You can view rejected changes here"}
                         </DialogDescription>
                       </DialogHeader>
-
+                      <div>
+                        <p className=" text-blue-950 bg-blue-300 p-6 py-2 w-fit">
+                          Status: {selectedRequest?.status.toUpperCase()}
+                        </p>
+                      </div>
                       <div className="flex flex-col space-y-4">
                         <div>
-                          <h3 className="text-lg font-semibold">Past Data</h3>
-                          <pre className="bg-gray-100 p-2 rounded">
-                            {pastApprovedData}
-                          </pre>
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-semibold">
-                            Update Data (Proposed Changes)
+                          <h3 className="text-lg font-semibold pb-6">
+                            Comparison{" "}
+                            <span className="font-normal">
+                              {selectedRequest?.status ==
+                                RequestStatus.Pending &&
+                                "(Current Data vs Requested Data)"}
+                              {selectedRequest?.status ==
+                                RequestStatus.Accepted &&
+                                "(Past Data vs Accepted Data)"}
+                              {selectedRequest?.status ==
+                                RequestStatus.Rejected &&
+                                "(Current Data vs Rejected Data)"}
+                            </span>
                           </h3>
-                          {/* Show the data representing the changes */}
-                          <pre className="bg-gray-100 p-2 rounded">
-                            {/* Update data here */}
-                          </pre>
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-semibold">
-                            Current Data
-                          </h3>
-                          <pre className="bg-gray-100 p-2 rounded">
-                            {newCode}
-                          </pre>
-                        </div>
-                        <div>
-                          <h3 className="text-lg font-semibold">Comparison</h3>
-                          <ReactDiffViewer
-                            oldValue={pastApprovedData}
-                            newValue={newCode}
-                            splitView={true}
-                            disableWordDiff={true}
-                          />
+                          {newData !== "" && pastData !== "" && (
+                            <ReactDiffViewer
+                              oldValue={pastData}
+                              newValue={newData}
+                              splitView={true}
+                              disableWordDiff={true}
+                            />
+                          )}
                         </div>
                       </div>
 

@@ -1,6 +1,10 @@
 "use client";
 
-import { useCentreExpenses } from "@/lib/query-hooks";
+import {
+  getAllUsers,
+  useCentreExpenses,
+  useGetUserById,
+} from "@/lib/query-hooks";
 import { useEffect, useState } from "react";
 import {
   Table,
@@ -52,10 +56,12 @@ import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 export function Expenses({ centreId }: { centreId: string }) {
   const [visibleColumns, setVisibleColumns] = useState({
     expenseId: true,
+    name: true,
     expenseType: true,
     paymentMethod: true,
     amount: true,
     createdAt: true,
+    createdBy: true,
     date: false,
   });
   const queryClient = useQueryClient();
@@ -69,6 +75,7 @@ export function Expenses({ centreId }: { centreId: string }) {
   const [filteredData, setFilteredData] = useState<ExpenseDto[]>([]);
   const [expensesUpdates, setExpensesUpdates] = useState({
     expenseId: "",
+    name: "",
     expenseType: "",
     paymentMethod: "",
     amount: 0,
@@ -78,6 +85,9 @@ export function Expenses({ centreId }: { centreId: string }) {
       centreId,
     });
 
+  const { data: users } = getAllUsers();
+
+  console.log(users, "here");
   useEffect(() => {
     let result = [...(dataCentreExpenses?.data || [])];
 
@@ -158,6 +168,7 @@ export function Expenses({ centreId }: { centreId: string }) {
       const response = await centreexpense.expenseControllerUpdate({
         id: expensesUpdates.expenseId,
         centreId,
+        name: expensesUpdates.name,
         expenseType: expensesUpdates.expenseType,
         paymentMethod: expensesUpdates.paymentMethod,
         amount: expensesUpdates.amount,
@@ -255,6 +266,7 @@ export function Expenses({ centreId }: { centreId: string }) {
           <TableHeader>
             <TableRow>
               {visibleColumns.expenseId && <TableHead>Expense Id</TableHead>}
+              {visibleColumns.name && <TableHead>Expense Name</TableHead>}
               {visibleColumns.expenseType && (
                 <TableHead>Expense Type</TableHead>
               )}
@@ -263,6 +275,7 @@ export function Expenses({ centreId }: { centreId: string }) {
               )}
               {visibleColumns.amount && <TableHead>Amount (in Rs.)</TableHead>}
               {visibleColumns.createdAt && <TableHead>Created At</TableHead>}
+              {visibleColumns.createdBy && <TableHead>Created By</TableHead>}
               {visibleColumns.date && <TableHead>Expense Date</TableHead>}
               <TableHead className="text-right">Options</TableHead>
             </TableRow>
@@ -273,6 +286,7 @@ export function Expenses({ centreId }: { centreId: string }) {
                 {visibleColumns.expenseId && (
                   <TableCell>{expense.id}</TableCell>
                 )}
+                {visibleColumns.name && <TableCell>{expense.name}</TableCell>}
                 {visibleColumns.expenseType && (
                   <TableCell>{expense.expenseType}</TableCell>
                 )}
@@ -286,6 +300,9 @@ export function Expenses({ centreId }: { centreId: string }) {
                   <TableCell>
                     {new Date(expense.createdAt).toLocaleString()}
                   </TableCell>
+                )}
+                {visibleColumns.createdBy && (
+                  <TableCell>{expense.createdBy}</TableCell>
                 )}
                 {visibleColumns.date && (
                   <TableCell>
@@ -301,6 +318,7 @@ export function Expenses({ centreId }: { centreId: string }) {
                         onClick={() => {
                           setExpensesUpdates({
                             expenseId: expense.id,
+                            name: expense.name,
                             expenseType: expense.expenseType,
                             paymentMethod: expense.paymentMethod,
                             amount: expense.amount,
@@ -319,6 +337,20 @@ export function Expenses({ centreId }: { centreId: string }) {
                         </DialogDescription>
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <label htmlFor="name">Expense Name</label>
+                          <Input
+                            id="name"
+                            value={expensesUpdates.name}
+                            onChange={(e) => {
+                              setExpensesUpdates({
+                                ...expensesUpdates,
+                                name: e.target.value,
+                              });
+                            }}
+                            className="col-span-3"
+                          />
+                        </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                           <label htmlFor="name">Expense Type</label>
                           <Input
@@ -393,6 +425,7 @@ export function Expenses({ centreId }: { centreId: string }) {
                         onClick={() => {
                           setExpensesUpdates({
                             expenseId: expense.id,
+                            name: expense.name,
                             expenseType: expense.expenseType,
                             paymentMethod: expense.paymentMethod,
                             amount: expense.amount,

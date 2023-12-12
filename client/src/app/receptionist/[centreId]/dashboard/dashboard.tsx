@@ -11,9 +11,7 @@ import Link from "next/link";
 export function ReceptionistDashboard({ centreId }: { centreId: string }) {
   const { toast } = useToast();
   const router = useRouter();
-  const { data: dataAllUser, isLoading: isLoadingAllUser } = useUserData({
-    centreId,
-  });
+  const { data: dataAllUser, isLoading: isLoadingAllUser } = useUserData();
   const user = dataAllUser?.data;
 
   return (

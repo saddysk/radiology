@@ -1,6 +1,8 @@
 "use client";
 import Nabvbar from "@/components/navbar";
 import { Card } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
+import { useUserData } from "@/lib/query-hooks";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import clsx from "clsx";
 import {
@@ -14,6 +16,7 @@ import {
   Users,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function ReceptionistLayout({
   children,
@@ -37,17 +40,30 @@ export default function ReceptionistLayout({
       path: `/receptionist/${params.centreId}/bookings`,
       icon: <ClipboardList size={20} />,
     },
-    {
-      title: "Patients",
-      path: `/receptionist/${params.centreId}/patients`,
-      icon: <Contact2 size={20} />,
-    },
+    // {
+    //   title: "Patients",
+    //   path: `/receptionist/${params.centreId}/patients`,
+    //   icon: <Contact2 size={20} />,
+    // },
     // {
     //   title: "Expenses",
     //   path: `/receptionist/${params.centreId}/expenses`,
     //   icon: <Receipt />,
     // },
   ];
+
+  const { data: user } = useUserData();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (user?.data?.role !== "pr" && user !== undefined) {
+      toast({
+        title: `You are not authorized to view this page`,
+        variant: "destructive",
+      });
+      route.push("/");
+    }
+  }, [user]);
 
   return (
     <Card className="flex flex-col m-4 h-full rounded-md bg-blue-50 border-blue-200">

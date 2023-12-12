@@ -13,7 +13,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export function DatePickerWithRange({ className, date, setDate }: any) {
+export function DatePickerWithRange({
+  className,
+  date,
+  setDate,
+  placeholder,
+}: any) {
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -37,7 +42,7 @@ export function DatePickerWithRange({ className, date, setDate }: any) {
                 format(date.from, "LLL dd, y")
               )
             ) : (
-              <span>Pick a date</span>
+              <span>{placeholder}</span>
             )}
           </Button>
         </PopoverTrigger>

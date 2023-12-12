@@ -3,10 +3,11 @@
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
-import { useAllConnectedCentresData } from "@/lib/query-hooks";
+import { useAllConnectedCentresData, useUserData } from "@/lib/query-hooks";
 import CenteredSpinner from "@/components/ui/centered-spinner";
 import Nabvbar from "@/components/navbar";
 import Link from "next/link";
+import { useEffect } from "react";
 
 export function PrDashboard() {
   const { toast } = useToast();
@@ -18,6 +19,17 @@ export function PrDashboard() {
     enabled: true,
   });
 
+  const { data: user } = useUserData();
+
+  useEffect(() => {
+    if (user?.data?.role !== "pr" && user !== undefined) {
+      toast({
+        title: `You are not authorized to view this page`,
+        variant: "destructive",
+      });
+      router.push("/");
+    }
+  }, [user]);
   return (
     <Card className="flex flex-col m-4 h-full rounded-md bg-blue-50 border-blue-200">
       <Nabvbar />

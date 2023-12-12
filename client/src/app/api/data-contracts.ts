@@ -302,6 +302,7 @@ export interface CreateDoctorCommissionDto {
   centreId: string;
   letGo?: boolean;
   commissions: CommissionDto[];
+  doctorName?: string;
 }
 
 export interface UpdateDoctorCommissionDto {
@@ -393,6 +394,7 @@ export interface CreateBookingDto {
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   centreId: string;
+  smkId?: string;
   /**
    * @format uuid
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
@@ -462,6 +464,7 @@ export interface BookingDto {
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   patientId: string;
+  smkId?: string;
   /**
    * @format uuid
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
@@ -506,6 +509,7 @@ export interface UpdateBookingDto {
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"
    */
   patientId: string;
+  smkId?: string;
   /**
    * @format uuid
    * @example "c3611c05-df51-4b47-b601-f2eac02f4ef0"

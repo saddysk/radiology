@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookingDto, DoctorCommissionDto } from "@/app/api/data-contracts";
 import { DoctorsAnalyticsComponent } from "@/components/analytics/doctors-analytics";
 import { ExpenseAnalyticsComponent } from "@/components/analytics/expense-analytics";
+import { CollectionAnalyticsComponent } from "@/components/analytics/collection-analytics";
 
 export function Analytics({ centreId }: { centreId: string }) {
   const [tab, setTab] = useState("doctor");
@@ -33,13 +34,17 @@ export function Analytics({ centreId }: { centreId: string }) {
       name: "Expenses",
       value: "expenses",
     },
+    {
+      name: "Collection",
+      value: "collection",
+    },
   ];
 
   const tabContent = "p-6 bg-blue-100 rounded-md mt-4";
   return (
     <div className="w-full h-[85vh] overflow-scroll p-8">
       <Tabs defaultValue={tab} onValueChange={setTab}>
-        <TabsList className="h-full grid w-[80vw] grid-cols-3 bg-blue-100 p-2">
+        <TabsList className="h-full grid w-[80vw] grid-cols-4 bg-blue-100 p-2">
           {tabsList.map(({ name, value }) => {
             return (
               <TabsTrigger
@@ -61,6 +66,9 @@ export function Analytics({ centreId }: { centreId: string }) {
         </TabsContent>
         <TabsContent className={tabContent} value="expenses">
           <ExpenseAnalytics centreId={centreId} />
+        </TabsContent>
+        <TabsContent className={tabContent} value="collection">
+          <CollectionAnalytics centreId={centreId} />
         </TabsContent>
       </Tabs>
     </div>
@@ -100,7 +108,7 @@ const DoctorAnalytics = ({ centreId }: { centreId: string }) => {
       <p className="text-lg mb-6 opacity-80">
         Click on a doctor to get analytics for that doctor.
       </p>
-      <div className="flex flex-wrap gap-8 mx-auto w-full justify-start">
+      <div className="flex flex-wrap gap-4 mx-auto w-full justify-start">
         {filteredData?.map((doctor, index) => (
           <div
             key={index}
@@ -118,7 +126,7 @@ const DoctorAnalytics = ({ centreId }: { centreId: string }) => {
       </div>
 
       {selectedDoctor && (
-        <div className="bg-blue-50 px-4 py-1 rounded-md mt-6">
+        <div className="bg-blue-50 px-4 py-1 rounded-md mt-4 pb-4">
           {isDoctorAnalyticsLoading ? (
             <CenteredSpinner />
           ) : (
@@ -138,11 +146,9 @@ const DoctorsAnalytics = ({ centreId }: { centreId: string }) => {
       centreId,
     });
 
-  console.log(dataCentreBookings, "01");
-
   return (
     <div>
-      <div className="bg-blue-50 px-4 py-1 rounded-md mt-6">
+      <div className="bg-blue-50 px-4 py-1 rounded-md mt-2 pb-4">
         {false ? (
           <CenteredSpinner />
         ) : (
@@ -161,11 +167,30 @@ const ExpenseAnalytics = ({ centreId }: { centreId: string }) => {
 
   return (
     <div>
-      <div className="bg-blue-50 px-4 py-1 rounded-md mt-6">
+      <div className="bg-blue-50 px-4 py-1 rounded-md mt-2 pb-4">
         {false ? (
           <CenteredSpinner />
         ) : (
           <ExpenseAnalyticsComponent data={dataCentreExpenses?.data} />
+        )}
+      </div>
+    </div>
+  );
+};
+
+const CollectionAnalytics = ({ centreId }: { centreId: string }) => {
+  const { data: dataCentreBookings, isLoading: isLoadingCentreBookings } =
+    useCentreBookings({
+      centreId,
+    });
+
+  return (
+    <div>
+      <div className="bg-blue-50 px-4 py-1 rounded-md mt-2 pb-4">
+        {false ? (
+          <CenteredSpinner />
+        ) : (
+          <CollectionAnalyticsComponent data={dataCentreBookings?.data} />
         )}
       </div>
     </div>

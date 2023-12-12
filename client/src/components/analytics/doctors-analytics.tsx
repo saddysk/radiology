@@ -29,6 +29,7 @@ import { amount, downloadCSV, toTitleCase } from "@/lib/utils";
 import { DatePickerWithRange } from "../ui/date-range-picker";
 import { addDays } from "date-fns";
 import { DateRange } from "react-day-picker";
+import { BarList, DonutChart } from "@tremor/react";
 
 type Modality = {
   name: string;
@@ -46,24 +47,20 @@ type Doctor = {
 type Data = Doctor[];
 
 function formatOutputToDto(output: BookingDto[], dateRange: DateRange) {
-  if (!output) {
-    return;
+  let filterDataByDate = output;
+
+  const startDate = dateRange?.from;
+  const endDate = dateRange?.to;
+  if (startDate != null && endDate != null) {
+    filterDataByDate = output.filter((item) => {
+      const itemDate = new Date(item.createdAt);
+      return itemDate >= startDate && itemDate <= endDate;
+    });
   }
-
-  // let filterDataByDate = output;
-
-  // const startDate = dateRange?.from;
-  // const endDate = dateRange?.to;
-  // if (startDate != null && endDate != null) {
-  //   filterDataByDate = output.filter((item) => {
-  //     const itemDate = new Date(item.createdAt);
-  //     return itemDate >= startDate && itemDate <= endDate;
-  //   });
-  // }
 
   const groupedByDoctor: any = {};
 
-  for (const item of output) {
+  for (const item of filterDataByDate) {
     const doctorId = item.consultant;
 
     if (!groupedByDoctor[doctorId]) {
@@ -123,16 +120,17 @@ export function DoctorsAnalyticsComponent({
   const [rowSelection, setRowSelection] = React.useState({});
 
   const [date, setDate] = React.useState<DateRange>({
-    from: null,
-    to: null,
+    from: undefined,
+    to: undefined,
   });
 
-  const dataa = React.useMemo(() => {
+  const filteredData = React.useMemo(() => {
     if (data) {
-      formatOutputToDto(data, date);
+      return formatOutputToDto(data, date);
     }
   }, [data, date]);
 
+  console.log(filteredData);
   function getModalityNames(data: Data) {
     const modalityNames: string[] = [];
     if (!data) {
@@ -148,21 +146,22 @@ export function DoctorsAnalyticsComponent({
     return modalityNames;
   }
 
-  const modalities = getModalityNames(dataa!);
+  const modalities = getModalityNames(filteredData!);
 
   const columns: ColumnDef<Data>[] = [
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => row.original?.name,
       // @ts-ignore
+      cell: ({ row }) => row.original?.name,
     },
     {
       accessorKey: "modality",
       header: "Total Referrals",
       cell: ({ row }) => {
+        // @ts-ignore
         const totalReferrals = row.original?.modality?.reduce(
-          (acc, mod) => acc + mod.referralCount,
+          (acc: any, mod: any) => acc + mod.referralCount,
           0
         );
         return totalReferrals;
@@ -208,8 +207,9 @@ export function DoctorsAnalyticsComponent({
       accessorKey: "modality",
       header: "Total Amount",
       cell: ({ row }) => {
-        const totalAmount = row.original.modality.reduce(
-          (acc, mod) => acc + mod.referralAmount,
+        // @ts-ignore
+        const totalAmount = row.original?.modality?.reduce(
+          (acc: any, mod: any) => acc + mod.referralAmount,
           0
         );
         return amount(totalAmount);
@@ -224,8 +224,8 @@ export function DoctorsAnalyticsComponent({
   }, [date, setColumnFilters]);
 
   const table = useReactTable({
-    data: dataa! || [],
-    columns,
+    data: filteredData! || ([] as any),
+    columns: columns as any,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -242,9 +242,61 @@ export function DoctorsAnalyticsComponent({
     },
   });
 
+  const cities = [
+    {
+      name: "New York",
+      sales: 9800,
+    },
+    {
+      name: "London",
+      sales: 4567,
+    },
+    {
+      name: "Hong Kong",
+      sales: 3908,
+    },
+    {
+      name: "San Francisco",
+      sales: 2400,
+    },
+    {
+      name: "Singapore",
+      sales: 1908,
+    },
+    {
+      name: "Zurich",
+      sales: 1398,
+    },
+  ];
+
+  function convertData(data: any) {
+    const totalCounts: { [key: string]: number } = {};
+
+    data.forEach((item: any) => {
+      item.original.modality.forEach((modality: any) => {
+        if (!totalCounts[modality.name]) {
+          totalCounts[modality.name] = 0;
+        }
+        totalCounts[modality.name] += modality.referralCount;
+      });
+    });
+
+    return Object.keys(totalCounts).map((name) => ({
+      name: name,
+      value: totalCounts[name],
+    }));
+  }
+
   return (
     <div className="flex h-full flex-col gap-6 mt-6">
       <div className="w-full">
+        <div className="bg-blue-100 rounded-md p-4 mb-2">
+          <h1>Modality Wise Count</h1>
+          <BarList
+            data={convertData(table.getRowModel().flatRows)}
+            className="mt-4"
+          />
+        </div>
         <div className="flex items-center py-4 gap-4">
           <Input
             placeholder="Filter analytics by modality"
@@ -258,12 +310,22 @@ export function DoctorsAnalyticsComponent({
             className="bg-blue-50"
             date={date}
             setDate={setDate}
+            placeholder="Filter bookings by date"
           />
 
           <Button
             variant="outline"
+            className=""
+            onClick={() => {
+              setDate({ from: undefined, to: undefined });
+            }}
+          >
+            Clear filter
+          </Button>
+          <Button
+            variant="outline"
             className="ml-auto"
-            onClick={() => downloadCSV(table.getCoreRowModel().flatRows)}
+            onClick={() => downloadCSV(table.getRowModel().flatRows)}
           >
             Download CSV
           </Button>
@@ -325,26 +387,6 @@ export function DoctorsAnalyticsComponent({
               ))}
             </TableBody>
           </Table>
-        </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
-          </div>
         </div>
       </div>
     </div>
