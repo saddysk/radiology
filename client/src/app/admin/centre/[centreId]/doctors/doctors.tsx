@@ -14,6 +14,7 @@ import { useGetAllDoctorsForCentreData } from "@/lib/query-hooks";
 import { aggregateDoctorData } from "@/lib/utils";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
+import CenteredSpinner from "@/components/ui/centered-spinner";
 
 export function DoctorsList({ centreId }: { centreId: string }) {
   const { toast } = useToast();
@@ -35,7 +36,7 @@ export function DoctorsList({ centreId }: { centreId: string }) {
     ? doctors.filter((doc) => doc.doctorName.toLowerCase().includes(searchTerm))
     : [];
   return (
-    <div className="w-full p-8 overflow-y-scroll">
+    <div className="w-full p-8 h-[90vh] overflow-scroll">
       <div className="p-6 my-4 rounded-lg   bg-blue-100">
         {" "}
         <div className="flex justify-between mb-4">
@@ -49,39 +50,47 @@ export function DoctorsList({ centreId }: { centreId: string }) {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Sr.No</TableHead>
-              <TableHead>Doctor Id</TableHead>
-              <TableHead>Doctor Name</TableHead>
-              <TableHead>XRAY (%)</TableHead>
-              <TableHead>USG (%)</TableHead>
-              <TableHead>CT-SCAN (%)</TableHead>
-              <TableHead>Let Go on Commision</TableHead>
+        {isLoadingAllDoctorsForCentre ? (
+          <div className="w-full h-20 flex justify-center items-center">
+            {" "}
+            <CenteredSpinner />
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Sr.No</TableHead>
+                <TableHead>Doctor Id</TableHead>
+                <TableHead>Doctor Name</TableHead>
+                <TableHead>XRAY (%)</TableHead>
+                <TableHead>USG (%)</TableHead>
+                <TableHead>CT-SCAN (%)</TableHead>
+                <TableHead>Let Go on Commision</TableHead>
 
-              {/* <TableHead className="text-right">XRAY</TableHead>
+                {/* <TableHead className="text-right">XRAY</TableHead>
             <TableHead className="text-right">CT-SCAN</TableHead>
             <TableHead className="text-right">USG</TableHead>
             <TableHead className="text-right">Added On</TableHead> */}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredDocs?.map((doctor: any, index) => (
-              <TableRow className="border-b-blue-200" key={index}>
-                <TableCell className="font-medium">{index + 1}</TableCell>
-                <TableCell>{doctor?.doctorId}</TableCell>
-                <TableCell>{doctor?.doctorName}</TableCell>
-                <TableCell>{doctor["ct-scan"]}</TableCell>
-                <TableCell>{doctor["usg"]}</TableCell>
-                <TableCell>{doctor["x-ray"]}</TableCell>{" "}
-                <TableCell>{doctor["letGo"] ? "Yes" : "No"}</TableCell>{" "}
-                {/* <TableCell className="text-right">{item.rate}</TableCell>
-              <TableCell className="text-right">{item.film_count}</TableCell> */}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+
+            <TableBody>
+              {filteredDocs?.map((doctor: any, index) => (
+                <TableRow className="border-b-blue-200" key={index}>
+                  <TableCell className="font-medium">{index + 1}</TableCell>
+                  <TableCell>{doctor?.doctorId}</TableCell>
+                  <TableCell>{doctor?.doctorName}</TableCell>
+                  <TableCell>{doctor["ct-scan"]}</TableCell>
+                  <TableCell>{doctor["usg"]}</TableCell>
+                  <TableCell>{doctor["x-ray"]}</TableCell>{" "}
+                  <TableCell>{doctor["letGo"] ? "Yes" : "No"}</TableCell>{" "}
+                  {/* <TableCell className="text-right">{item.rate}</TableCell>
+              <TableCell className="text-right">{item.film_count}</TableCell> */}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </div>
   );

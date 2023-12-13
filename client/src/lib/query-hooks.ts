@@ -9,7 +9,10 @@ import {
   ratelist,
 } from "@/app/api";
 import { CommissionDto, UpdatePatientDto, UpdateRateListDto } from "@/app/api/data-contracts";
+import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { error } from "console";
+import { useRouter } from "next/navigation";
 
 
 export const useGetUserById = (id: string) => {
@@ -37,7 +40,19 @@ export const useCentreData = ({
 };
 
 export const useUserData = () => {
-  return useQuery(["user"], () => auth.authControllerGet());
+  const router = useRouter()
+  const { toast } = useToast()
+  return useQuery({
+    queryKey: ["user"], queryFn: () => auth.authControllerGet(), onError: (error) => {
+      router.push('/login')
+      if (error.response.status == 401) {
+        toast({
+          title: 'Unauthorized to access this route',
+          variant: 'destructive'
+        })
+      }
+    }
+  });
 };
 
 export const useUserDetailData = () => {

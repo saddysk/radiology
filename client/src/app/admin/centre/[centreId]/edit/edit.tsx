@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -191,6 +192,12 @@ export function EditReq({ centreId }: { centreId: string }) {
         </div>
 
         <Table>
+          {dataEdit?.data.length == 0 && (
+            <TableCaption className="w-full">
+              No data in this table
+            </TableCaption>
+          )}
+
           <TableHeader>
             {/* <TableHead>ID</TableHead> */}
             <TableHead>Requested By</TableHead>
@@ -199,6 +206,7 @@ export function EditReq({ centreId }: { centreId: string }) {
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Options</TableHead>
           </TableHeader>
+
           <TableBody>
             {dataEdit?.data.map((request) => (
               <TableRow key={request.id}>

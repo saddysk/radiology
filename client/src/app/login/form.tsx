@@ -55,7 +55,7 @@ export function LoginForm() {
           variant: "default",
         });
         if (response.data.user.role === UserRole.Admin) {
-          router.push(`/admin/onboarding`);
+          router.push(`/admin/dashboard`);
         }
         if (response.data.user.role === UserRole.Pr) {
           router.push(`/pr/${response.data.user.centreId}/dashboard`);

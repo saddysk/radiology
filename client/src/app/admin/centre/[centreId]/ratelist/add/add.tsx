@@ -66,8 +66,8 @@ export function AddRateList({ centreId }: { centreId: string }) {
   const [investigationUpdates, setInvestigationUpdates] = useState({
     id: "",
     type: "",
-    amount: 0,
-    filmCount: 0,
+    amount: undefined,
+    filmCount: undefined,
   });
   const {
     data: dataRateList,
@@ -158,15 +158,16 @@ export function AddRateList({ centreId }: { centreId: string }) {
         setInvestigationUpdates({
           id: "",
           type: "",
-          amount: 0,
-          filmCount: 0,
+          amount: undefined,
+          filmCount: undefined,
         });
         setLoading(false);
       }
     } catch (error) {
+      console.log(error.response);
       toast({
         title: "Error",
-        description: "Something went wrong",
+        description: error.response.data.error,
         variant: "destructive",
       });
       //localStorage.removeItem("x-session-token");
