@@ -34,7 +34,7 @@ export function Analytics() {
       });
       router.push("/");
     }
-  }, [user]);
+  }, [user, router, toast]);
   return (
     <Card className="flex flex-col m-4 h-full rounded-md bg-blue-50 border-blue-200">
       <Nabvbar />

@@ -63,7 +63,7 @@ type Investigations = {
 export function AddRateList({ centreId }: { centreId: string }) {
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
-  const [investigationUpdates, setInvestigationUpdates] = useState({
+  const [investigationUpdates, setInvestigationUpdates] = useState<any>({
     id: "",
     type: "",
     amount: undefined,
@@ -143,6 +143,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
 
       const response = await ratelist.rateListControllerUpdate({
         id: investigationUpdates.id,
+        //@ts-ignore
         investigation: updatedInvestigations,
       });
 
@@ -163,7 +164,7 @@ export function AddRateList({ centreId }: { centreId: string }) {
         });
         setLoading(false);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error.response);
       toast({
         title: "Error",

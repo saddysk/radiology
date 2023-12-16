@@ -63,7 +63,7 @@ export default function ReceptionistLayout({
       });
       route.push("/");
     }
-  }, [user]);
+  }, [user, route, toast]);
 
   return (
     <Card className="flex flex-col m-4 h-full rounded-md bg-blue-50 border-blue-200">

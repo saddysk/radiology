@@ -38,20 +38,7 @@ import {
 } from "../ui/select";
 import { AreaChart, BarList, DonutChart } from "@tremor/react";
 
-type Modality = {
-  name: string;
-  referralCount: number;
-  amount: number;
-  referralAmount: number;
-};
-
-type Doctor = {
-  name: string;
-  id: string;
-  modality: Modality[];
-};
-
-type Data = Doctor[];
+type Data = any;
 
 export function CollectionAnalyticsComponent({
   data,
@@ -68,8 +55,8 @@ export function CollectionAnalyticsComponent({
   const [rowSelection, setRowSelection] = React.useState({});
 
   const [date, setDate] = React.useState<DateRange>({
-    from: null,
-    to: null,
+    from: undefined,
+    to: undefined,
   });
 
   const db = React.useMemo(() => {
@@ -146,7 +133,7 @@ export function CollectionAnalyticsComponent({
   }, [date, setColumnFilters]);
 
   const table = useReactTable({
-    data: db! || [],
+    data: db! || ([] as any),
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -345,10 +332,10 @@ export function CollectionAnalyticsComponent({
   );
 }
 
-function aggregatePayments(data) {
+function aggregatePayments(data: any) {
   const paymentMap = new Map();
   console.log(data, "data");
-  data.forEach(({ original: item }) => {
+  data.forEach(({ original: item }: { original: any }) => {
     if (paymentMap.has(item.paymentType)) {
       paymentMap.set(
         item.paymentType,

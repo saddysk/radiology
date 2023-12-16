@@ -51,7 +51,7 @@ export default function CentreLayout({
       });
       route.push("/");
     }
-  }, [user]);
+  }, [user, route, toast]);
   return (
     <Card className="flex flex-col m-4 h-full rounded-md bg-blue-50 border-blue-200">
       <nav className="flex items-center justify-between gap-4 p-6 border-b border-b-blue-200">

@@ -23,7 +23,7 @@ export function AdminDashboard() {
       });
       router.push("/");
     }
-  }, [user]);
+  }, [user, router, toast]);
 
   const {
     data: dataAllConnectedCentres,
