@@ -12,6 +12,7 @@ import { CommissionDto, UpdatePatientDto, UpdateRateListDto } from "@/app/api/da
 import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { error } from "console";
+import { Plane } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 
@@ -19,7 +20,7 @@ export const useGetUserById = (id: string) => {
   return useQuery(["get-user-by-id", id], () => auth.authControllerGetById(id));
 };
 
-export const getAllUsers = () => {
+export const useAllUsers = () => {
   return useQuery(["users"], () => auth.authControllerGetDoctors());
 }
 
@@ -45,7 +46,8 @@ export const useUserData = () => {
   return useQuery({
     queryKey: ["user"], queryFn: () => auth.authControllerGet(), onError: (error) => {
       router.push('/login')
-      if (error.response.status == 401) {
+      //@ts-ignore
+      if (error?.response?.status! == 401) {
         toast({
           title: 'Unauthorized to access this route',
           variant: 'destructive'

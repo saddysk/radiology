@@ -1,6 +1,6 @@
 "use client";
 import CenteredSpinner from "@/components/ui/centered-spinner";
-import { getAllUsers, useUserData } from "@/lib/query-hooks";
+import { useAllUsers, useUserData } from "@/lib/query-hooks";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  getAllUsers,
+  useAllUsers,
   useCentreExpenses,
   useGetUserById,
 } from "@/lib/query-hooks";
@@ -85,7 +85,7 @@ export function Expenses({ centreId }: { centreId: string }) {
       centreId,
     });
 
-  const { data: users } = getAllUsers();
+  const { data: users } = useAllUsers();
 
   console.log(users, "here");
   useEffect(() => {

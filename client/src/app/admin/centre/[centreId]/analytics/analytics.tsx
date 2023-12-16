@@ -48,6 +48,7 @@ export function Analytics({ centreId }: { centreId: string }) {
           {tabsList.map(({ name, value }) => {
             return (
               <TabsTrigger
+                key={value}
                 className={cn(
                   tab == value && "bg-blue-300 font-bold rounded-md "
                 )}

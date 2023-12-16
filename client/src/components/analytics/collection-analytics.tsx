@@ -57,7 +57,6 @@ export function CollectionAnalyticsComponent({
   data,
 }: {
   data: BookingDto[] | undefined;
-  startDate: string;
 }) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
